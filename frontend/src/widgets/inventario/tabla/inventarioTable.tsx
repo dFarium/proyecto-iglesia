@@ -15,7 +15,7 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 
-import { MOCK_DATA } from "../../../mockup/MOCK_DATA";
+import { MOCK_DATA } from "../../../mockdata/MOCK_DATA";
 
 import {
   ColumnDef,
