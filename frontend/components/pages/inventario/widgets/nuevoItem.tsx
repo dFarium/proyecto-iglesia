@@ -161,9 +161,7 @@ function NuevoItemInventario() {
                     type="text"
                     onChange={handleCantidadChange}
                   />
-                  <FormErrorMessage>
-                    Ingrese la cantidad
-                  </FormErrorMessage>
+                  <FormErrorMessage>Ingrese la cantidad</FormErrorMessage>
                 </FormControl>
               </HStack>
               <HStack alignItems={"start"} mt={"25px"}>
@@ -224,25 +222,24 @@ function NuevoItemInventario() {
               <Button
                 colorScheme="blue"
                 onClick={() => {
-                  console.log(cantidad);
                   validation();
-                  // if (validation()) {
-                  //   mutation.mutate({
-                  //     name: name,
-                  //     categoria: category,
-                  //     cantidad: cantidad,
-                  //     outDate: outDate,
-                  //     state: state,
-                  //     desc: desc,
-                  //   });
-                  //   onClose();
-                  //   setCantidad(1);
-                  //   setName("");
-                  //   setCategory("");
-                  //   setDesc("");
-                  //   setOutDate(undefined);
-                  //   onClose();
-                  // }
+                  if (validation()) {
+                    mutation.mutate({
+                      name: name,
+                      categoria: category,
+                      cantidad: cantidad,
+                      outDate: outDate,
+                      state: state,
+                      desc: desc,
+                    });
+                    onClose();
+                    setCantidad(1);
+                    setName("");
+                    setCategory("");
+                    setDesc("");
+                    setOutDate(undefined);
+                    onClose();
+                  }
                 }}
               >
                 Aceptar
