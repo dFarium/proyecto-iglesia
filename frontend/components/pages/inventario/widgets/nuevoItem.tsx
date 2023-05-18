@@ -51,10 +51,6 @@ function NuevoItemInventario() {
 
   const handleCantidadChange = (e: any) => {
     const r = e.target.value.replace(/\D/g, "");
-    if (e.target.value === null) {
-      setCantidadErr(true);
-      return false;
-    }
     setCantidad(r);
     setCantidadErr(false);
   };
@@ -78,8 +74,15 @@ function NuevoItemInventario() {
       setNameErr(true);
       error = true;
     }
+    if (cantidad.toString().trim() == "") {
+      setCantidadErr(true);
+      error = true;
+    }
     if (error) {
       return false;
+    } else {
+      setCantidadErr(false);
+      setNameErr(false);
     }
     return true;
   };
@@ -158,8 +161,10 @@ function NuevoItemInventario() {
                     type="text"
                     onChange={handleCantidadChange}
                   />
+                  <FormErrorMessage>
+                    Ingrese la cantidad
+                  </FormErrorMessage>
                 </FormControl>
-                <FormErrorMessage>Ingrese solamente números</FormErrorMessage>
               </HStack>
               <HStack alignItems={"start"} mt={"25px"}>
                 <FormControl>
@@ -203,7 +208,11 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setName("");
+                  setNameErr(false);
+
                   setCantidad(1);
+                  setCantidadErr(false);
+
                   setCategory("");
                   setDesc("");
                   setOutDate(undefined);
@@ -215,24 +224,25 @@ function NuevoItemInventario() {
               <Button
                 colorScheme="blue"
                 onClick={() => {
+                  console.log(cantidad);
                   validation();
-                  if (validation()) {
-                    mutation.mutate({
-                      name: name,
-                      categoria: category,
-                      cantidad: cantidad,
-                      outDate: outDate,
-                      state: state,
-                      desc: desc,
-                    });
-                    onClose();
-                    setCantidad(1);
-                    setName("");
-                    setCategory("");
-                    setDesc("");
-                    setOutDate(undefined);
-                    onClose();
-                  }
+                  // if (validation()) {
+                  //   mutation.mutate({
+                  //     name: name,
+                  //     categoria: category,
+                  //     cantidad: cantidad,
+                  //     outDate: outDate,
+                  //     state: state,
+                  //     desc: desc,
+                  //   });
+                  //   onClose();
+                  //   setCantidad(1);
+                  //   setName("");
+                  //   setCategory("");
+                  //   setDesc("");
+                  //   setOutDate(undefined);
+                  //   onClose();
+                  // }
                 }}
               >
                 Aceptar

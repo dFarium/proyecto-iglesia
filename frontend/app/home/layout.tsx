@@ -7,5 +7,5 @@ export default function HomeLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <HomePage children={children} />;
+  return <HomePage>{children}</HomePage>;
 }
