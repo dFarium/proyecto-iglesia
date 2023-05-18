@@ -13,8 +13,10 @@ app.options("*", cors());
 
 //routes
 import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
+import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 
 app.use("/api", inventarioRoutes);
+app.use("/api", prestamoRoutes);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
