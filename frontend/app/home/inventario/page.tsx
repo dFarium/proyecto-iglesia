@@ -1,7 +1,7 @@
 "use client";
 
-import { InventarioBody } from "@/components/pages/inventario/body/inventarioBody";
+import { ElegirBody } from "@/components/pages/inventario/body/elegirbody";
 
 export default function Page() {
-  return <InventarioBody />;
+  return <ElegirBody />;
 }
