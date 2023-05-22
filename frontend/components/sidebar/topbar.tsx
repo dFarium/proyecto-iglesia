@@ -41,6 +41,7 @@ function TopNavBar() {
           <MenuItem h={"50px"}>Archivos</MenuItem>
           <MenuItem h={"50px"}>Canciones</MenuItem>
           <MenuItem h={"50px"}>Calendario</MenuItem>
+          <MenuItem h={"50px"}>Tesoreria</MenuItem>
           <MenuItem h={"50px"}>Cerrar Sesión</MenuItem>
           <MenuItem onClick={toggleColorMode} h={"50px"}>
             <Text mr={"5px"}>Cambiar Modo</Text>

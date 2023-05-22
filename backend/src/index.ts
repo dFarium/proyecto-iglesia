@@ -13,8 +13,11 @@ app.options("*", cors());
 
 //routes
 import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
+import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
 
 app.use("/api", inventarioRoutes);
+app.use("/api", tesoreriaRoutes);
+
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

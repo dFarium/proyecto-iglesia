@@ -23,6 +23,7 @@ import {
   MdOutlineInventory2,
   MdPerson,
   MdPiano,
+  MdOutlineSavings,
 } from "react-icons/md";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -144,6 +145,11 @@ function SideMenu() {
           icon={MdCalendarMonth}
           option="Calendario"
           href="/home/calendario"
+        />
+        <MenuItemSideBar
+          icon={MdOutlineSavings}
+          option="Tesoreria"
+          href="/home/tesoreria"
         />
       </VStack>
     </Box>
