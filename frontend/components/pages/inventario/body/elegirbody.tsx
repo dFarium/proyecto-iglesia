@@ -19,6 +19,7 @@ export function ElegirBody() {
       display={"flex"}
       alignItems={"center"}
       overflow={"auto"}
+      p={"20px"}
     >
       <Grid
         templateColumns={{
@@ -26,9 +27,8 @@ export function ElegirBody() {
           lg: "repeat(2,1fr)",
           xl: "repeat(3,1fr)",
         }}
-        h={"80%"}
-        gap={"25px"}
-        w={"full"}
+        gap={"40px"}
+        m={"auto"}
       >
         <Categoria
           titulo="Instrumentos"
@@ -36,7 +36,7 @@ export function ElegirBody() {
           image="instrumentos.webp"
         />
         <Categoria
-          titulo="Equipo Electrónico"
+          titulo="Equipos Electrónicos"
           href="/home/inventario/equipos"
           image="equipos.png"
         />
@@ -52,38 +52,33 @@ export function ElegirBody() {
 
 function Categoria(props: { titulo: string; href: string; image: string }) {
   const { colorMode } = useColorMode();
-  const borderDark = "3px white solid";
-  const borderLight = "3px grey solid";
+  const outlineDark = "2px white solid";
+  const outlineLight = "2px grey solid";
+  const borderRadius = "10px";
   return (
     <Link as={NextLink} href={props.href} pos={"relative"}>
-      <VStack
-        h={"100%"}
-        // bg={"#ffc361"}
-        minH={"400px"}
-        borderRadius={"25px"}
-        // bgImage={`/${props.image}`}
-        // backgroundSize={"cover"}
-        // backgroundRepeat={"no-repeat"}
-        // backgroundPosition={"bottom"}
-        border={colorMode == "light" ? borderLight : borderDark}
+      <Box
+        h={"450px"}
+        w={"320px"}
+        borderRadius={borderRadius}
+        outline={colorMode == "light" ? outlineLight : outlineDark}
         overflow={"hidden"}
-        fontSize={"2em"}
-        _hover={{ fontSize: "2.2em" }}
-        transition={"1s"}
+        fontSize={"1.5em"}
+        _hover={{ transform: "scale(1.03)" }}
+        transition={"0.5s"}
       >
         <Box
-          // bg={"red"}
-          w={"100%"}
-          h={"100%"}
-          transition={"0.5s"}
           bgImage={`/${props.image}`}
           backgroundSize={"cover"}
           backgroundRepeat={"no-repeat"}
           backgroundPosition={"bottom"}
-          _hover={{ transform: "scale(1.1)" }}
+          h={"100%"}
+          w={"100%"}
+          _hover={{ transform: "scale(1.05)" }}
+          transition={"0.5s"}
         ></Box>
         <Flex
-          borderBottomRadius={"25px"}
+          borderBottomRadius={borderRadius}
           bg="rgb(0,0,0,0.75)"
           w={"100%"}
           h={"20%"}
@@ -93,12 +88,10 @@ function Categoria(props: { titulo: string; href: string; image: string }) {
           justify={"center"}
           // fontSize={"2em"}
           color={"white"}
-          borderBlockEnd={colorMode == "light" ? borderLight : borderDark}
-          borderInline={colorMode == "light" ? borderLight : borderDark}
         >
           {props.titulo}
         </Flex>
-      </VStack>
+      </Box>
     </Link>
   );
 }

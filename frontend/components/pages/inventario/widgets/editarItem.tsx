@@ -156,6 +156,8 @@ function EditarItemInventario(props: {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioInstrumentos"] });
     },
   });
 
@@ -197,7 +199,7 @@ function EditarItemInventario(props: {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-              Editar Instrumento Músical
+              Editar Instrumento Musical
             </AlertDialogHeader>
             <AlertDialogBody>
               <HStack align={"start"}>
