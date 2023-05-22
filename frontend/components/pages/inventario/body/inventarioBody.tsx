@@ -38,7 +38,7 @@ import {
   MdNavigateNext,
 } from "react-icons/md";
 import EditarItemInventario from "../widgets/editarItem";
-import {NuevoItemInventario} from "../widgets/nuevoItem";
+import { NuevoItemInventario } from "../widgets/nuevoItem";
 import { useMemo, useState } from "react";
 import { textDate } from "@/utils/dateUtils";
 import { IItemInventario, getAllItemsInventario } from "@/data/inventario/item";
@@ -64,10 +64,13 @@ export function InventarioBody() {
   const { colorMode } = useColorMode();
 
   // definicion de las columnas de la tabla
-  const columns = useMemo<ColumnDef<IItemInventario>[]>(
+  const columns: ColumnDef<IItemInventario>[] = useMemo<
+    ColumnDef<IItemInventario>[]
+  >(
     () => [
       { id: "id", accessorKey: "_id" },
       {
+        id: "index",
         header: "#",
         accessorFn: (_row: any, i: number) => i + 1,
         sortingFn: "basic",
@@ -82,7 +85,9 @@ export function InventarioBody() {
         id: "cantidad",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Cantidad
             </Text>
           );
@@ -90,7 +95,9 @@ export function InventarioBody() {
         accessorKey: "cantidad",
         cell: ({ row }) => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               {row.getValue("cantidad")}
             </Text>
           );
@@ -100,7 +107,9 @@ export function InventarioBody() {
         id: "categoria",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Categoría
             </Text>
           );
@@ -108,7 +117,9 @@ export function InventarioBody() {
         accessorKey: "categoria",
         cell: ({ row }) => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               {row.getValue("categoria")}
             </Text>
           );
@@ -118,7 +129,9 @@ export function InventarioBody() {
         id: "estado",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Estado
             </Text>
           );
@@ -126,7 +139,9 @@ export function InventarioBody() {
         accessorKey: "estado",
         cell: ({ row }) => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               {row.getValue("estado")}
             </Text>
           );
@@ -136,7 +151,9 @@ export function InventarioBody() {
         id: "prestable",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               ¿Prestable?
             </Text>
           );
@@ -147,20 +164,26 @@ export function InventarioBody() {
 
           if (prestable) {
             return (
-              <Text minW={"100%"} textAlign={"center"}>
+              <Text
+              //  minW={"100%"} textAlign={"center"}
+              >
                 Si
               </Text>
             );
           } else {
             if (prestable === false) {
               return (
-                <Text minW={"100%"} textAlign={"center"}>
+                <Text
+                //  minW={"100%"} textAlign={"center"}
+                >
                   No
                 </Text>
               );
             }
             return (
-              <Text minW={"100%"} textAlign={"center"}>
+              <Text
+              //  minW={"100%"} textAlign={"center"}
+              >
                 -
               </Text>
             );
@@ -171,7 +194,9 @@ export function InventarioBody() {
         id: "createdAt",
         header: () => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Fecha de Ingreso
             </Text>
           );
@@ -180,7 +205,9 @@ export function InventarioBody() {
         cell: ({ row }) => {
           const date = textDate(row.getValue<Date>("createdAt"));
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               {date}
             </Text>
           );
@@ -191,7 +218,9 @@ export function InventarioBody() {
         id: "fechaSalida",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Fecha de Salida
             </Text>
           );
@@ -200,14 +229,18 @@ export function InventarioBody() {
         cell: ({ row }) => {
           if (!row.getValue("fechaSalida")) {
             return (
-              <Text minW={"100%"} textAlign={"center"}>
+              <Text
+              //  minW={"100%"} textAlign={"center"}
+              >
                 -
               </Text>
             );
           }
 
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               {textDate(row.getValue("fechaSalida"))}
             </Text>
           );
@@ -343,6 +376,7 @@ export function InventarioBody() {
                           display={"flex"}
                           flexDir={"row"}
                           alignItems={"center"}
+                          justifyContent={"center"}
                           cursor={"pointer"}
                         >
                           {flexRender(
@@ -375,6 +409,7 @@ export function InventarioBody() {
                         minH={"50px"}
                         display={"flex"}
                         alignItems={"center"}
+                        justifyContent={"center"}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,

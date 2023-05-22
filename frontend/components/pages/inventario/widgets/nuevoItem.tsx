@@ -110,6 +110,8 @@ function NuevoInstrumento() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioInstrumentos"] });
     },
   });
 
@@ -151,7 +153,7 @@ function NuevoInstrumento() {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-              Agregar Instrumento Músical
+              Agregar Instrumento Musical
             </AlertDialogHeader>
             <AlertDialogBody>
               <FormControl>
@@ -700,7 +702,7 @@ function NuevoItemInventario() {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-              Agregar Instrumento Músical
+              Agregar Instrumento Musical
             </AlertDialogHeader>
             <AlertDialogBody>
               <FormControl>
