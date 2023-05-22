@@ -38,21 +38,28 @@ import {
   MdNavigateNext,
 } from "react-icons/md";
 import EditarItemInventario from "../widgets/editarItem";
-import {NuevoItemInventario} from "../widgets/nuevoItem";
+import { NuevoInstrumento } from "../widgets/nuevoItem";
 import { useMemo, useState } from "react";
 import { textDate } from "@/utils/dateUtils";
-import { IItemInventario, getAllItemsInventario } from "@/data/inventario/item";
+import {
+  IItemInventario,
+  getAllItemsInventario,
+  getItemsInventarioCategoria,
+} from "@/data/inventario/item";
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 
-export function InventarioBody() {
-  // query todos los items
-  const allItemsQuery = useQuery({
-    queryKey: ["itemsInventario"],
-    queryFn: getAllItemsInventario,
+export function InventarioInstrumentosBody() {
+  // query todos los instrumentos
+  const instrumentosQuery = useQuery({
+    queryKey: ["itemsInventarioInstrumentos"],
+    queryFn: async () => {
+      const data = getItemsInventarioCategoria("Instrumento");
+      return data;
+    },
     initialData: [],
   });
-  const allItemsData = allItemsQuery.data;
+  const instrumentosData = instrumentosQuery.data;
 
   const [columnVisibility] = useState({
     id: false,
@@ -294,7 +301,7 @@ export function InventarioBody() {
 
   // api react table
   const table = useReactTable({
-    data: allItemsData,
+    data: instrumentosData,
     columns,
     initialState: {
       columnVisibility,
@@ -313,7 +320,7 @@ export function InventarioBody() {
     <Box w={"100%"} h={"100%"}>
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
-          <Text textStyle={"titulo"}>Inventario Total</Text>
+          <Text textStyle={"titulo"}>Instrumentos Músicales</Text>
           {/* <EditarItemInventario
             id={""}
             nombre={"nombre"}
@@ -326,7 +333,7 @@ export function InventarioBody() {
             fechaSalida={new Date()}
             ultMant={new Date()}
           /> */}
-          <NuevoItemInventario />
+          <NuevoInstrumento />
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
