@@ -38,21 +38,28 @@ import {
   MdNavigateNext,
 } from "react-icons/md";
 import EditarItemInventario from "../widgets/editarItem";
-import {NuevoItemInventario} from "../widgets/nuevoItem";
+import { NuevoEquipoElec } from "../widgets/nuevoItem";
 import { useMemo, useState } from "react";
 import { textDate } from "@/utils/dateUtils";
-import { IItemInventario, getAllItemsInventario } from "@/data/inventario/item";
+import {
+  IItemInventario,
+  getAllItemsInventario,
+  getItemsInventarioCategoria,
+} from "@/data/inventario/item";
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 
-export function InventarioBody() {
-  // query todos los items
-  const allItemsQuery = useQuery({
-    queryKey: ["itemsInventario"],
-    queryFn: getAllItemsInventario,
+export function InventarioEquiposBody() {
+  // query todos los equipos electrónicos
+  const equiposQuery = useQuery({
+    queryKey: ["itemsInventarioEquipos"],
+    queryFn: async () => {
+      const data = getItemsInventarioCategoria("Equipo");
+      return data;
+    },
     initialData: [],
   });
-  const allItemsData = allItemsQuery.data;
+  const equiposData = equiposQuery.data;
 
   const [columnVisibility] = useState({
     id: false,
@@ -60,6 +67,7 @@ export function InventarioBody() {
     ultMant: false,
     cicloMant: false,
   });
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
 
@@ -294,7 +302,7 @@ export function InventarioBody() {
 
   // api react table
   const table = useReactTable({
-    data: allItemsData,
+    data: equiposData,
     columns,
     initialState: {
       columnVisibility,
@@ -313,7 +321,7 @@ export function InventarioBody() {
     <Box w={"100%"} h={"100%"}>
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
-          <Text textStyle={"titulo"}>Inventario Total</Text>
+          <Text textStyle={"titulo"}>Equipos Electrónicos</Text>
           {/* <EditarItemInventario
             id={""}
             nombre={"nombre"}
@@ -326,7 +334,7 @@ export function InventarioBody() {
             fechaSalida={new Date()}
             ultMant={new Date()}
           /> */}
-          <NuevoItemInventario />
+          <NuevoEquipoElec />
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
