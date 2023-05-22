@@ -17,8 +17,8 @@ const ArchivoSchema = new Schema<IArchivos>(
         tagCategoria: { type: String, required: true },
         mimetype:{ type: String, required: true },
         url: { type: String, required: true },
-        userSubida: { type: Schema.Types.ObjectId, required: true },
-        userModifica: { type: Schema.Types.ObjectId},
+        userSubida: { type: Schema.Types.ObjectId},
+        userModifica: { type: Schema.Types.ObjectId, default: null},
         publico: { type: Boolean, default: false },
         fechaSubida:  { type: Date, default: Date.now }
 
