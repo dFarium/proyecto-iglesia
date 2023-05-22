@@ -1,9 +1,9 @@
-const multer = require('multer');
-const fs = require('fs');
+import multer from 'multer';
+import * as fs from 'fs'
+import { Request } from 'express';
 
 const storage = multer.diskStorage({
-
-    destination: function(req,file, cb){
+    destination: function(req: Request,file, cb){
         console.log("entra destination ");
         const route = './upload/' + req.params.archivo
         if(!fs.existsSync(route)){
@@ -24,6 +24,10 @@ const storage = multer.diskStorage({
             }else{
                 if(file.mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
                     tipo=".docx"
+                }else{
+                    if(file.mimetype == 'image/jpeg'){
+                        tipo=".jpg"
+                    }
                 }
             }
         }
@@ -31,24 +35,25 @@ const storage = multer.diskStorage({
         let indice = file.originalname.indexOf(tipo)
         let nombre = file.originalname.substring(0, indice);
         let fechaArchivo = fecha.getFullYear() + '_' + (fecha.getMonth() + 1) + '_' + fecha.getDate() + '_' + fecha.getHours() + '_' + fecha.getMinutes() + '_' + fecha.getSeconds()
-        const nameFile = nombre + ' '  + fechaArchivo + tipo
+        const nameFile = fechaArchivo+' '+nombre+ tipo
         cb(null, nameFile)
     }
 })
 
 const upload = multer({
     storage: storage,
-    fileFilter: (req,file,cb) => {
-        if(file.mimetype == 'application/pdf' || file.mimetype == 'application/msword' || file.mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-            //console.log("El archivo es .doc, .docx o .pdf")
-            req.params.fileValido = true
-        } else {
-            //console.log("El archivo tiene otra extension")
-            req.params.fileValido = true
-        }
-        console.log("entra fileFilter"),
-        cb(null, req.params.fileValido)
-    },
+    // fileFilter: (req,file,cb) => {
+    //     // if(file.mimetype == 'application/pdf' || file.mimetype == 'application/msword' || file.mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+    //     //     //console.log("El archivo es .doc, .docx o .pdf")
+    //     //     req.params.fileValido = true
+    //     // } else {
+    //     //     //console.log("El archivo tiene otra extension")
+    //     //     req.params.fileValido = true
+    //     // }
+    //     // console.log("entra fileFilter"),
+    //     // cb(null, req.params.fileValido)
+    //     cb(null, true)
+    // },
     limits:{
         fileSize: 1024 * 1024 * 15
     }

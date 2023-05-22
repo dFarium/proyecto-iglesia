@@ -1,26 +1,25 @@
 import { Archivos, IArchivos } from "../../models/archivos/archivos";
 import { Request, Response } from "express";
 import { CallbackError } from "mongoose";
+import * as fs from 'fs'
+interface MulterRequest extends Request {
+    file: any;
+}
 
-const fs = require('fs');
-
-const uploadNewFile = async(req, res) => {
-    //const { file } = req
+const uploadNewFile = async(req: Request, res: Response) => {
+    const file = req.files[0]
     // if (req.params.fileValido === false){
     //     return res.status(415).send({ message: 'Solo se aceptan archivos con extensión .pdf, .doc y .docx' })
     // }
     // if (file.length === 0) {
     //     return res.status(404).send({ message: 'No se ha seleccionado ningun archivo' })
     // }
-
+    console.log("AAAAAAAAAAAA", file);
     const newFile = new Archivos({
-        // url: req.path,
-        // name: req.originalname,
-        // mimeType: req.mimetype,
-        fileName:"imagen",
+        fileName:file.originalname,
         tagCategoria: "random",
-        mimetype:"jpg",
-        url: req.path,
+        mimetype:file.mimetype,
+        url: file.destination,
         userSubida: null,
         userModifica: null,
         publico: false
@@ -54,16 +53,16 @@ const getFiles = async (req: Request, res: Response) => {
 };
 
 const downloadFile = async (req: Request, res: Response) => {
-    await Archivos.findOne(req.params)
+    await Archivos.findById(req.params.id)
         .then((item) => {
             console.log("ya no");
-            console.log(item);
-            return res.download('../../../'+item.url);
+            console.log(item.url);
+            let fechaArchivo = item.createdAt.getFullYear() + '_' + (item.createdAt.getMonth() + 1) + '_' + item.createdAt.getDate() + '_' + item.createdAt.getHours() + '_' + item.createdAt.getMinutes() + '_' + item.createdAt.getSeconds()
+            return res.download(item.url+'/'+fechaArchivo+' '+item.fileName);
             //return res.status(200).send(item);
         })
         .catch((err: CallbackError) => {
             //console.log(err);
-            console.log(req.params);
             return res
             .status(400)
             .send({ message: "Error al encontrar el archivo" });
@@ -103,41 +102,18 @@ const downloadFile = async (req: Request, res: Response) => {
 //     })
 // }
 
-// const viewAsambleaFiles = (req, res)=>{
+const viewFile = async (req: Request, res: Response) => {
+    await Archivos.findById(req.params.id)
+        .then((item) => {
+            return res.status(200).send(item);
+        })
+        .catch((err: CallbackError) => {
+            return res
+            .status(400)
+            .send({ message: "Error al encontrar el archivo" });
+        });
+};
 
-//     Asamblea.findById(req.params.id, (error, asamblea) => {
-//         if (error) {
-//             return res.status(400).send({ message: "Error al obtener los archivo" })
-//         }
-//         if (!asamblea) {
-//             return res.status(404).send({ message: "La asamblea no existe" })
-//         }
-
-//         fileModel.find({asamblea: req.params.id},(error,files)=>{
-//             if(error){
-//                 return res.status(400).send({ message: 'Error al obtener los archivo'})
-//             }
-//             if(files.length === 0){
-//                 return res.status(404).send({ message: 'No existen archivos'})
-//             }else{
-//                 return res.status(201).send(files)
-//             }
-//         })
-//     })
-// }
-
-// const viewFile = (req, res)=> {
-//     const {id} = req.params
-//     fileModel.findById(id, (err, file)=>{
-//         if(!file){
-//             return res.status(404).send({ message: 'El archivo no existe'})
-//         }
-//         if(err){
-//             return res.status(400).send({ message: 'Error al buscar el archivo'})
-//         }
-//         res.send(file)
-//     })
-// }
 
 // const eliminarArchivosAsociados = (req, res)=>{
 
@@ -190,7 +166,6 @@ export{
     getFiles,
     downloadFile,
     // deleteFile,
-    // viewAsambleaFiles,
-    // viewFile,
+    viewFile
     // eliminarArchivosAsociados
 }

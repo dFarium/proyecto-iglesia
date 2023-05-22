@@ -8,7 +8,7 @@ export interface IArchivos {
     userSubida: Schema.Types.ObjectId;
     userModifica?: Schema.Types.ObjectId;
     publico: boolean;
-    fechaSubida: Date;
+    createdAt?: Date;
 }
 
 const ArchivoSchema = new Schema<IArchivos>(
@@ -20,8 +20,6 @@ const ArchivoSchema = new Schema<IArchivos>(
         userSubida: { type: Schema.Types.ObjectId},
         userModifica: { type: Schema.Types.ObjectId, default: null},
         publico: { type: Boolean, default: false },
-        fechaSubida:  { type: Date, default: Date.now }
-
     },
     { timestamps: true }
 );

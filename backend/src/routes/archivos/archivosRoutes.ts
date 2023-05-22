@@ -9,6 +9,7 @@ import {
     uploadNewFile,
     getFiles,
     downloadFile,
+    viewFile
 } from "../../controllers/archivos/archivosController";
 
 export const archivosRoutes = Router();
@@ -16,13 +17,14 @@ export const archivosRoutes = Router();
 // post
 archivosRoutes.post("/file/:archivo/", upload.array('archivos'), fileSizeError, uploadNewFile);
 
-// //put
+//put
 // archivosRoutes.put("/inventario/edit/:id", editItemInventario);
 
-// //delete
+//delete
 // archivosRoutes.delete("/inventario/delete", deleteItemInventario);
 
 //get
 archivosRoutes.get("/files/", getFiles)
 archivosRoutes.get('/file/download/:id', downloadFile)
+archivosRoutes.get('/file/specific/:id', viewFile)
 
