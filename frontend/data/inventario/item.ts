@@ -1,25 +1,40 @@
 import axios, { AxiosResponse } from "axios";
 
 export interface IItemInventario {
-  _id?: string;
-  name: string;
-  categoria?: string;
-  cantidad: number;
-  state: string;
-  outDate?: Date;
-  desc?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  __v?: number;
-}
+  nombre: string; // <=
+  categoria?: string; // <=
 
-const getItemInventario = async (id: string) => {
-  const res = await axios.get(`${process.env.API_URL}/inventario/getone/${id}`);
-  return res.data;
-};
+  cantidad?: number; // cantidad actual
+  estado?: string; // estado actual
+
+  fechaSalida?: Date; // fecha de salida - vencimiento
+  desc?: string; // descripcion - comentarios
+
+  prestable?: boolean; // si es prestable o no (cuestionable)
+  ultMant?: Date; // ultima mantencion (fecha)
+
+  cicloMant?: number; // ciclo de mantencion (problemamente en segundos)
+  uploader?: string; // quien subió el item (nombre por ahora quizs id despues)
+
+  ultMod?: string; // ultimo en modificar
+  // urlPic?: string; // url de imagen adjunta (no se aun como se hace)
+
+  createdAt?: Date; // timestamp
+  updatedAt?: Date; // timestamp
+
+  _id?: string; // id de mongoDB
+  __v?: number; // dios sabrá que es esto
+}
 
 const getAllItemsInventario = async () => {
   const res = await axios.get(`${process.env.API_URL}/inventario/getall`);
+  return res.data;
+};
+
+const getItemsInventarioCategoria = async (categoria: string) => {
+  const res = await axios.get(
+    `${process.env.API_URL}/inventario/getcategoria/${categoria}`
+  );
   return res.data;
 };
 
@@ -47,7 +62,7 @@ const deleteItemInventario = async (id: string) => {
 };
 
 export {
-  getItemInventario,
+  getItemsInventarioCategoria,
   getAllItemsInventario,
   editItemInventario,
   createItemInventario,

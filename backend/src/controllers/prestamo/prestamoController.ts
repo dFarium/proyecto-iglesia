@@ -2,6 +2,8 @@ import { PrestamoInstrumento , IPrestamoInstrumento } from "../../models/prestam
 import { Request, Response } from "express";
 import { CallbackError } from "mongoose";
 
+const nodeCron = require("node-cron");
+
 const createPrestamoInstrumento = async (req: Request, res: Response) => {
   let newPrestamo = new PrestamoInstrumento(req.body);
 
@@ -68,6 +70,11 @@ const getAllPrestamosInstrumento = async (req: Request, res: Response) => {
         .send({ message: "Error al obtener los prestamos de instrumentos" });
     });
 };
+
+//Revisa a las 9 si hay personas que necesitan ser avisadas
+nodeCron.schedule('* 9 * * *',() =>{
+  console.log("FUNCIONA");
+});
 
 export {
   createPrestamoInstrumento,

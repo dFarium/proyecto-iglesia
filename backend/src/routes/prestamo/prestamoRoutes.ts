@@ -10,14 +10,14 @@ import {
 export const prestamoRoutes = Router();
 
 // post
-prestamoRoutes.post("/inventario/create", createPrestamoInstrumento);
+prestamoRoutes.post("/prestamo/create", createPrestamoInstrumento);
 
 //put
-prestamoRoutes.put("/inventario/edit/:id", editPrestamoInstrumento);
+prestamoRoutes.put("/prestamo/edit/:id", editPrestamoInstrumento);
 
 //delete
-prestamoRoutes.delete("/inventario/delete", deleteIPrestamoInventario);
+prestamoRoutes.delete("/prestamo/delete", deleteIPrestamoInventario);
 
 //get
-prestamoRoutes.get("/inventario/getone", getIPrestamoInstrumento);
-prestamoRoutes.get("/inventario/getall", getAllPrestamosInstrumento);
+prestamoRoutes.get("/prestamo/getone", getIPrestamoInstrumento);
+prestamoRoutes.get("/prestamo/getall", getAllPrestamosInstrumento);

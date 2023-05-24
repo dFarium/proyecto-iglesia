@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 
 export interface IPrestamoInstrumento {
+  instrumento: Schema.Types.ObjectId; 
   prestatario: Schema.Types.ObjectId;
   prestamista: Schema.Types.ObjectId;
   devuelto: boolean;
@@ -12,6 +13,7 @@ export interface IPrestamoInstrumento {
 
 const PrestamoSchema = new Schema<IPrestamoInstrumento>(
   {
+    instrumento: { type: Schema.Types.ObjectId, required: true },
     prestatario: { type: Schema.Types.ObjectId, required: true },
     prestamista: { type: Schema.Types.ObjectId, required: true },
     devuelto: { type: Boolean, default: false },
