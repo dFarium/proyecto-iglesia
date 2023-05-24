@@ -9,6 +9,7 @@ import {
     uploadNewFile,
     getFiles,
     downloadFile,
+    deleteFile,
     viewFile
 } from "../../controllers/archivos/archivosController";
 
@@ -21,7 +22,7 @@ archivosRoutes.post("/file/:archivo/", upload.array('archivos'), fileSizeError, 
 // archivosRoutes.put("/inventario/edit/:id", editItemInventario);
 
 //delete
-// archivosRoutes.delete("/inventario/delete", deleteItemInventario);
+archivosRoutes.delete("/file/delete/:id", deleteFile);
 
 //get
 archivosRoutes.get("/files/", getFiles)
