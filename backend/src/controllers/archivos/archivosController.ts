@@ -14,7 +14,6 @@ const uploadNewFile = async(req: Request, res: Response) => {
     // if (file.length === 0) {
     //     return res.status(404).send({ message: 'No se ha seleccionado ningun archivo' })
     // }
-    console.log("AAAAAAAAAAAA", file);
     const newFile = new Archivos({
         fileName:file.originalname,
         tagCategoria: "random",
@@ -26,13 +25,10 @@ const uploadNewFile = async(req: Request, res: Response) => {
     })
 
     await newFile.save().catch((err: CallbackError) => {
-        console.log("save");
-        console.log(err);
         return res.status(400).send({ message: "Error al subir el archivo" });
     });
-    console.log("Final save");
     return res.status(201).send(newFile);
-    }
+}
 
 const getFiles = async (req: Request, res: Response) => {
     await Archivos.find({})
@@ -45,7 +41,6 @@ const getFiles = async (req: Request, res: Response) => {
             return res.status(200).send(items);
         })
         .catch((err: CallbackError) => {
-            console.log(err);
             return res
                 .status(400)
                 .send({ message: "Error al obtener los archivos completos" });
@@ -55,14 +50,10 @@ const getFiles = async (req: Request, res: Response) => {
 const downloadFile = async (req: Request, res: Response) => {
     await Archivos.findById(req.params.id)
         .then((item) => {
-            console.log("ya no");
-            console.log(item.url);
             let fechaArchivo = item.createdAt.getFullYear() + '_' + (item.createdAt.getMonth() + 1) + '_' + item.createdAt.getDate() + '_' + item.createdAt.getHours() + '_' + item.createdAt.getMinutes() + '_' + item.createdAt.getSeconds()
             return res.download(item.url+'/'+fechaArchivo+' '+item.fileName);
-            //return res.status(200).send(item);
         })
         .catch((err: CallbackError) => {
-            //console.log(err);
             return res
             .status(400)
             .send({ message: "Error al encontrar el archivo" });
@@ -80,8 +71,6 @@ const deleteFile = async (req: Request, res: Response) => {
                 }
                 return res.status(200).send({ message: "Archivo Eliminado" })
             })
-
-            return res.status(200).send(item);
         })
         .catch((err: CallbackError) => {
             return res
@@ -101,6 +90,41 @@ const viewFile = async (req: Request, res: Response) => {
             .send({ message: "Error al encontrar el archivo" });
         });
 };
+
+// const viewFavorite = async (req: Request, res: Response) => {
+//     await Archivos.findById(req.params.id)
+//         .then((item) => {
+//             return res.status(200).send(item);
+//         })
+//         .catch((err: CallbackError) => {
+//             return res
+//             .status(400)
+//             .send({ message: "Error al encontrar el archivo" });
+//         });
+// };
+
+// const viewAsambleaFiles = (req, res)=>{
+
+//     Asamblea.findById(req.params.id, (error, asamblea) => {
+//         if (error) {
+//             return res.status(400).send({ message: "Error al obtener los archivo" })
+//         }
+//         if (!asamblea) {
+//             return res.status(404).send({ message: "La asamblea no existe" })
+//         }
+
+//         fileModel.find({asamblea: req.params.id},(error,files)=>{
+//             if(error){
+//                 return res.status(400).send({ message: 'Error al obtener los archivo'})
+//             }
+//             if(files.length === 0){
+//                 return res.status(404).send({ message: 'No existen archivos'})
+//             }else{
+//                 return res.status(201).send(files)
+//             }
+//         })
+//     })
+// }
 
 
 export{
