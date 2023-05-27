@@ -21,7 +21,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Icon,
   Text,
   Switch,
   Box,
@@ -109,9 +108,11 @@ function NuevoInstrumento() {
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
       queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
-      queryClient.invalidateQueries({ queryKey: ["itemsInventarioInstrumentos"] });
+      queryClient.invalidateQueries({
+        queryKey: ["itemsInventarioInstrumentos"],
+      });
     },
   });
 
@@ -128,8 +129,7 @@ function NuevoInstrumento() {
         Nuevo Item
       </Button>
 
-      <Button
-        as={IconButton}
+      <IconButton
         display={{ base: "flex", md: "none" }}
         isRound
         w={{ base: "60px", md: "70px" }}
@@ -141,7 +141,7 @@ function NuevoInstrumento() {
         onClick={onOpen}
       >
         Nuevo Item
-      </Button>
+      </IconButton>
 
       {/* Alerta de Instrumento */}
 
@@ -374,8 +374,7 @@ function NuevoEquipoElec() {
         Nuevo Item
       </Button>
 
-      <Button
-        as={IconButton}
+      <IconButton
         display={{ base: "flex", md: "none" }}
         isRound
         w={{ base: "60px", md: "70px" }}
@@ -387,7 +386,7 @@ function NuevoEquipoElec() {
         onClick={onOpen}
       >
         Nuevo Item
-      </Button>
+      </IconButton>
 
       {/* Alerta de Equipo Electronico */}
 

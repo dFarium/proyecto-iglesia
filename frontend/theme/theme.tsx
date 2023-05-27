@@ -18,6 +18,23 @@ const textStyles = {
   },
 };
 
+// variante boton item inventario
+// const newItemInventarioButton = {
+//   color: "black",
+//   bg: "#F07B3F",
+//   fontWeight: "bold",
+//   _dark: {
+//     color: "white",
+//     bg: "#ff9655",
+//   },
+//   _hover: {
+//     bg: "#dc6529",
+//     _dark: {
+//       bg: "#67e8f9",
+//     },
+//   },
+// };
+
 const components = {
   // tabla inventario
   Table: {
@@ -60,6 +77,12 @@ const components = {
       },
     },
   },
+  // Nuevo Item Inventario
+  // Button: {
+  //   variants: {
+  //     newItemInventarioButton: newItemInventarioButton,
+  //   },
+  // },
 };
 
 /*
@@ -122,6 +145,14 @@ const colors = {
     200: "#ff9655", // dark mode
     300: "#ff7520", // dark mode _hover
   },
+
+  editInventarioItemButton: {
+    500: "#06b6d4", // light mode
+    600: "#0891b2", // light mode _hover
+    200: "#a5f3fc", // dark mode
+    300: "#67e8f9", // dark mode _hover
+  },
+
   inventarioItemEditHeaderBg: {
     light: "#4A5568",
     dark: "#2D3748",
@@ -136,8 +167,6 @@ const colors = {
   },
 
   // archivos
-
-  
 };
 
 const theme = extendTheme({
