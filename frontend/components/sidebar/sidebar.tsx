@@ -39,6 +39,7 @@ export default function SideBar() {
       borderRadius={"25px"}
       pt={"25px"}
       display={{ base: "none", md: "block" }}
+      overflowY={"auto"}
     >
       <VStack justify={"space-between"} h={"100%"}>
         <VStack spacing={88} align={"left"}>
