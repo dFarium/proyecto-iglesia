@@ -110,7 +110,7 @@ const updateUser = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
-
+        
         // Si se incluye 'password' en la actualización, no se actualiza la contraseña, todo lo demás sí.
         if (updates.password) {
             delete updates.password;
