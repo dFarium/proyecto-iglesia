@@ -13,8 +13,14 @@ app.options("*", cors());
 
 //routes
 import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
+import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
+const validaToken = require('./controllers/usuario/validate-token')
+const admin = require('./controllers/usuario/admin')
+
 
 app.use("/api", inventarioRoutes);
+app.use("/api", usuarioRoutes);
+app.use("/api/admin", validaToken, admin);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
