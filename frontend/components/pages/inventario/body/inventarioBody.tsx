@@ -15,6 +15,7 @@ import {
   Circle,
   IconButton,
   useColorMode,
+  Icon,
 } from "@chakra-ui/react";
 
 import {
@@ -32,6 +33,7 @@ import {
   MdArrowDropUp,
   MdCreate,
   MdDelete,
+  MdHelp,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
   MdNavigateBefore,
@@ -44,11 +46,12 @@ import { textDate } from "@/utils/dateUtils";
 import { IItemInventario, getAllItemsInventario } from "@/data/inventario/item";
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
+import { VerFotoItem } from "../widgets/verFotoItem";
 
 export function InventarioBody() {
   // query todos los items
   const allItemsQuery = useQuery({
-    queryKey: ["itemsInventario"],
+    queryKey: ["allItemsInventario"],
     queryFn: getAllItemsInventario,
     initialData: [],
   });
@@ -59,6 +62,7 @@ export function InventarioBody() {
     desc: false,
     ultMant: false,
     cicloMant: false,
+    index: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -79,7 +83,9 @@ export function InventarioBody() {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => {
+          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={"560"} />;
+        },
       },
       {
         id: "cantidad",
@@ -270,6 +276,7 @@ export function InventarioBody() {
         },
         cell: ({ row }) => {
           return (
+            // <VerDetallesItem itemInventario={row.getValue("id")} />
             <EditarItemInventario
               id={row.getValue("id")}
               nombre={row.getValue("nombre")}
@@ -347,18 +354,6 @@ export function InventarioBody() {
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Inventario Total</Text>
-          {/* <EditarItemInventario
-            id={""}
-            nombre={"nombre"}
-            estado={"Activo"}
-            prestable={true}
-            cantidad={3}
-            categoria={"Varios"}
-            cicloMant={123}
-            desc={""}
-            fechaSalida={new Date()}
-            ultMant={new Date()}
-          /> */}
           <NuevoItemInventario />
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
@@ -424,46 +419,54 @@ export function InventarioBody() {
           </Table>
         </TableContainer>
         <VStack flexGrow={1} minH={"50px"} w={"100%"} justifyContent={"end"}>
-          <HStack w={"100%"} overflowX={"auto"}>
-            <Text minW={"220px"} overflowX={"auto"}>
-              Mostrando{" "}
-              {table.getState().pagination.pageSize *
-                table.getState().pagination.pageIndex +
-                1}
-              {"-"}
-              {showPages(
-                table.getPrePaginationRowModel().rows.length,
-                table.getState().pagination.pageIndex,
-                table.getState().pagination.pageSize
-              )}
-              {" de "}
-              {table.getPrePaginationRowModel().rows.length}
-            </Text>
+          <HStack w={"100%"} overflowX={"auto"} justify={"space-between"}>
             <HStack>
-              <IconButton
-                icon={<MdKeyboardDoubleArrowLeft />}
-                aria-label="Primera página"
-                onClick={() => table.setPageIndex(0)}
-                isDisabled={!table.getCanPreviousPage()}
-              />
-              <IconButton
-                icon={<MdNavigateBefore />}
-                aria-label="Página anterior"
-                onClick={() => table.previousPage()}
-                isDisabled={!table.getCanPreviousPage()}
-              />
-              <IconButton
-                icon={<MdNavigateNext />}
-                aria-label="Página siguiente"
-                onClick={() => table.nextPage()}
-                isDisabled={!table.getCanNextPage()}
-              />
-              <IconButton
-                icon={<MdKeyboardDoubleArrowRight />}
-                aria-label="Última página"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                isDisabled={!table.getCanNextPage()}
-              />
+              <Text minW={"220px"} overflowX={"auto"}>
+                Mostrando{" "}
+                {table.getState().pagination.pageSize *
+                  table.getState().pagination.pageIndex +
+                  1}
+                {"-"}
+                {showPages(
+                  table.getPrePaginationRowModel().rows.length,
+                  table.getState().pagination.pageIndex,
+                  table.getState().pagination.pageSize
+                )}
+                {" de "}
+                {table.getPrePaginationRowModel().rows.length}
+              </Text>
+              <HStack>
+                <IconButton
+                  icon={<MdKeyboardDoubleArrowLeft />}
+                  aria-label="Primera página"
+                  onClick={() => table.setPageIndex(0)}
+                  isDisabled={!table.getCanPreviousPage()}
+                />
+                <IconButton
+                  icon={<MdNavigateBefore />}
+                  aria-label="Página anterior"
+                  onClick={() => table.previousPage()}
+                  isDisabled={!table.getCanPreviousPage()}
+                />
+                <IconButton
+                  icon={<MdNavigateNext />}
+                  aria-label="Página siguiente"
+                  onClick={() => table.nextPage()}
+                  isDisabled={!table.getCanNextPage()}
+                />
+                <IconButton
+                  icon={<MdKeyboardDoubleArrowRight />}
+                  aria-label="Última página"
+                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                  isDisabled={!table.getCanNextPage()}
+                />
+              </HStack>
+            </HStack>
+            <HStack display={{ base: "none", lg: "flex" }}>
+              <MdHelp size={"20px"} />
+              <Text minW={"400px"}>
+                Puede ver las fotos dando click en el nombre del Item
+              </Text>
             </HStack>
           </HStack>
         </VStack>

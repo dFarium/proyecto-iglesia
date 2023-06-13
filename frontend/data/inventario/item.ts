@@ -31,6 +31,11 @@ const getAllItemsInventario = async () => {
   return res.data;
 };
 
+const getItemInventario = async (id: string) => {
+  const res = await axios.get(`${process.env.API_URL}/inventario/getone/${id}`);
+  return res.data;
+};
+
 const getItemsInventarioCategoria = async (categoria: string) => {
   const res = await axios.get(
     `${process.env.API_URL}/inventario/getcategoria/${categoria}`
@@ -64,6 +69,7 @@ const deleteItemInventario = async (id: string) => {
 export {
   getItemsInventarioCategoria,
   getAllItemsInventario,
+  getItemInventario,
   editItemInventario,
   createItemInventario,
   deleteItemInventario,

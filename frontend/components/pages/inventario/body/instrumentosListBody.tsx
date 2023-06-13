@@ -32,6 +32,7 @@ import {
   MdArrowDropUp,
   MdCreate,
   MdDelete,
+  MdHelp,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
   MdNavigateBefore,
@@ -48,6 +49,7 @@ import {
 } from "@/data/inventario/item";
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
+import { VerFotoItem } from "../widgets/verFotoItem";
 
 export function InventarioInstrumentosBody() {
   // query todos los instrumentos
@@ -63,7 +65,7 @@ export function InventarioInstrumentosBody() {
 
   const [columnVisibility] = useState({
     id: false,
-    // index: false,
+    index: false,
     cantidad: false,
     categoria: false,
     desc: false,
@@ -89,7 +91,9 @@ export function InventarioInstrumentosBody() {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => {
+          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={""} />;
+        },
       },
       {
         id: "cantidad",
@@ -357,18 +361,6 @@ export function InventarioInstrumentosBody() {
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Instrumentos Musicales</Text>
-          {/* <EditarItemInventario
-            id={""}
-            nombre={"nombre"}
-            estado={"Activo"}
-            prestable={true}
-            cantidad={3}
-            categoria={"Varios"}
-            cicloMant={123}
-            desc={""}
-            fechaSalida={new Date()}
-            ultMant={new Date()}
-          /> */}
           <NuevoInstrumento />
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
@@ -434,46 +426,54 @@ export function InventarioInstrumentosBody() {
           </Table>
         </TableContainer>
         <VStack flexGrow={1} minH={"50px"} w={"100%"} justifyContent={"end"}>
-          <HStack w={"100%"} overflowX={"auto"}>
-            <Text minW={"220px"} overflowX={"auto"}>
-              Mostrando{" "}
-              {table.getState().pagination.pageSize *
-                table.getState().pagination.pageIndex +
-                1}
-              {"-"}
-              {showPages(
-                table.getPrePaginationRowModel().rows.length,
-                table.getState().pagination.pageIndex,
-                table.getState().pagination.pageSize
-              )}
-              {" de "}
-              {table.getPrePaginationRowModel().rows.length}
-            </Text>
+          <HStack w={"100%"} overflowX={"auto"} justify={"space-between"}>
             <HStack>
-              <IconButton
-                icon={<MdKeyboardDoubleArrowLeft />}
-                aria-label="Primera página"
-                onClick={() => table.setPageIndex(0)}
-                isDisabled={!table.getCanPreviousPage()}
-              />
-              <IconButton
-                icon={<MdNavigateBefore />}
-                aria-label="Página anterior"
-                onClick={() => table.previousPage()}
-                isDisabled={!table.getCanPreviousPage()}
-              />
-              <IconButton
-                icon={<MdNavigateNext />}
-                aria-label="Página siguiente"
-                onClick={() => table.nextPage()}
-                isDisabled={!table.getCanNextPage()}
-              />
-              <IconButton
-                icon={<MdKeyboardDoubleArrowRight />}
-                aria-label="Última página"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                isDisabled={!table.getCanNextPage()}
-              />
+              <Text minW={"220px"} overflowX={"auto"}>
+                Mostrando{" "}
+                {table.getState().pagination.pageSize *
+                  table.getState().pagination.pageIndex +
+                  1}
+                {"-"}
+                {showPages(
+                  table.getPrePaginationRowModel().rows.length,
+                  table.getState().pagination.pageIndex,
+                  table.getState().pagination.pageSize
+                )}
+                {" de "}
+                {table.getPrePaginationRowModel().rows.length}
+              </Text>
+              <HStack>
+                <IconButton
+                  icon={<MdKeyboardDoubleArrowLeft />}
+                  aria-label="Primera página"
+                  onClick={() => table.setPageIndex(0)}
+                  isDisabled={!table.getCanPreviousPage()}
+                />
+                <IconButton
+                  icon={<MdNavigateBefore />}
+                  aria-label="Página anterior"
+                  onClick={() => table.previousPage()}
+                  isDisabled={!table.getCanPreviousPage()}
+                />
+                <IconButton
+                  icon={<MdNavigateNext />}
+                  aria-label="Página siguiente"
+                  onClick={() => table.nextPage()}
+                  isDisabled={!table.getCanNextPage()}
+                />
+                <IconButton
+                  icon={<MdKeyboardDoubleArrowRight />}
+                  aria-label="Última página"
+                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                  isDisabled={!table.getCanNextPage()}
+                />
+              </HStack>
+            </HStack>
+            <HStack display={{ base: "none", lg: "flex" }}>
+              <MdHelp size={"20px"} />
+              <Text minW={"400px"}>
+                Puede ver las fotos dando click en el nombre del Item
+              </Text>
             </HStack>
           </HStack>
         </VStack>

@@ -155,7 +155,7 @@ function EditarItemInventario(props: {
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
       queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
       queryClient.invalidateQueries({ queryKey: ["itemsInventarioInstrumentos"] });
     },

@@ -24,12 +24,11 @@ const createItemInventario = async (req: Request, res: Response) => {
 };
 
 const getItemInventario = async (req: Request, res: Response) => {
-  await ItemInventario.findOne({ nombre: req.body.nombre })
+  await ItemInventario.findById(req.params.id)
     .then((item: IItemInventario) => {
       return res.status(200).send(item);
     })
     .catch((err: CallbackError) => {
-      console.log(err);
       return res
         .status(400)
         .send({ message: "Error al encontrar el item del inventario" });
