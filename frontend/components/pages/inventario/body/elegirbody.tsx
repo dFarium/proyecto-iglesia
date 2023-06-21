@@ -2,51 +2,52 @@ import {
   Box,
   Flex,
   Grid,
-  HStack,
   Link,
-  Stack,
-  VStack,
   useColorMode,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { use } from "react";
 
 export function ElegirBody() {
   return (
-    <Box
-      w={"full"}
-      h={"full"}
-      display={"flex"}
-      alignItems={"center"}
-      overflow={"auto"}
-      p={"20px"}
-    >
-      <Grid
-        templateColumns={{
-          base: "repeat(1,1fr)",
-          lg: "repeat(2,1fr)",
-          xl: "repeat(3,1fr)",
-        }}
-        gap={"40px"}
-        m={"auto"}
+    <VStack w={"full"} h={"full"}>
+      <Text textStyle={"titulo"}>Seleccionar una categoría</Text>
+      <VStack
+        w={"full"}
+        h={"full"}
+        justify={"space-between"}
+        overflow={"auto"}
+        p={"20px"}
+        // bg={"red"}
       >
-        <Categoria
-          titulo="Instrumentos"
-          href="/home/inventario/instrumentos"
-          image="instrumentos.webp"
-        />
-        <Categoria
-          titulo="Equipos Electrónicos"
-          href="/home/inventario/equipos"
-          image="equipos.png"
-        />
-        <Categoria
-          titulo="Inventario Total"
-          href="/home/inventario/total"
-          image="varios.webp"
-        />
-      </Grid>
-    </Box>
+        <Grid
+          templateColumns={{
+            base: "repeat(1,1fr)",
+            lg: "repeat(2,1fr)",
+            xl: "repeat(3,1fr)",
+          }}
+          gap={"40px"}
+          m={"auto"}
+        >
+          <Categoria
+            titulo="Instrumentos"
+            href="/home/inventario/instrumentos"
+            image="instrumentos.webp"
+          />
+          <Categoria
+            titulo="Equipos Electrónicos"
+            href="/home/inventario/equipos"
+            image="equipos.png"
+          />
+          <Categoria
+            titulo="Inventario Total"
+            href="/home/inventario/total"
+            image="varios.webp"
+          />
+        </Grid>
+      </VStack>
+    </VStack>
   );
 }
 
@@ -60,6 +61,7 @@ function Categoria(props: { titulo: string; href: string; image: string }) {
       <Box
         h={"450px"}
         w={"320px"}
+        // bg={"#ffe187"}
         borderRadius={borderRadius}
         outline={colorMode == "light" ? outlineLight : outlineDark}
         overflow={"hidden"}

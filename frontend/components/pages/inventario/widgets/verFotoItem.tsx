@@ -10,6 +10,9 @@ import {
   Text,
   useColorMode,
   useDisclosure,
+  Box,
+  Flex,
+  VStack,
 } from "@chakra-ui/react";
 import { useRef } from "react";
 
@@ -56,9 +59,17 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
 
 function LoadingImage(src: string) {
   if (src == "") {
-    return <Text>No hay foto disponible</Text>;
+    return (
+      <VStack minH={"80px"} justify={"center"} align={"center"}>
+        <Text fontWeight={"bold"}>No hay foto disponible</Text>
+      </VStack>
+    );
   }
-  return <Spinner size={"xl"} />;
+  return (
+    <VStack minH={"300px"} justify={"center"} align={"center"}>
+      <Spinner size={"xl"} />
+    </VStack>
+  );
 }
 
 export { VerFotoItem };
