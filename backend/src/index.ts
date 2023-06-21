@@ -13,6 +13,14 @@ app.options("*", cors());
 
 //routes
 import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
+import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
+const validaToken = require('./controllers/usuario/validate-token')
+const admin = require('./controllers/usuario/admin')
+
+
+app.use("/api", inventarioRoutes);
+app.use("/api", usuarioRoutes);
+app.use("/api/admin", validaToken, admin);
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
 
