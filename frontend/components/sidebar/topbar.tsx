@@ -37,7 +37,6 @@ function TopNavBar() {
           borderRadius={"15px"}
         />
         <MenuList>
-<<<<<<< HEAD
           <MenuItem h={"50px"}>Inventario</MenuItem>
           <MenuItem h={"50px"}>Usuarios</MenuItem>
           <MenuItem h={"50px"}>Instrumentos</MenuItem>
@@ -46,15 +45,6 @@ function TopNavBar() {
           <MenuItem h={"50px"}>Calendario</MenuItem>
           <MenuItem h={"50px"}>Tesoreria</MenuItem>
           <MenuItem h={"50px"}>Cerrar Sesión</MenuItem>
-=======
-          <TopbarItem option="Archivos" href="/home/archivos" />
-          <TopbarItem option="Calendario" href="/home/calendario" />
-          <TopbarItem option="Canciones" href="/home/canciones" />
-          <TopbarItem option="Instrumentos" href="/home/instrumentos" />
-          <TopbarItem option="Inventario" href="/home/inventario" />
-          <TopbarItem option="Tesorería" href="/home/tesorería" />
-          <TopbarItem option="Usuarios" href="/home/usuarios" />
->>>>>>> ff305145011541b6e13aa436f017328bc0274488
           <MenuItem onClick={toggleColorMode} h={"50px"}>
             <Text mr={"5px"}>Cambiar Modo</Text>
             <Icon as={colorMode == "light" ? MdOutlineDarkMode : MdDarkMode} />

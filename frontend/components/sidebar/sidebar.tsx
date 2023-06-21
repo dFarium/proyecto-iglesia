@@ -24,11 +24,8 @@ import {
   MdOutlineInventory2,
   MdPerson,
   MdPiano,
-<<<<<<< HEAD
   MdOutlineSavings,
-=======
-  MdSavings,
->>>>>>> ff305145011541b6e13aa436f017328bc0274488
+  MdSavings
 } from "react-icons/md";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
