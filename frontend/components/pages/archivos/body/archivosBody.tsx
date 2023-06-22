@@ -22,18 +22,18 @@ export default function ArchivosBody() {
             >
                 <OpcionArchivos
                     titulo="Favoritos"
-                    href="/home/inventario/instrumentos"
+                    href="/home/archivos/favorito"
                     image="star.png"
                 />
                 <OpcionArchivos
                     titulo="Biblioteca Pública"
-                    href="/home/inventario/equipos"
+                    href="/home/archivos/publico"
                     image="libro.png"
                 />
                 <OpcionArchivos
                     titulo="Biblioteca Privada"
-                    href="/home/inventario/total"
-                    image="varios.webp"
+                    href="/home/archivos/privado"
+                    image="libropriv.png"
                 />
             </Grid>
         </Box>

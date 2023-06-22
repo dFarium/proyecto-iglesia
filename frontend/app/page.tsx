@@ -25,7 +25,7 @@ export default function Page() {
         })
       });
       if (res.status === 200) {
-        router.push("/home/inventario");
+        router.push("/home/");
       } else {
         const errorData = await res.json();
         console.log(errorData);
