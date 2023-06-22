@@ -11,7 +11,9 @@ import {
   useColorMode,
   Text,
   Icon,
+  Link,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { MdDarkMode, MdMenu, MdOutlineDarkMode } from "react-icons/md";
 
 function TopNavBar() {
@@ -41,6 +43,7 @@ function TopNavBar() {
           <MenuItem h={"50px"}>Archivos</MenuItem>
           <MenuItem h={"50px"}>Canciones</MenuItem>
           <MenuItem h={"50px"}>Calendario</MenuItem>
+          <MenuItem h={"50px"}>Tesoreria</MenuItem>
           <MenuItem h={"50px"}>Cerrar Sesión</MenuItem>
           <MenuItem onClick={toggleColorMode} h={"50px"}>
             <Text mr={"5px"}>Cambiar Modo</Text>
@@ -49,6 +52,13 @@ function TopNavBar() {
         </MenuList>
       </Menu>
     </Box>
+  );
+}
+function TopbarItem(props: { option: string; href: string }) {
+  return (
+    <Link as={NextLink} href={props.href}>
+      <MenuItem h={"50px"}>{props.option}</MenuItem>
+    </Link>
   );
 }
 

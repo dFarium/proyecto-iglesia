@@ -5,6 +5,7 @@ import {
   editItemInventario,
   getAllItemsInventario,
   getItemInventario,
+  getItemsInventarioCategoria,
 } from "../../controllers/inventario/itemController";
 
 export const inventarioRoutes = Router();
@@ -19,5 +20,9 @@ inventarioRoutes.put("/inventario/edit/:id", editItemInventario);
 inventarioRoutes.delete("/inventario/delete", deleteItemInventario);
 
 //get
-inventarioRoutes.get("/inventario/getone", getItemInventario);
+inventarioRoutes.get("/inventario/getone/:id", getItemInventario);
 inventarioRoutes.get("/inventario/getall", getAllItemsInventario);
+inventarioRoutes.get(
+  "/inventario/getcategoria/:categoria",
+  getItemsInventarioCategoria
+);

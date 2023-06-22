@@ -28,7 +28,11 @@ function EliminarItemInventario(props: { name: string; id: string }) {
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
+      queryClient.invalidateQueries({
+        queryKey: ["itemsInventarioInstrumentos"],
+      });
     },
   });
 
