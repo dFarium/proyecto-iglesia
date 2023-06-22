@@ -15,7 +15,6 @@ import {
   Circle,
   IconButton,
   useColorMode,
-  Icon,
 } from "@chakra-ui/react";
 
 import {
@@ -40,29 +39,38 @@ import {
   MdNavigateNext,
 } from "react-icons/md";
 import EditarItemInventario from "../widgets/editarItem";
-import { NuevoItemInventario } from "../widgets/nuevoItem";
+import { NuevoInstrumento } from "../widgets/nuevoItem";
 import { useMemo, useState } from "react";
 import { textDate } from "@/utils/dateUtils";
-import { IItemInventario, getAllItemsInventario } from "@/data/inventario/item";
+import {
+  IItemInventario,
+  getAllItemsInventario,
+  getItemsInventarioCategoria,
+} from "@/data/inventario/item";
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 import { VerFotoItem } from "../widgets/verFotoItem";
 
-export function InventarioBody() {
-  // query todos los items
-  const allItemsQuery = useQuery({
-    queryKey: ["allItemsInventario"],
-    queryFn: getAllItemsInventario,
+export function InventarioInstrumentosBody() {
+  // query todos los instrumentos
+  const instrumentosQuery = useQuery({
+    queryKey: ["itemsInventarioInstrumentos"],
+    queryFn: async () => {
+      const data = getItemsInventarioCategoria("Instrumento");
+      return data;
+    },
     initialData: [],
   });
-  const allItemsData = allItemsQuery.data;
+  const instrumentosData = instrumentosQuery.data;
 
   const [columnVisibility] = useState({
     id: false,
+    index: false,
+    cantidad: false,
+    categoria: false,
     desc: false,
     ultMant: false,
     cicloMant: false,
-    index: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -84,7 +92,7 @@ export function InventarioBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={"560"} />;
+          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={""} />;
         },
       },
       {
@@ -276,7 +284,6 @@ export function InventarioBody() {
         },
         cell: ({ row }) => {
           return (
-            // <VerDetallesItem itemInventario={row.getValue("id")} />
             <EditarItemInventario
               id={row.getValue("id")}
               nombre={row.getValue("nombre")}
@@ -334,7 +341,7 @@ export function InventarioBody() {
 
   // api react table
   const table = useReactTable({
-    data: allItemsData,
+    data: instrumentosData,
     columns,
     initialState: {
       columnVisibility,
@@ -353,8 +360,8 @@ export function InventarioBody() {
     <Box w={"100%"} h={"100%"}>
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
-          <Text textStyle={"titulo"}>Inventario Total</Text>
-          <NuevoItemInventario />
+          <Text textStyle={"titulo"}>Instrumentos Musicales</Text>
+          <NuevoInstrumento />
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">

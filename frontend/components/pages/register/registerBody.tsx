@@ -1,3 +1,5 @@
+"use client";
+
 import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode,} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -7,6 +9,7 @@ export default function Register() {
     const router = useRouter();
     
     const [name, setName] = useState("");
+    const [rut, setRut] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -58,6 +61,10 @@ export default function Register() {
             <FormControl>
                 <FormLabel>Nombre</FormLabel>
                 <Input value={name} onChange={(e) => setName(e.target.value)} />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Rut</FormLabel>
+                <Input value={rut} onChange={(e) => setRut(e.target.value)} />
             </FormControl>
             <FormControl>
                 <FormLabel>Email</FormLabel>

@@ -25,7 +25,7 @@ export default function Page() {
         })
       });
       if (res.status === 200) {
-        router.push("/home/inventario");
+        router.push("/home");
       } else {
         const errorData = await res.json();
         console.log(errorData);
@@ -68,7 +68,7 @@ export default function Page() {
           />
         </FormControl>
         <Button type="submit" style={{backgroundColor: '#005FFF', color: '#FFFFFF'}}>Iniciar sesión</Button>
-        <Button style={{backgroundColor: '#06FF47', color: '#FFFFFF'}} onClick={() => router.push("/home/register")}>Crear usuario</Button>
+        <Button style={{backgroundColor: '#06FF47', color: '#FFFFFF'}} onClick={() => router.push("")}>Crear usuario</Button>
       </VStack>
     </Box>
   );

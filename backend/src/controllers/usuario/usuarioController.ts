@@ -17,7 +17,7 @@ const registerUser = async (req: Request, res: Response) => {
     if (error){
         return res.status(400).json({error: error.details[0].message})
     }
-
+    console.log("AQUI")
     // Validación de email único
     const isEmailExist = await UsuarioModel.findOne({ email: req.body.email })
     if (isEmailExist) return res.status(400).json({error: true, message: 'Email ya registrado'})
@@ -29,6 +29,7 @@ const registerUser = async (req: Request, res: Response) => {
     // Registro usuario
     const newUser = new UsuarioModel({
         name: req.body.name,
+        rut: req.body.rut,
         email: req.body.email,
         password: password
     })

@@ -1,2 +1,0 @@
-# proyecto-iglesia
-proyecto gps

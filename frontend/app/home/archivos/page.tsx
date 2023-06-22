@@ -1,3 +1,4 @@
+"use client"
 import ArchivosBody from "@/components/pages/archivos/body/archivosBody";
 
 export default function Page() {
