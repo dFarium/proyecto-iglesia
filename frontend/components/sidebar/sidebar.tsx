@@ -24,7 +24,8 @@ import {
   MdOutlineInventory2,
   MdPerson,
   MdPiano,
-  MdSavings,
+  MdOutlineSavings,
+  MdSavings
 } from "react-icons/md";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -145,6 +146,11 @@ function SideMenu() {
           icon={MdPerson}
           option="Usuarios"
           href="/home/usuarios"
+        />
+        <MenuItemSideBar
+          icon={MdOutlineSavings}
+          option="Tesoreria"
+          href="/home/tesoreria"
         />
       </VStack>
     </Box>
