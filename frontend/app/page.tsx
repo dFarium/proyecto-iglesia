@@ -25,7 +25,11 @@ export default function Page() {
         })
       });
       if (res.status === 200) {
+<<<<<<< HEAD
         router.push("/home");
+=======
+        router.push("/home/");
+>>>>>>> 0fe5293d422b40ed66b0dcae8482afac1c547a9c
       } else {
         const errorData = await res.json();
         console.log(errorData);

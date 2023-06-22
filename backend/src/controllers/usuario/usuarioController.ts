@@ -56,12 +56,11 @@ const loginUser = async (req: Request, res: Response) => {
     // Válida la contraseña
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).json({ error: 'contraseña no válida' })
-    
+
     // Creación de token
     const token = jwt.sign({name: user.name, id: user._id}, process.env.TOKEN_SECRET)
 
     res.header('auth-token', token).json({error: null, message: 'Bienvenido!', data: {token}})
-    
 }
 
 // Cerrar sesión

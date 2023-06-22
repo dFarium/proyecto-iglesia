@@ -24,7 +24,8 @@ import {
   MdOutlineInventory2,
   MdPerson,
   MdPiano,
-  MdSavings,
+  MdOutlineSavings,
+  MdSavings
 } from "react-icons/md";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -39,6 +40,7 @@ export default function SideBar() {
       borderRadius={"25px"}
       pt={"25px"}
       display={{ base: "none", md: "block" }}
+      overflowY={"auto"}
     >
       <VStack justify={"space-between"} h={"100%"}>
         <VStack spacing={88} align={"left"}>
@@ -144,6 +146,11 @@ function SideMenu() {
           icon={MdPerson}
           option="Usuarios"
           href="/home/usuarios"
+        />
+        <MenuItemSideBar
+          icon={MdOutlineSavings}
+          option="Tesoreria"
+          href="/home/tesoreria"
         />
       </VStack>
     </Box>

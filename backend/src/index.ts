@@ -13,12 +13,21 @@ app.options("*", cors());
 
 //routes
 import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
+<<<<<<< HEAD
+=======
+import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
+>>>>>>> 0fe5293d422b40ed66b0dcae8482afac1c547a9c
 import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
 const validaToken = require('./controllers/usuario/validate-token')
 const admin = require('./controllers/usuario/admin')
 
+<<<<<<< HEAD
 
 app.use("/api", inventarioRoutes);
+=======
+app.use("/api", inventarioRoutes);
+app.use("/api", tesoreriaRoutes);
+>>>>>>> 0fe5293d422b40ed66b0dcae8482afac1c547a9c
 app.use("/api", usuarioRoutes);
 app.use("/api/admin", validaToken, admin);
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
