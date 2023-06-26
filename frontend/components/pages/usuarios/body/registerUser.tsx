@@ -1,6 +1,6 @@
 "use client";
 
-import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode, Checkbox, CheckboxGroup} from "@chakra-ui/react";
+import {Box, Button, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox, CheckboxGroup, FormErrorMessage} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -9,11 +9,93 @@ function RegisterUser() {
     const router = useRouter();
     
     const [name, setName] = useState("");
+    const [isValidName, setIsValidName] = useState(true);
+    const [nameTouched, setNameTouched] = useState(false);
+
     const [rut, setRut] = useState("");
+    const [isValidRut, setIsValidRut] = useState(true);
+    const [rutTouched, setRutTouched] = useState(false);
+
     const [email, setEmail] = useState("");
+    const [isValidEmail, setIsValidEmail] = useState(true);
+    const [emailTouched, setEmailTouched] = useState(false);
+
     const [password, setPassword] = useState("");
+    const [isValidPassword, setIsValidPassword] = useState(true);
+    const [passwordTouched, setPasswordTouched] = useState(false);
+
     const [rol, setRoles] = useState<string[]>([]);
 
+    // Estados para menejo de errores
+    const [nameError, setNameError] = useState("");
+    const [rutError, setRutError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+
+    // Manejadores de eventos de 'onBlur'
+    const handleNameBlur = () => setNameTouched(true);
+    const handleRutBlur = () => setRutTouched(true);
+    const handleEmailBlur = () => setEmailTouched(true);
+    const handlePasswordBlur = () => setPasswordTouched(true);
+
+    // Funciones de manejo de cambio actualizadas para incluir la validación
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
+        if(e.target.value.length < 5){
+            setIsValidName(false);
+            setNameError("Debe tener 4 o más caracteres");
+        }
+        else if(e.target.value.length > 255){
+            setIsValidName(false);
+            setNameError("Debe tener 255 o menos caracteres");
+        }
+        else{
+            setIsValidName(true);
+            setNameError("");
+        }
+    };
+    const handleRutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRut(e.target.value);
+        if(e.target.value.length < 9){
+            setIsValidRut(false);
+            setRutError("Debe tener 8 o más caracteres");
+        }
+        else if(e.target.value.length > 12){
+            setIsValidRut(false);
+            setRutError("Debe tener 13 o menos caracteres");
+        }
+        else{
+            setIsValidRut(true);
+            setRutError("");
+        }
+    };
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+        const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value);
+        setIsValidEmail(isValid);
+        if(!isValid){
+            setEmailError("Correo electrónico no válido");
+        }
+        else{
+            setEmailError("");
+        }
+    };
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        if(e.target.value.length < 4){
+            setIsValidPassword(false);
+            setPasswordError("La contraseña debe tener 4 o más caracteres");
+        }
+        else if(e.target.value.length > 1024){
+            setIsValidPassword(false);
+            setPasswordError("La contraseña no puede tener más de 1024 caracteres");
+        }
+        else{
+            setIsValidPassword(true);
+            setPasswordError("");
+        }
+    };
+    
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
@@ -65,11 +147,11 @@ function RegisterUser() {
 
     return (
         <Box
-        bg={colorMode === "light" ? "body.light" : "body.dark"}
+        //bg={colorMode === "light" ? "body.light" : "body.dark"}
         color={colorMode === "light" ? "colorFont.light" : "colorFont.dark"}
         display={"flex"}
-        width={"100vw"}
-        height={"100vh"}
+        //width={"100vw"}
+        //height={"100vh"}
         >
         <VStack
             as="form"
@@ -79,37 +161,45 @@ function RegisterUser() {
             bg={colorMode === "light" ? "container.light" : "container.dark"}
             borderRadius={"25px"}
             p={"50px"}
-            spacing={"30px"}
+            spacing={"10px"}
             shadow={"md"}
         >
-            <FormControl>
+            <FormControl isInvalid={!isValidName && nameTouched}>
                 <FormLabel>Nombre</FormLabel>
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
+                <Input value={name} onChange={handleNameChange} onBlur={handleNameBlur} />
+                {!isValidName && nameTouched && (
+                    <FormErrorMessage>{nameError}</FormErrorMessage>
+                )}
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={!isValidRut && rutTouched}>
                 <FormLabel>Rut</FormLabel>
-                <Input value={rut} onChange={(e) => setRut(e.target.value)} />
+                <Input value={rut} onChange={handleRutChange} onBlur={handleRutBlur} />
+                {!isValidRut && rutTouched && (
+                    <FormErrorMessage>{rutError}</FormErrorMessage>
+                )}
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={!isValidEmail && emailTouched}>
                 <FormLabel>Email</FormLabel>
-                <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input value={email} onChange={handleEmailChange} onBlur={handleEmailBlur} />
+                {!isValidEmail && emailTouched && (
+                    <FormErrorMessage>{emailError}</FormErrorMessage>
+                )}
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={!isValidPassword && passwordTouched}>
                 <FormLabel>Contraseña</FormLabel>
-                <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                />
+                <Input type="password" value={password} onChange={handlePasswordChange} onBlur={handlePasswordBlur} />
+                {!isValidPassword && passwordTouched && (
+                    <FormErrorMessage>{passwordError}</FormErrorMessage>
+                )}
             </FormControl>
             <FormControl>
         <FormLabel>Roles</FormLabel>
             <CheckboxGroup colorScheme="green" value={rol} onChange={handleRolesChange}>
-            <VStack spacing={3} direction="column">
+            <HStack spacing={3}>
                 <Checkbox value="admin">Admin</Checkbox>
                 <Checkbox value="directiva">Directiva</Checkbox>
                 <Checkbox value="miembro">Miembro</Checkbox>
-            </VStack>
+            </HStack>
             </CheckboxGroup>
         </FormControl>
             <Button type="submit">Crear cuenta</Button>
