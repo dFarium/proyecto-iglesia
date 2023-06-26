@@ -22,7 +22,7 @@ usuarioRoutes.get("/usuario/:id", getUser);
 usuarioRoutes.get("/usuarios", getUsers);
 
 // put
-usuarioRoutes.put("/usuario/update/:id", updateUser);
+usuarioRoutes.put("/usuario/update/:id", [verifyToken, isAdmin], updateUser);
 
 // delete
-usuarioRoutes.delete("/usuario/delete/:id", isAdmin, deleteUser);
+usuarioRoutes.delete("/usuario/delete/:id", [verifyToken, isAdmin], deleteUser);

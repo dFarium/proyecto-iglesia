@@ -23,19 +23,25 @@ function RegisterUser() {
                 return;
             }
 
+            // Construcción condicional del cuerpo de la solicitud
+            const requestBody: { name: string; rut: string; email: string; password: string; rol?: string[] } = {
+                name,
+                rut,
+                email,
+                password,
+            };
+
+            // Si se seleccionó al menos un rol, añade el campo 'rol' al cuerpo de la solicitud
+            if (rol.length > 0) {
+                requestBody.rol = rol;
+            }
             const res = await fetch('http://localhost:3001/api/usuario/register', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
                 'auth-token': token
                 },
-                body: JSON.stringify({
-                    name,
-                    rut,
-                    email,
-                    password,
-                    rol
-                })
+                body: JSON.stringify(requestBody)
             });
             if (!res.ok) {
                 console.error('Error al realizar la solicitud:', res.statusText);

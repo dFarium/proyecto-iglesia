@@ -20,11 +20,11 @@ export interface IUsuarioModel {
 
 // Schema de usuario
 const UserSchema = new Schema<IUsuarioModel>({
-    name: { type: String, required: true, minlength: 6, maxlength: 255 },
+    name: { type: String, required: true, minlength: 5, maxlength: 255 },
     rut:{ type: String, required: true, minlength: 9, maxlength: 12},
     email: { type: String, required: true, unique: true, minlength: 6, maxlength: 255 },
-    password: { type: String, required: true, minlength: 6, maxlength: 1024 },
-    rol: [{ref: "Role", type: Schema.Types.ObjectId}],
+    password: { type: String, required: true, minlength: 4, maxlength: 1024 },
+    rol: [{ref: 'Role', type: Schema.Types.ObjectId}],
     telefono: {type: String, default: null},
     direccion: {type: String, require: true, default: null},
     fecha_nacimiento: {type: Date, require: true, default: null},
@@ -40,10 +40,10 @@ const UserSchema = new Schema<IUsuarioModel>({
 
 // Schema de registro
 export const schemaRegister = Joi.object({
-    name: Joi.string().min(6).max(255).required(),
+    name: Joi.string().min(4).max(255).required(),
     rut: Joi.string().min(9).max(12).required(),
     email: Joi.string().min(6).max(255).required().email(),
-    password: Joi.string().min(6).max(1024).required(),
+    password: Joi.string().min(4).max(1024).required(),
     rol: Joi.array().items(Joi.string()),
     telefono: Joi.string(),
     direccion: Joi.string(),
@@ -59,7 +59,7 @@ export const schemaRegister = Joi.object({
 // Schema de login
 export const schemaLogin = Joi.object({
     email: Joi.string().min(6).max(255).required().email(),
-    password: Joi.string().min(6).max(1024).required()
+    password: Joi.string().min(4).max(1024).required()
 })
 
 export const UsuarioModel = model<IUsuarioModel>(

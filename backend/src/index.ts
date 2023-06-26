@@ -3,12 +3,13 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import {createRoles} from "./libs/initialSetup"
+import {createRoles, createAdminUserIfNotExist} from "./libs/initialSetup"
 
 dotenv.config();
 const app: Express = express();
 const port: string = process.env.PORT;
 createRoles();
+createAdminUserIfNotExist();
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.json());
