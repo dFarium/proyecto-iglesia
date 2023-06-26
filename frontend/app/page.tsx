@@ -24,18 +24,20 @@ export default function Page() {
           password
         })
       });
+      const data = await res.json();
       if (res.status === 200) {
-<<<<<<< HEAD
+        // Guarda el token en el local storage
+        localStorage.setItem('auth-token', data.data.token);
+        console.log("Token guardado:", data.data.token);
+        // Pide el token del local storage(Prueba)
+        const token = localStorage.getItem('auth-token');
+        console.log("Token recibido:", token);
         router.push("/home");
-=======
-        router.push("/home/");
->>>>>>> 0fe5293d422b40ed66b0dcae8482afac1c547a9c
       } else {
         const errorData = await res.json();
         console.log(errorData);
       }
     } catch (error) {
-      console.log("KE CHUCHA");
       console.log(error);
     }
   };
@@ -72,7 +74,6 @@ export default function Page() {
           />
         </FormControl>
         <Button type="submit" style={{backgroundColor: '#005FFF', color: '#FFFFFF'}}>Iniciar sesión</Button>
-        <Button style={{backgroundColor: '#06FF47', color: '#FFFFFF'}} onClick={() => router.push("")}>Crear usuario</Button>
       </VStack>
     </Box>
   );

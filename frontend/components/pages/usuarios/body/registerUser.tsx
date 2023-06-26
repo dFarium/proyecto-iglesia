@@ -1,10 +1,10 @@
 "use client";
 
-import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode,} from "@chakra-ui/react";
+import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode, Checkbox, CheckboxGroup} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Register() {
+function RegisterUser() {
     const { colorMode } = useColorMode();
     const router = useRouter();
     
@@ -12,31 +12,49 @@ export default function Register() {
     const [rut, setRut] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [rol, setRoles] = useState<string[]>([]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-        const res = await fetch('http://localhost:3001/api/usuario/register', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name,
-                email,
-                password
-            })
-        });
-        if (res.status === 200) {
-            router.push("/home/inventario");
-        } else {
-            const errorData = await res.json();
-            console.log(errorData);
-        }
+            const token = localStorage.getItem('auth-token'); // Recupera el token
+            if (!token) {
+                console.log('No hay token guardado.');
+                return;
+            }
+
+            const res = await fetch('http://localhost:3001/api/usuario/register', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'auth-token': token
+                },
+                body: JSON.stringify({
+                    name,
+                    rut,
+                    email,
+                    password,
+                    rol
+                })
+            });
+            if (!res.ok) {
+                console.error('Error al realizar la solicitud:', res.statusText);
+                return;
+            }
+
+            if (res.status === 200) {
+                router.push("/home");
+            } else {
+                const errorData = await res.json();
+                console.log(errorData);
+            }
         } catch (error) {
-        console.log("error de inicio de sesión");
-        console.log(error);
+        console.log("Error durante el registro de usuario:", error);
         }
+    };
+
+    const handleRolesChange = (values: string[]) => {
+        setRoles(values);
     };
 
     return (
@@ -78,8 +96,20 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 />
             </FormControl>
+            <FormControl>
+        <FormLabel>Roles</FormLabel>
+            <CheckboxGroup colorScheme="green" value={rol} onChange={handleRolesChange}>
+            <VStack spacing={3} direction="column">
+                <Checkbox value="admin">Admin</Checkbox>
+                <Checkbox value="directiva">Directiva</Checkbox>
+                <Checkbox value="miembro">Miembro</Checkbox>
+            </VStack>
+            </CheckboxGroup>
+        </FormControl>
             <Button type="submit">Crear cuenta</Button>
         </VStack>
         </Box>
     );
 }
+
+export { RegisterUser };
