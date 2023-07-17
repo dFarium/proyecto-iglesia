@@ -20,12 +20,12 @@ export interface IUsuarioModel {
 
 // Schema de usuario
 const UserSchema = new Schema<IUsuarioModel>({
-    name: { type: String, required: true, minlength: 5, maxlength: 255 },
-    rut:{ type: String, required: true, minlength: 9, maxlength: 12},
+    name: { type: String, required: true, minlength: 4, maxlength: 255 },
+    rut:{ type: String, required: true, unique: true, minlength: 9, maxlength: 12},
     email: { type: String, required: true, unique: true, minlength: 6, maxlength: 255 },
     password: { type: String, required: true, minlength: 4, maxlength: 1024 },
     rol: [{ref: 'Role', type: Schema.Types.ObjectId}],
-    telefono: {type: String, default: null},
+    telefono: {type: String, unique: true, default: null},
     direccion: {type: String, require: true, default: null},
     fecha_nacimiento: {type: Date, require: true, default: null},
     num_emergencia: {type: String, default: null},

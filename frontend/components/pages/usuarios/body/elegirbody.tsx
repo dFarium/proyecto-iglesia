@@ -3,7 +3,6 @@ import NextLink from "next/link";
 // instalar para las alertas --> npm install sweetalert2
 // instalar para usar el token --> npm install --save-dev @types/jsonwebtoken
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 
 
@@ -29,69 +28,49 @@ export function ElegirBody() {
     }
 
       // Arreglo que contiene el rol, leído para ver si es administrador y fijar el admin como true o false
-      if (decoded) {
-        if (Array.isArray(decoded.rol)) {
-          decoded.rol.forEach((roleObject) => {
-            if (roleObject.name === 'admin') {
-              setAdmin(true);
-            }
-          });
-        }
-      } else {
-        setAdmin(false);
+    if (decoded) {
+      if (Array.isArray(decoded.rol)) {
+        decoded.rol.forEach((roleObject) => {
+          if (roleObject.name === 'admin') {
+            setAdmin(true);
+          }
+        });
       }
+    } else {
+      setAdmin(false);
+    }
   }, []);
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (!admin) {
-      e.preventDefault();
-      Swal.fire('Acceso denegado', 'Solo los administradores pueden crear un usuario', 'error');
-    }
-  };
+  // const handleClick = (e: React.MouseEvent) => {
+  //   Swal.fire('Se hizo clic en un botón');
+  // };
 
   return (
     <VStack w={"full"} h={"full"}>
       <Text textStyle={"titulo"}>Prueba</Text>
-      <VStack
-        w={"full"}
-        h={"full"}
-        justify={"space-between"}
-        overflow={"auto"}
-        p={"20px"}
-        // bg={"red"}
-      >
-        <Grid
-          templateColumns={{
-            base: "repeat(1,1fr)",
-            lg: "repeat(2,1fr)",
-            xl: "repeat(3,1fr)",
-          }}
-          gap={"40px"}
-          m={"auto"}
-        >
-          <Categoria
-            titulo="crear usuario"
-            href="/home/usuarios/register"
-            onClick={handleClick}
-          />
+      <VStack w={"full"} h={"full"} justify={"space-between"} overflow={"auto"} p={"20px"} >
+        <Grid templateColumns={{ base: "repeat(1,1fr)", lg: "repeat(2,1fr)", xl: "repeat(3,1fr)", }} gap={"40px"} m={"auto"} >
+          {/* {admin && (
+            <Categoria titulo="crear usuario" href="/home/usuarios/register"/>
+          )} */}
+          <Categoria titulo="Ver usuario" href="/home/usuarios/getUsuarios"/>
         </Grid>
       </VStack>
     </VStack>
   );
 }
 
-function Categoria(props: { titulo: string; href: string, onClick: (e: any) => void }) {
+function Categoria(props: { titulo: string; href: string}) { // Agregación de función onclick , onClick: (e: any) => void 
   const { colorMode } = useColorMode();
   const outlineDark = "2px white solid";
   const outlineLight = "2px grey solid";
   const borderRadius = "10px";
   
   return (
-    <Link as={NextLink} href={props.href} onClick={props.onClick} pos={"relative"}>
+    <Link as={NextLink} href={props.href}  pos={"relative"}> {/* onClick={props.onClick}*/ }
       <Box
         h={"100px"}
         w={"320px"}
-        // bg={"#ffe187"}
         borderRadius={borderRadius}
         outline={colorMode == "light" ? outlineLight : outlineDark}
         overflow={"hidden"}
@@ -100,7 +79,6 @@ function Categoria(props: { titulo: string; href: string, onClick: (e: any) => v
         transition={"0.5s"}
       >
         <Box
-          //bgImage={`/${props.image}`}
           backgroundSize={"cover"}
           backgroundRepeat={"no-repeat"}
           backgroundPosition={"bottom"}
@@ -118,7 +96,6 @@ function Categoria(props: { titulo: string; href: string, onClick: (e: any) => v
           pos={"absolute"}
           align={"center"}
           justify={"center"}
-          // fontSize={"2em"}
           color={"white"}
         >
           {props.titulo}

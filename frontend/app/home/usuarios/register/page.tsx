@@ -1,7 +1,7 @@
 "use client";
 
-import { RegisterUser } from "@/components/pages/usuarios/body/registerUser";
+import { RegisterUserBody } from "@/components/pages/usuarios/body/registerUserBody";
 
 export default function Page() {
-    return <RegisterUser />;
+    return < RegisterUserBody />;
 }

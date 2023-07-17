@@ -3,6 +3,7 @@
 import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode,} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function Page() {
   const { colorMode } = useColorMode();
@@ -26,6 +27,11 @@ export default function Page() {
       });
       const data = await res.json();
       if (res.status === 200) {
+        Swal.fire({
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500
+        })
         // Guarda el token en el local storage
         localStorage.setItem('auth-token', data.data.token);
         console.log("Token guardado:", data.data.token);
@@ -38,6 +44,8 @@ export default function Page() {
         console.log(errorData);
       }
     } catch (error) {
+      Swal.fire('', 'Contraseña incorrecta');
+      console.log("Contraseña inválida");
       console.log(error);
     }
   };

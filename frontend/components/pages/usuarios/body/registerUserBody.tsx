@@ -1,10 +1,11 @@
 "use client";
 
-import {Box, Button, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox, CheckboxGroup, FormErrorMessage} from "@chakra-ui/react";
+import {Box, Button, Text, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox, CheckboxGroup, FormErrorMessage } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Swal from 'sweetalert2'
 
-function RegisterUser() {
+function RegisterUserBody() {
     const { colorMode } = useColorMode();
     const router = useRouter();
     
@@ -16,9 +17,13 @@ function RegisterUser() {
     const [isValidRut, setIsValidRut] = useState(true);
     const [rutTouched, setRutTouched] = useState(false);
 
+    const [fechaNacimiento, setFechaNacimiento] = useState<Date>();
+
     const [email, setEmail] = useState("");
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [emailTouched, setEmailTouched] = useState(false);
+
+    //const [isValidPhone, setIsValidPhone] = useState(true);
 
     const [password, setPassword] = useState("");
     const [isValidPassword, setIsValidPassword] = useState(true);
@@ -30,18 +35,33 @@ function RegisterUser() {
     const [nameError, setNameError] = useState("");
     const [rutError, setRutError] = useState("");
     const [emailError, setEmailError] = useState("");
+    const [phoneError, setPhoneError] = useState('');
     const [passwordError, setPasswordError] = useState("");
 
     // Manejadores de eventos de 'onBlur'
     const handleNameBlur = () => setNameTouched(true);
-    const handleRutBlur = () => setRutTouched(true);
+    const handleRutBlur = () => {
+        const re = /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
+        if (!re.test(rut)) {
+            setIsValidRut(false);
+            setRutError("El formato debe ser xx.xxx.xxx-x");
+            return;
+        }
+        setRutTouched(true);
+    };
     const handleEmailBlur = () => setEmailTouched(true);
     const handlePasswordBlur = () => setPasswordTouched(true);
 
     // Funciones de manejo de cambio actualizadas para incluir la validación
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Permitir solo caracteres de la A a la Z, tanto en mayúsculas como en minúsculas.
+        const re = /^[a-zA-Z\s]*$/;
+        if (!re.test(e.target.value)) {
+            return;
+        }
+
         setName(e.target.value);
-        if(e.target.value.length < 5){
+        if(e.target.value.length < 4){
             setIsValidName(false);
             setNameError("Debe tener 4 o más caracteres");
         }
@@ -54,6 +74,7 @@ function RegisterUser() {
             setNameError("");
         }
     };
+
     const handleRutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRut(e.target.value);
         if(e.target.value.length < 9){
@@ -69,6 +90,13 @@ function RegisterUser() {
             setRutError("");
         }
     };
+
+    const handleFechaNacimientoChange = (e: any) => {
+        const d = new Date(e.target.value);
+        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        setFechaNacimiento(date);
+    };
+    
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
         const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value);
@@ -82,9 +110,9 @@ function RegisterUser() {
     };
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
-        if(e.target.value.length < 4){
+        if(e.target.value.length < 5){
             setIsValidPassword(false);
-            setPasswordError("La contraseña debe tener 4 o más caracteres");
+            setPasswordError("La contraseña debe tener 5 o más caracteres");
         }
         else if(e.target.value.length > 1024){
             setIsValidPassword(false);
@@ -106,12 +134,16 @@ function RegisterUser() {
             }
 
             // Construcción condicional del cuerpo de la solicitud
-            const requestBody: { name: string; rut: string; email: string; password: string; rol?: string[] } = {
+            const requestBody: { name: string; rut: string; fecha_nacimiento?: string; email: string; password: string; rol?: string[] } = {
                 name,
                 rut,
                 email,
                 password,
             };
+
+            if (fechaNacimiento) {
+                requestBody.fecha_nacimiento = fechaNacimiento.toISOString();
+            }
 
             // Si se seleccionó al menos un rol, añade el campo 'rol' al cuerpo de la solicitud
             if (rol.length > 0) {
@@ -125,16 +157,35 @@ function RegisterUser() {
                 },
                 body: JSON.stringify(requestBody)
             });
-            if (!res.ok) {
-                console.error('Error al realizar la solicitud:', res.statusText);
-                return;
-            }
-
+            // if (!res.ok) {
+            //     console.error('Error al realizar la solicitud:', res.statusText);
+            //     return;
+            // }
             if (res.status === 200) {
-                router.push("/home");
+                Swal.fire({
+                    title: 'Usuario Creado',
+                    text: 'El usuario ha sido creado con exito',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+                setTimeout(() => {
+                    router.push("/home");
+                }, 2500);
             } else {
                 const errorData = await res.json();
-                console.log(errorData);
+                if (errorData.message === 'RUT ya registrado') {
+                    setIsValidRut(false);
+                    setRutError('RUT en uso');
+                } else if (errorData.message === 'Email ya registrado') {
+                    setIsValidEmail(false);
+                    setEmailError('Correo en uso');
+                // } else if (errorData.message === 'Teléfono ya registrado') {
+                //     setIsValidPhone(false);
+                //     setPhoneError('Teléfono en uso');
+                } else {
+                    console.log(errorData);
+                }
             }
         } catch (error) {
         console.log("Error durante el registro de usuario:", error);
@@ -145,49 +196,53 @@ function RegisterUser() {
         setRoles(values);
     };
 
+    // Constante usada para establecer el calendario hasta la fecha actual.
+    const currentDate = new Date().toISOString().split('T')[0];
+
     return (
         <Box
-        //bg={colorMode === "light" ? "body.light" : "body.dark"}
         color={colorMode === "light" ? "colorFont.light" : "colorFont.dark"}
         display={"flex"}
-        //width={"100vw"}
-        //height={"100vh"}
         >
-        <VStack
-            as="form"
-            onSubmit={handleSubmit}
-            minW={"30%"}
-            margin={"auto"}
-            bg={colorMode === "light" ? "container.light" : "container.dark"}
-            borderRadius={"25px"}
-            p={"50px"}
-            spacing={"10px"}
-            shadow={"md"}
-        >
+            <VStack
+                as="form"
+                onSubmit={handleSubmit}
+                minW={"30%"}
+                margin={"auto"}
+                bg={colorMode === "light" ? "container.light" : "container.dark"}
+                borderRadius={"10px"}
+                p={"40px"}
+                boxShadow="0 0 10px 2px #88AAFF"
+            >
+            <Text textStyle={"titulo"}>Registro de usuario</Text>
             <FormControl isInvalid={!isValidName && nameTouched}>
                 <FormLabel>Nombre</FormLabel>
-                <Input value={name} onChange={handleNameChange} onBlur={handleNameBlur} />
+                <Input placeholder='Nombre' value={name} onChange={handleNameChange} onBlur={handleNameBlur} required/>
                 {!isValidName && nameTouched && (
                     <FormErrorMessage>{nameError}</FormErrorMessage>
                 )}
             </FormControl>
             <FormControl isInvalid={!isValidRut && rutTouched}>
                 <FormLabel>Rut</FormLabel>
-                <Input value={rut} onChange={handleRutChange} onBlur={handleRutBlur} />
+                <Input placeholder='xx.xxx.xxx-x' value={rut} onChange={handleRutChange} onBlur={handleRutBlur} required/>
                 {!isValidRut && rutTouched && (
                     <FormErrorMessage>{rutError}</FormErrorMessage>
                 )}
             </FormControl>
+            <FormControl mt={"25px"}>
+                <FormLabel>Fecha de nacimiento</FormLabel>
+                <Input type="date" max={currentDate} value={fechaNacimiento ? fechaNacimiento.toISOString().split('T')[0] : ''} onChange={handleFechaNacimientoChange} required />
+            </FormControl>
             <FormControl isInvalid={!isValidEmail && emailTouched}>
                 <FormLabel>Email</FormLabel>
-                <Input value={email} onChange={handleEmailChange} onBlur={handleEmailBlur} />
+                <Input placeholder='email@gmail.com' value={email} onChange={handleEmailChange} onBlur={handleEmailBlur} />
                 {!isValidEmail && emailTouched && (
                     <FormErrorMessage>{emailError}</FormErrorMessage>
                 )}
             </FormControl>
             <FormControl isInvalid={!isValidPassword && passwordTouched}>
                 <FormLabel>Contraseña</FormLabel>
-                <Input type="password" value={password} onChange={handlePasswordChange} onBlur={handlePasswordBlur} />
+                <Input placeholder='*****' type="password" value={password} onChange={handlePasswordChange} onBlur={handlePasswordBlur} required/>
                 {!isValidPassword && passwordTouched && (
                     <FormErrorMessage>{passwordError}</FormErrorMessage>
                 )}
@@ -208,4 +263,4 @@ function RegisterUser() {
     );
 }
 
-export { RegisterUser };
+export { RegisterUserBody };

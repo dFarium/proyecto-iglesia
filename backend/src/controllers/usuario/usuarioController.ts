@@ -20,9 +20,17 @@ const registerUser = async (req: Request, res: Response) => {
         return res.status(400).json({error: error.details[0].message})
     }
 
+    // Validación de RUT único
+    const isRutExist = await UsuarioModel.findOne({ rut: req.body.rut })
+    if (isRutExist) return res.status(400).json({error: true, message: 'RUT ya registrado'})
+
     // Validación de email único
     const isEmailExist = await UsuarioModel.findOne({ email: req.body.email })
     if (isEmailExist) return res.status(400).json({error: true, message: 'Email ya registrado'})
+
+    // Validación de teléfono único
+    // const isPhoneExist = await UsuarioModel.findOne({ telefono: req.body.telefono }) 
+    // if (isPhoneExist) return res.status(400).json({error: true, message: 'Teléfono ya registrado'})
 
     // Encriptación de clave
     const salt = await bcrypt.genSalt(10);
