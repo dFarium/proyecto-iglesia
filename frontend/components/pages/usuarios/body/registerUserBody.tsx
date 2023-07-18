@@ -23,19 +23,28 @@ function RegisterUserBody() {
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [emailTouched, setEmailTouched] = useState(false);
 
-    //const [isValidPhone, setIsValidPhone] = useState(true);
+    const [telefono, setTelefono] = useState("");
 
     const [password, setPassword] = useState("");
     const [isValidPassword, setIsValidPassword] = useState(true);
     const [passwordTouched, setPasswordTouched] = useState(false);
 
+    const [direccion, setDireccion] = useState("");
+
+    const [num_emergencia, setNumEmergencia] = useState("");
+
+    const [RRSS, setRRSS] = useState("");
+
     const [rol, setRoles] = useState<string[]>([]);
+
+    // const [estado, setEstado] = useState<string>("");
+
+    // const [archivos, setArchivos] = useState<string>("");
 
     // Estados para menejo de errores
     const [nameError, setNameError] = useState("");
     const [rutError, setRutError] = useState("");
     const [emailError, setEmailError] = useState("");
-    const [phoneError, setPhoneError] = useState('');
     const [passwordError, setPasswordError] = useState("");
 
     // Manejadores de eventos de 'onBlur'
@@ -124,6 +133,30 @@ function RegisterUserBody() {
         }
     };
     
+    const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTelefono(e.target.value);
+    };
+
+    const handleDireccionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDireccion(e.target.value);
+    };
+
+    const handleNumEmergenciaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNumEmergencia(e.target.value);
+    };
+
+    const handleRRSSChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRRSS(e.target.value);
+    };
+
+    // const handleEstadoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     setEstado(e.target.value);
+    // };
+
+    // const handleArchivosChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     setArchivos(e.target.value);
+    // };
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
@@ -134,11 +167,16 @@ function RegisterUserBody() {
             }
 
             // Construcción condicional del cuerpo de la solicitud
-            const requestBody: { name: string; rut: string; fecha_nacimiento?: string; email: string; password: string; rol?: string[] } = {
+            const requestBody: { name: string; rut: string; fecha_nacimiento?: string; email: string; password: string; rol?: string[]; telefono: string;
+            direccion: string; num_emergencia: string; RRSS: string, estado?: string; archivos?: string } = {
                 name,
                 rut,
                 email,
                 password,
+                telefono,
+                direccion,
+                num_emergencia,
+                RRSS
             };
 
             if (fechaNacimiento) {
@@ -248,6 +286,22 @@ function RegisterUserBody() {
                 )}
             </FormControl>
             <FormControl>
+                <FormLabel>Teléfono</FormLabel>
+                <Input placeholder="+569xxxxxxxx" value={telefono} onChange={handleTelefonoChange} required/>
+            </FormControl>
+            <FormControl>
+                <FormLabel>Dirección</FormLabel>
+                <Input placeholder="Calle N°" value={direccion} onChange={handleDireccionChange} required/>
+            </FormControl>
+            <FormControl>
+                <FormLabel>Numero de emergencia</FormLabel>
+                <Input placeholder="+569xxxxxxxx" value={num_emergencia} onChange={handleNumEmergenciaChange} required/>
+            </FormControl>
+            <FormControl>
+                <FormLabel>RRSS</FormLabel>
+                <Input placeholder="@instagram" value={RRSS} onChange={handleRRSSChange}/>
+            </FormControl>
+            <FormControl>
         <FormLabel>Roles</FormLabel>
             <CheckboxGroup colorScheme="green" value={rol} onChange={handleRolesChange}>
             <HStack spacing={3}>
@@ -257,7 +311,7 @@ function RegisterUserBody() {
             </HStack>
             </CheckboxGroup>
         </FormControl>
-            <Button type="submit">Crear cuenta</Button>
+            <Button type="submit" colorScheme="green" h="40px" w="120px">Crear usuario</Button>
         </VStack>
         </Box>
     );
