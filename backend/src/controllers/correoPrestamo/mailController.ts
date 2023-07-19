@@ -1,13 +1,15 @@
+import {Response} from "express";
+
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const sendMail = (req, res) => {
+const sendMail = (from: string, asunto: string, correo: string, contenido: string) => {
     let directory = []
-    const { from, asunto } = req.body
+    //const { from, asunto } = req.body
     const token = process.env.PW
     if (!token) {
-        return res.status(400).send({ message: "No se ha entregado la contraseña de aplicación para el correo" })
+        console.log("No se ha entregado la contraseña de aplicación para el correo");
     }
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -22,24 +24,23 @@ const sendMail = (req, res) => {
 
     const mailOptions = {
       from: `Enviado por ${from}`,
-      to: `minelyne@gmail.com`,
+      to: `${correo}`,
       subject: `${asunto}`,
-      text: 'TEST',
-      html: `hola`
+      text: `${contenido}`,
+      html: `${contenido}`
   }
-  transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(err)
-          return res.status(400).send({ message: 'Error al enviar el correo' })
-      }
-      return res.status(200).send({ message: 'Mensaje enviado' })
-  })
+    transporter.sendMail(mailOptions, (err: any, info: any) => {
+        if (err) {
+            console.log(err);
+        }
+        console.log("Correo enviado");
+    });
 
     transporter.verify().then(() => {
-        console.log('Servidor de correos habilitado')
-    }).catch(err => {
-        console.log('Error al utilizar servidor de correos')
-    })
+        console.log('Servidor de correos habilitado');
+    }).catch((err: any) => {
+        console.log('Error al utilizar servidor de correos:', err);
+    });
 }
 
 export{ sendMail };

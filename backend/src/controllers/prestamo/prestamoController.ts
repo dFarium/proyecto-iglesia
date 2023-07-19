@@ -1,6 +1,8 @@
-import { PrestamoInstrumento , IPrestamoInstrumento } from "../../models/prestamo/prestamo";
-import { Request, Response } from "express";
-import { CallbackError } from "mongoose";
+import {IPrestamoInstrumento, PrestamoInstrumento} from "../../models/prestamo/prestamo";
+import {IUsuarioModel, UsuarioModel} from "../../models/usuario/usuarioModel";
+import {Request, Response} from "express";
+import {CallbackError} from "mongoose";
+import {sendMail} from "../correoPrestamo/mailController";
 
 const nodeCron = require("node-cron");
 
@@ -72,14 +74,72 @@ const getAllPrestamosInstrumento = async (req: Request, res: Response) => {
 };
 
 //Revisa a las 9 si hay personas que necesitan ser avisadas
-nodeCron.schedule('* 9 * * *',() =>{
-  console.log("FUNCIONA");
+nodeCron.schedule('* * * * *',() =>{
+    console.log("CORREOS");
+    notificarPrestamosPendientes();
 });
 
+
+
+async function buscarPrestamosPorVencer(): Promise<IPrestamoInstrumento[]> {
+    const fechaActual = new Date();
+    const fechaLimite = new Date();
+    fechaLimite.setDate(fechaLimite.getDate() + 3);
+
+    try {
+        return await PrestamoInstrumento.find({
+            fechaLimite: {$gte: fechaActual, $lte: fechaLimite},
+            devuelto: false,
+        })
+            .populate("prestatario", "name email") // Obtiene solo el campo 'name' y 'email' del prestatario
+            .exec();
+    } catch (error) {
+        console.error("Error al buscar préstamos por vencer:", error);
+        throw error;
+    }
+}
+
+const notificarPrestamosPendientes = async () => {
+    try {
+        const prestamosPendientes = await buscarPrestamosPorVencer();
+
+        if (prestamosPendientes.length === 0) {
+            console.log("Sin prestamos pendientes hoy")
+        }
+
+        // Envía un correo a cada usuario prestatario
+        for (const prestamo of prestamosPendientes) {
+            try {
+                const prestatario = await UsuarioModel.findById(prestamo.prestatario) as IUsuarioModel;
+                if (prestatario) {
+                    if (prestatario.email) {
+                        sendMail(
+                            "Tu Nombre", // Nombre o remitente del correo
+                            "Préstamo por vencer", // Asunto del correo
+                            prestatario.email, // Correo del prestatario
+                            `Hola ${prestatario.name}, tienes un préstamo de instrumento que está por vencer.`, // Contenido del correo
+                            // Objeto 'res' para enviar la respuesta al cliente después de enviar el correo
+                        );
+                    }
+                }
+            } catch (error) {
+                console.error("Error al enviar el correo:", error);
+            }
+        }
+
+        // No envíes una respuesta aquí, ya que se enviará en la función sendMail
+    } catch (error) {
+        // ... manejo de errores ...
+    }
+};
+
+
+
 export {
-  createPrestamoInstrumento,
-  getIPrestamoInstrumento,
-  editPrestamoInstrumento,
-  deleteIPrestamoInventario,
-  getAllPrestamosInstrumento,
+    createPrestamoInstrumento,
+    getIPrestamoInstrumento,
+    editPrestamoInstrumento,
+    deleteIPrestamoInventario,
+    getAllPrestamosInstrumento,
+    notificarPrestamosPendientes
 };
