@@ -74,7 +74,7 @@ const getAllPrestamosInstrumento = async (req: Request, res: Response) => {
 };
 
 //Revisa a las 9 si hay personas que necesitan ser avisadas
-nodeCron.schedule('* * * * *',() =>{
+nodeCron.schedule('* 9 * * *',() =>{
     console.log("CORREOS");
     notificarPrestamosPendientes();
 });
