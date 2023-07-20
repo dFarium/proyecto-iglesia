@@ -3,7 +3,6 @@ import {IUsuarioModel, UsuarioModel} from "../../models/usuario/usuarioModel";
 import {Request, Response} from "express";
 import {CallbackError} from "mongoose";
 import {sendMail} from "../correoPrestamo/mailController";
-
 const nodeCron = require("node-cron");
 
 const createPrestamoInstrumento = async (req: Request, res: Response) => {
@@ -16,7 +15,7 @@ const createPrestamoInstrumento = async (req: Request, res: Response) => {
   return res.status(201).send(newPrestamo);
 };
 
-const getIPrestamoInstrumento = async (req: Request, res: Response) => {
+const getPrestamoInstrumento = async (req: Request, res: Response) => {
   await PrestamoInstrumento.findOne({ name: req.body.name })
     .then((item: IPrestamoInstrumento) => {
       return res.status(200).send(item);
@@ -58,6 +57,9 @@ const deleteIPrestamoInventario = async (req: Request, res: Response) => {
 
 const getAllPrestamosInstrumento = async (req: Request, res: Response) => {
   await PrestamoInstrumento.find({})
+      .populate("instrumento", "nombre")
+      .populate("prestatario","name")
+      .populate("prestamista","name")
     .sort({ createdAt: "desc" })
     .then((items: IPrestamoInstrumento[]) => {
       if (items.length === 0) {
@@ -137,7 +139,7 @@ const notificarPrestamosPendientes = async () => {
 
 export {
     createPrestamoInstrumento,
-    getIPrestamoInstrumento,
+    getPrestamoInstrumento,
     editPrestamoInstrumento,
     deleteIPrestamoInventario,
     getAllPrestamosInstrumento,

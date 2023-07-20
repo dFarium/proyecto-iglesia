@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
     createPrestamoInstrumento,
-    getIPrestamoInstrumento,
+    getPrestamoInstrumento,
     editPrestamoInstrumento,
     deleteIPrestamoInventario,
     getAllPrestamosInstrumento,
@@ -21,5 +21,5 @@ prestamoRoutes.put("/prestamo/edit/:id", editPrestamoInstrumento);
 prestamoRoutes.delete("/prestamo/delete", deleteIPrestamoInventario);
 
 //get
-prestamoRoutes.get("/prestamo/getone", getIPrestamoInstrumento);
+prestamoRoutes.get("/prestamo/getone/:id", getPrestamoInstrumento);
 prestamoRoutes.get("/prestamo/getall", getAllPrestamosInstrumento);
