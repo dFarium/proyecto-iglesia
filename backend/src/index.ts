@@ -16,6 +16,7 @@ import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
 import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
 import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
 import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
+import { mailRoutes } from "./routes/correoPrestamo/mailRoutes";
 const validaToken = require('./controllers/usuario/validate-token')
 const admin = require('./controllers/usuario/admin')
 
@@ -24,6 +25,8 @@ app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
 app.use("/api/admin", validaToken, admin);
 app.use("/api",cancionesRoutes);
+app.use("/api",mailRoutes)
+
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
 
