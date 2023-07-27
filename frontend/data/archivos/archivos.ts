@@ -23,8 +23,8 @@ const uploadNewFileData = async (fileData: IArchivos) => {
 };
 const uploadNewFile = async (
   file: FormData,
-  fileName: string,
-  folderName: string
+  folderName: string,
+  fileName: string
 ) => {
   const resFile = await axios.post(
     `${process.env.API_URL}/file/upload/${folderName}/${fileName}`,
@@ -36,7 +36,7 @@ const uploadNewFile = async (
   return resFile.data;
 };
 
-const viewImg = async (imgName: string, folderName: string) => {
+const viewImg = async (folderName: string, imgName: string) => {
   const res = await axios.get(
     `${process.env.API_URL}/file/${folderName}/${imgName}`
   );

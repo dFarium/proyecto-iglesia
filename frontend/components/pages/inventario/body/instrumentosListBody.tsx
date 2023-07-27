@@ -97,7 +97,7 @@ export function InventarioInstrumentosBody() {
           return (
             <VerFotoItem
               nombre={row.getValue("nombre")}
-              imgScr={""}
+              imgScr={row.getValue("imgScr")}
             />
           );
         },
