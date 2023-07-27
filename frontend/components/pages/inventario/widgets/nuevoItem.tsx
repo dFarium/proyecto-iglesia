@@ -313,7 +313,7 @@ function NuevoInstrumento() {
                         fileName: `${imagen.name}`,
                         tagCategoria: "Inventario",
                         mimetype: imagen.type,
-                        url: `${imagen.name}-${fechaStd}`,
+                        url: `${fechaStd}-${imagen.name}`,
                         userSubida: "user",
                         publico: true,
                       });

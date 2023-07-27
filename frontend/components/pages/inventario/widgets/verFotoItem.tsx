@@ -24,7 +24,7 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
   const [imagenUrl, setImagenUrl] = useState<string>("");
 
   useEffect(() => {
-    viewImg(props.imgScr, "Imagenes")
+    viewImg("Imagenes", props.imgScr)
       .then((res) => setImagenUrl(res.data))
       .catch((err) => {
         console.log("Error al recibir imagen", err);
