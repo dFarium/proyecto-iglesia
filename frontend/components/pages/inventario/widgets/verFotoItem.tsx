@@ -23,19 +23,29 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
   const cancelRef = useRef(null);
   const [imagenUrl, setImagenUrl] = useState<string>("");
 
-  useEffect(() => {
-    viewImg("Imagenes", props.imgScr)
-      .then((res) => setImagenUrl(res.data))
-      .catch((err) => {
-        console.log("Error al recibir imagen", err);
-      });
-  }, []);
+  const imgScr = async () => {
+    try {
+      const res = await viewImg("Imagenes", props.imgScr);
+      console.log(res.data);
+      // setImagenUrl(res.data);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const lightBorderImage = "5px #5c5c5c solid";
   const darkBorderImage = "5px #ffe1af solid";
   return (
     <>
-      <Link onClick={onOpen}>{props.nombre}</Link>
+      <Link
+        onClick={() => {
+          onOpen();
+          imgScr();
+        }}
+      >
+        {props.nombre}
+      </Link>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -53,7 +63,7 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
               {imagenUrl && (
                 <Image
                   src={imagenUrl}
-                  fallback={LoadingImage(props.imgScr)}
+                  fallback={LoadingImage(imagenUrl)}
                   objectFit={"cover"}
                   borderRadius={"15px"}
                   border={

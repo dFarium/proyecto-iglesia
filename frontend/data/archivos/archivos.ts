@@ -40,6 +40,7 @@ const viewImg = async (folderName: string, imgName: string) => {
   const res = await axios.get(
     `${process.env.API_URL}/file/${folderName}/${imgName}`
   );
+  console.log(res);
   return res;
 };
 
