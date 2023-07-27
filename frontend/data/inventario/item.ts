@@ -14,10 +14,10 @@ export interface IItemInventario {
   ultMant?: Date; // ultima mantencion (fecha)
 
   cicloMant?: number; // ciclo de mantencion (problemamente en segundos)
-  uploader?: string; // quien subió el item (nombre por ahora quizs id despues)
+  uploader?: string; // quien subió el item (nombre por ahora quizas id despues)
 
   ultMod?: string; // ultimo en modificar
-  // urlPic?: string; // url de imagen adjunta (no se aun como se hace)
+  urlPic?: string; // url de imagen adjunta
 
   createdAt?: Date; // timestamp
   updatedAt?: Date; // timestamp

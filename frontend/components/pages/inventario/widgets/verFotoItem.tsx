@@ -1,3 +1,4 @@
+import { viewImg } from "@/data/archivos/archivos";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -14,12 +15,21 @@ import {
   Flex,
   VStack,
 } from "@chakra-ui/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function VerFotoItem(props: { nombre: string; imgScr: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const cancelRef = useRef(null);
+  const [imagenUrl, setImagenUrl] = useState<string>("");
+
+  useEffect(() => {
+    viewImg(props.imgScr, "Imagenes")
+      .then((res) => setImagenUrl(res.data))
+      .catch((err) => {
+        console.log("Error al recibir imagen", err);
+      });
+  }, []);
 
   const lightBorderImage = "5px #5c5c5c solid";
   const darkBorderImage = "5px #ffe1af solid";
@@ -40,15 +50,17 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
               justifyContent={"center"}
               maxH={"600px"}
             >
-              <Image
-                src={`https://picsum.photos/${props.imgScr}`}
-                fallback={LoadingImage(props.imgScr)}
-                objectFit={"cover"}
-                borderRadius={"15px"}
-                border={
-                  colorMode == "light" ? lightBorderImage : darkBorderImage
-                }
-              />
+              {imagenUrl && (
+                <Image
+                  src={imagenUrl}
+                  fallback={LoadingImage(props.imgScr)}
+                  objectFit={"cover"}
+                  borderRadius={"15px"}
+                  border={
+                    colorMode == "light" ? lightBorderImage : darkBorderImage
+                  }
+                />
+              )}
             </AlertDialogBody>
           </AlertDialogContent>
         </AlertDialogOverlay>

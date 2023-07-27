@@ -71,6 +71,7 @@ export function InventarioInstrumentosBody() {
     desc: false,
     ultMant: false,
     cicloMant: false,
+    imgScr: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -87,12 +88,18 @@ export function InventarioInstrumentosBody() {
         accessorFn: (_row: any, i: number) => i + 1,
         sortingFn: "basic",
       },
+      { id: "imgScr", accessorKey: "urlPic" },
       {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={""} />;
+          return (
+            <VerFotoItem
+              nombre={row.getValue("nombre")}
+              imgScr={""}
+            />
+          );
         },
       },
       {
