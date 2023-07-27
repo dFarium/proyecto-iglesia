@@ -17,7 +17,7 @@ export interface IItemInventario {
   uploader?: string; // quien subió el item (nombre por ahora quizs id despues)
 
   ultMod?: string; // ultimo en modificar
-  // urlPic?: string; // url de imagen adjunta (no se aun como se hace)
+  urlPic?: string; // url de imagen adjunta
 }
 
 const ItemSchema = new Schema<IItemInventario>(
@@ -44,6 +44,7 @@ const ItemSchema = new Schema<IItemInventario>(
     cicloMant: { type: Number },
     uploader: { type: String },
     ultMod: { type: String },
+    urlPic: { type: String, default: null },
   },
   { timestamps: true, collection: "inventario" }
 );
