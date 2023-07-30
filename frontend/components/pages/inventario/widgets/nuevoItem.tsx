@@ -108,7 +108,6 @@ function NuevoInstrumento() {
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
-      console.log("update res:", res);
       return res;
     },
     onSuccess: () => {
@@ -129,14 +128,17 @@ function NuevoInstrumento() {
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
     formFile.append("archivos", file);
-
     try {
       await uploadNewFile(formFile, "Imagenes", fileData.url);
       console.log("file si");
+    } catch (error) {
+      console.log("file:", error);
+    }
+    try {
       await uploadNewFileData(fileData);
       console.log("data si");
     } catch (error) {
-      console.log("error");
+      console.log("data:", error);
     }
   };
 
@@ -435,17 +437,18 @@ function NuevoEquipoElec() {
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
-    formFile.append("file", file);
-
+    formFile.append("archivos", file);
     try {
-      const resFile = await uploadNewFile(
-        formFile,
-        "Imagenes",
-        fileData.fileName
-      );
-      const resData = await uploadNewFileData(fileData);
+      await uploadNewFile(formFile, "Imagenes", fileData.url);
+      console.log("file si");
     } catch (error) {
-      console.log("error");
+      console.log("file:", error);
+    }
+    try {
+      await uploadNewFileData(fileData);
+      console.log("data si");
+    } catch (error) {
+      console.log("data:", error);
     }
   };
 

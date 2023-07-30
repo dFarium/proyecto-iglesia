@@ -23,16 +23,30 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
   const cancelRef = useRef(null);
   const [imagenUrl, setImagenUrl] = useState<string>("");
 
-  const imgScr = async () => {
-    try {
-      const res = await viewImg("Imagenes", props.imgScr);
-      console.log(res.data);
-      // setImagenUrl(res.data);
-      return res.data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // useEffect(() => {
+  //   viewImg("Imagenes", props.imgScr)
+  //     .then((res) => {
+  //       console.log(res.data.imgPath);
+  //       setImagenUrl(res.data.imgPath);
+  //       console.log("imagen: ", imagenUrl);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Error al ver imagen: ", err);
+  //     });
+  // });
+
+  // const imgScr = async () => {
+  //   try {
+  //     await viewImg("Imagenes", props.imgScr).then(async (res) => {
+  //       console.log(res.data.imgPath);
+  //       setImagenUrl(res.data.imgPath);
+  //       console.log("imagen: ", imagenUrl);
+  //       // return res.data.imgPath;
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const lightBorderImage = "5px #5c5c5c solid";
   const darkBorderImage = "5px #ffe1af solid";
@@ -41,7 +55,7 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
       <Link
         onClick={() => {
           onOpen();
-          imgScr();
+          // imgScr();
         }}
       >
         {props.nombre}
@@ -53,24 +67,23 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
         isCentered
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent maxW={"1000px"}>
             <AlertDialogBody
               p={"15px"}
               display={"flex"}
               justifyContent={"center"}
-              maxH={"600px"}
             >
-              {imagenUrl && (
-                <Image
-                  src={imagenUrl}
-                  fallback={LoadingImage(imagenUrl)}
-                  objectFit={"cover"}
-                  borderRadius={"15px"}
-                  border={
-                    colorMode == "light" ? lightBorderImage : darkBorderImage
-                  }
-                />
-              )}
+              {/* {imagenUrl && ( */}
+              <Image
+                src={`${process.env.API_URL}/upload/Imagenes/${props.imgScr}`}
+                fallback={LoadingImage(imagenUrl)}
+                objectFit={"contain"}
+                borderRadius={"15px"}
+                border={
+                  colorMode == "light" ? lightBorderImage : darkBorderImage
+                }
+              />
+              {/* )} */}
             </AlertDialogBody>
           </AlertDialogContent>
         </AlertDialogOverlay>

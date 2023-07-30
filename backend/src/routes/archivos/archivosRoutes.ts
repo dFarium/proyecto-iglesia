@@ -31,4 +31,3 @@ archivosRoutes.get("/files/", getFiles);
 archivosRoutes.get("/file/download/:id", downloadFile);
 archivosRoutes.get("/file/specific/:id", viewFile);
 archivosRoutes.get("/file/:folderName/:name", sendImg);
- 

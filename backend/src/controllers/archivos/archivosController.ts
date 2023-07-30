@@ -118,9 +118,9 @@ const viewFile = async (req: Request, res: Response) => {
 const sendImg = async (req: Request, res: Response) => {
   const folderName = req.params.folderName;
   const imgName = req.params.name;
-  const imgPath = path.join(process.cwd(), "upload", folderName, imgName);
+  const imgPath = path.join(__dirname, "../upload", folderName, imgName);
 
-  res.sendFile(imgPath);
+  res.json({ imgPath });
 };
 
 // const viewFavorite = async (req: Request, res: Response) => {
