@@ -19,6 +19,7 @@ import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
 import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
+import { mailRoutes } from "./routes/correoPrestamo/mailRoutes";
 
 const validaToken = require("./controllers/usuario/validate-token");
 const admin = require("./controllers/usuario/admin");
@@ -28,10 +29,11 @@ app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
 app.use("/api/admin", validaToken, admin);
 app.use("/api", cancionesRoutes);
-
+app.use("/api", mailRoutes)
 app.use("/api", inventarioRoutes);
 app.use("/api", prestamoRoutes);
 app.use("/api", archivosRoutes);
+
 app.use("/api/upload", express.static(path.join(__dirname, "../upload")));
 
 app.listen(port, () => {
