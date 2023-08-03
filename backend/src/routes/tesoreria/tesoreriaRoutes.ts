@@ -1,22 +1,26 @@
 import { Router } from "express";
 import {
-    crearGastoTesoreria,
-    obtenerGastosTesoreria,
-    editarGastoTesoreria,
-    eliminarGastoTesoreria,
-    obtenerTodoGastoTesoreria,
+    crearGastoIngresoTesoreria,
+    ObtenerGastoIngresoTesoreria,
+    editarGastoIngresoTesoreria,
+    eliminarGastoIngresoTesoreria,
+    obtenerTodoTesoreria,
+    obtenerIngresoTesoreria,
+    obtenerGastoTesoreria,
 } from "../../controllers/tesoreria/tesoreriaController";
 
 export const tesoreriaRoutes = Router();
 
 //POST
-tesoreriaRoutes.post("/tesoreria/create", crearGastoTesoreria);
+tesoreriaRoutes.post("/tesoreria/create", crearGastoIngresoTesoreria);
 //put
-tesoreriaRoutes.put("/tesoreria/edit/:id", editarGastoTesoreria);
+tesoreriaRoutes.put("/tesoreria/edit/:id", editarGastoIngresoTesoreria);
 
 //delete
-tesoreriaRoutes.delete("/tesoreria/delete", eliminarGastoTesoreria);
+tesoreriaRoutes.delete("/tesoreria/delete", eliminarGastoIngresoTesoreria);
 
 //get
-tesoreriaRoutes.get("/tesoreria/getone", obtenerGastosTesoreria);
-tesoreriaRoutes.get("/tesoreria/getall", obtenerTodoGastoTesoreria);
+tesoreriaRoutes.get("/tesoreria/getone", ObtenerGastoIngresoTesoreria);//Obtiene 1 solo
+tesoreriaRoutes.get("/tesoreria/getall", obtenerTodoTesoreria);
+tesoreriaRoutes.get("/tesoreria/geting", obtenerIngresoTesoreria);
+tesoreriaRoutes.get("/tesoreria/getgas", obtenerGastoTesoreria);

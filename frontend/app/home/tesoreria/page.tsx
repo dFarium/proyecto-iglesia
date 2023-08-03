@@ -1,4 +1,9 @@
+"use client";
+
+import { ElegirBody } from "@/components/pages/tesoreria/body/elegirBody";
+
+
 export default function Page() {
-  return <div>Tesoreria</div>;
-  //   return <TesoreriaBody />;
+  return <ElegirBody />;
+
 }
