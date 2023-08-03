@@ -46,6 +46,7 @@ import {textDate} from "@/utils/dateUtils";
 // import {IItemInventario, getAllItemsInventario} from "@/data/inventario/item";
 import {IPrestamoInstrumento, getAllPrestamoInstrumento} from "@/data/prestamos/prestamos";
 import {useQuery} from "@tanstack/react-query";
+import {NuevoPrestamoInstrumento} from "@/components/pages/instrumentos/widgets/nuevoPrestamo";
 // import EliminarItemInventario from "../widgets/eliminarItem";
 // import { VerFotoItem } from "../widgets/verFotoItem";
 
@@ -494,7 +495,7 @@ export default function PrestamoBody() {
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
                     <Text textStyle={"titulo"}>Prestamos Instrumentos</Text>
-                    {/*<NuevoItemInventario/>*/}
+                    <NuevoPrestamoInstrumento/>
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
                     <Table variant={"striped"} size={"sm"} colorScheme="stripTable">

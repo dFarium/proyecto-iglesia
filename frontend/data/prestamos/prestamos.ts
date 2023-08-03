@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import {IItemInventario} from "@/data/inventario/item";
 
 export interface IPrestamoInstrumento {
     _id?: string,
@@ -24,6 +25,15 @@ export interface IPrestamoInstrumento {
     __v?: number
 }
 
+export interface ICrearInstrumento {
+    instrumento: string,
+    prestatario: string,
+    prestamista: string,
+    fechaInicio: Date,
+    fechaLimite: Date,
+    comentario?: string
+}
+
 const getAllPrestamoInstrumento = async () => {
     const res = await axios.get(`${process.env.API_URL}/prestamo/getall`);
     return res.data;
@@ -35,14 +45,14 @@ const getPrestamoInstrumento = async (id: string) => {
 };
 
 
-const editPrestamoInstrumento = async (id: string, newItem: IPrestamoInstrumento) => {
+const editPrestamoInstrumento = async (id: string, newItem: ICrearInstrumento) => {
     const res = await axios.put(`${process.env.API_URL}/prestamo/edit/${id}`, {
         newItem,
     });
     return res.data;
 };
 
-const createPrestamoInstrumento = async (prestamo: IPrestamoInstrumento) => {
+const createPrestamoInstrumento = async (prestamo: ICrearInstrumento) => {
     const res = await axios.post(
         `${process.env.API_URL}/prestamo/create`,
         prestamo
@@ -58,10 +68,20 @@ const deletePrestamoInstrumnto = async (id: string) => {
     return res.data;
 };
 
+const getInstrumentosPrestables = async () => {
+    const res = await axios.get(
+        `${process.env.API_URL}/prestamo/getAvailableInstrumento`
+    )
+    return res.data;
+}
+
+
+
 export {
     getAllPrestamoInstrumento,
     getPrestamoInstrumento,
     editPrestamoInstrumento,
     createPrestamoInstrumento,
     deletePrestamoInstrumnto,
+    getInstrumentosPrestables
 };

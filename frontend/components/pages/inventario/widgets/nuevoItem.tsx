@@ -1,4 +1,5 @@
 import { IItemInventario, createItemInventario } from "@/data/inventario/item";
+import {IPrestamoInstrumento,createPrestamoInstrumento} from "@/data/prestamos/prestamos";
 import { minDate, textDefaultDate } from "@/utils/dateUtils";
 import {
   AlertDialog,

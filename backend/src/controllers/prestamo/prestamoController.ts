@@ -3,11 +3,14 @@ import {IUsuarioModel, UsuarioModel} from "../../models/usuario/usuarioModel";
 import {Request, Response} from "express";
 import {CallbackError} from "mongoose";
 import {sendMail} from "../correoPrestamo/mailController";
+import {IItemInventario, ItemInventario} from "../../models/inventario/item";
 const nodeCron = require("node-cron");
 
 const createPrestamoInstrumento = async (req: Request, res: Response) => {
+  console.log("body: ",req.body);
   let newPrestamo = new PrestamoInstrumento(req.body);
 
+  console.log("object: ",newPrestamo);
   await newPrestamo.save().catch((err: CallbackError) => {
     console.log(err);
     return res.status(400).send({ message: "Error al generar prestamo" });
@@ -135,6 +138,21 @@ const notificarPrestamosPendientes = async () => {
     }
 };
 
+const getInstrumentosPrestables = async (req: Request, res: Response) => {
+    await ItemInventario.find({ categoria: "Instrumento", prestable:true })
+        .sort({ createdAt: "desc" })
+        .then((items: IItemInventario[]) => {
+            if (items.length === 0) {
+                return res.status(200).send([]);
+            }
+            return res.status(200).send(items);
+        })
+        .catch((err: CallbackError) => {
+            console.log(err);
+            return res.status(400).send({ message: "Error al encontrar los items" });
+        });
+};
+
 
 
 export {
@@ -143,5 +161,6 @@ export {
     editPrestamoInstrumento,
     deleteIPrestamoInventario,
     getAllPrestamosInstrumento,
-    notificarPrestamosPendientes
+    notificarPrestamosPendientes,
+    getInstrumentosPrestables
 };

@@ -5,7 +5,7 @@ import {
     editPrestamoInstrumento,
     deleteIPrestamoInventario,
     getAllPrestamosInstrumento,
-    notificarPrestamosPendientes,
+    notificarPrestamosPendientes, getInstrumentosPrestables,
 } from "../../controllers/prestamo/prestamoController";
 
 export const prestamoRoutes = Router();
@@ -23,3 +23,4 @@ prestamoRoutes.delete("/prestamo/delete", deleteIPrestamoInventario);
 //get
 prestamoRoutes.get("/prestamo/getone/:id", getPrestamoInstrumento);
 prestamoRoutes.get("/prestamo/getall", getAllPrestamosInstrumento);
+prestamoRoutes.get("/prestamo/getAvailableInstrumento", getInstrumentosPrestables);
