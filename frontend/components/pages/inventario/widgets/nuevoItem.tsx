@@ -25,17 +25,17 @@ import {
   Text,
   Switch,
   Box,
+  VStack,
 } from "@chakra-ui/react";
 
 import { useRef, useState } from "react";
-import {
-  MdAdd,
-  MdComputer,
-  MdPiano,
-  MdReceipt,
-  MdReceiptLong,
-} from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  IArchivos,
+  uploadNewFile,
+  uploadNewFileData,
+} from "@/data/archivos/archivos";
 
 function NuevoInstrumento() {
   // use disclosure
@@ -57,6 +57,9 @@ function NuevoInstrumento() {
 
   const [desc, setDesc] = useState<string>("");
   const [prestable, setPrestable] = useState<boolean>(false);
+
+  const [imagen, setImagen] = useState<File | null>(null);
+  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
@@ -117,6 +120,29 @@ function NuevoInstrumento() {
     },
   });
 
+  const handlePicChange = async (file: any) => {
+    const imagen = file.target.files?.[0] || null;
+    setImagen(imagen);
+    setUploadImg(true);
+  };
+
+  const uploadPicture = async (file: any, fileData: IArchivos) => {
+    const formFile = new FormData();
+    formFile.append("archivos", file);
+    try {
+      await uploadNewFile(formFile, "Imagenes", fileData.url);
+      console.log("file si");
+    } catch (error) {
+      console.log("file:", error);
+    }
+    try {
+      await uploadNewFileData(fileData);
+      console.log("data si");
+    } catch (error) {
+      console.log("data:", error);
+    }
+  };
+
   return (
     <>
       <Button
@@ -149,6 +175,8 @@ function NuevoInstrumento() {
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         onClose={onClose}
       >
         <AlertDialogOverlay>
@@ -197,13 +225,30 @@ function NuevoInstrumento() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -241,6 +286,8 @@ function NuevoInstrumento() {
                   setCicloMant(undefined);
                   setPrestable(false);
                   onClose();
+                  setImagen(null);
+                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -250,6 +297,8 @@ function NuevoInstrumento() {
                 onClick={() => {
                   // validation();
                   if (validation()) {
+                    const fecha: Date = new Date();
+                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
                     mutation.mutate({
                       nombre,
                       categoria: "Instrumento",
@@ -262,7 +311,19 @@ function NuevoInstrumento() {
                       ultMant: date,
                       ultMod: "Yo",
                       prestable,
+                      urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                     });
+                    if (imagen) {
+                      uploadPicture(imagen, {
+                        fileName: `${imagen.name}`,
+                        tagCategoria: "Inventario",
+                        mimetype: imagen.type,
+                        url: `${fechaStd}-${imagen.name}`,
+                        userSubida: "user",
+                        publico: true,
+                      });
+                    }
+
                     setNombre("");
                     setNombreErr(false);
                     setCantidad(1);
@@ -271,6 +332,7 @@ function NuevoInstrumento() {
                     setUltMant(undefined);
                     setCicloMant(undefined);
                     setDesc("");
+                    setImagen(null);
                     setPrestable(false);
                     onClose();
                   }
@@ -306,6 +368,9 @@ function NuevoEquipoElec() {
 
   const [desc, setDesc] = useState<string>("");
   const [prestable, setPrestable] = useState<boolean>(false);
+
+  const [imagen, setImagen] = useState<File | null>(null);
+  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
@@ -362,6 +427,32 @@ function NuevoEquipoElec() {
     },
   });
 
+  const handlePicChange = async (file: any) => {
+    const fecha: Date = new Date();
+    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+
+    const imagen = file.target.files?.[0] || null;
+    setImagen(imagen);
+    setUploadImg(true);
+  };
+
+  const uploadPicture = async (file: any, fileData: IArchivos) => {
+    const formFile = new FormData();
+    formFile.append("archivos", file);
+    try {
+      await uploadNewFile(formFile, "Imagenes", fileData.url);
+      console.log("file si");
+    } catch (error) {
+      console.log("file:", error);
+    }
+    try {
+      await uploadNewFileData(fileData);
+      console.log("data si");
+    } catch (error) {
+      console.log("data:", error);
+    }
+  };
+
   return (
     <>
       <Button
@@ -393,6 +484,8 @@ function NuevoEquipoElec() {
 
       <AlertDialog
         isOpen={isOpen}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onClose}
       >
@@ -455,13 +548,30 @@ function NuevoEquipoElec() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -503,6 +613,8 @@ function NuevoEquipoElec() {
                   setDesc("");
                   setPrestable(false);
                   onClose();
+                  setImagen(null);
+                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -579,6 +691,9 @@ function NuevoItemInventario() {
   const [desc, setDesc] = useState<string>("");
   const [prestable, setPrestable] = useState<boolean>(false);
 
+  const [imagen, setImagen] = useState<File | null>(null);
+  const [uploadImg, setUploadImg] = useState<boolean>(false);
+
   const date = new Date();
   const queryClient = useQueryClient();
 
@@ -633,6 +748,31 @@ function NuevoItemInventario() {
       queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
     },
   });
+
+  const handlePicChange = async (file: any) => {
+    const fecha: Date = new Date();
+    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+
+    const imagen = file.target.files?.[0] || null;
+    setImagen(imagen);
+    setUploadImg(true);
+  };
+
+  const uploadPicture = async (file: any, fileData: IArchivos) => {
+    const formFile = new FormData();
+    formFile.append("file", file);
+
+    try {
+      const resFile = await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName
+      );
+      const resData = await uploadNewFileData(fileData);
+    } catch (error) {
+      console.log("error");
+    }
+  };
 
   return (
     <>
@@ -696,6 +836,8 @@ function NuevoItemInventario() {
 
       <AlertDialog
         isOpen={isOpenInstrumentos}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onCloseInstrumentos}
       >
@@ -745,13 +887,30 @@ function NuevoItemInventario() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -789,6 +948,8 @@ function NuevoItemInventario() {
                   setCicloMant(undefined);
                   setPrestable(false);
                   onCloseInstrumentos();
+                  setImagen(null);
+                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -810,6 +971,7 @@ function NuevoItemInventario() {
                       ultMant: date,
                       ultMod: "Yo",
                       prestable,
+                      urlPic: "",
                     });
                     setNombre("");
                     setNombreErr(false);
@@ -835,6 +997,8 @@ function NuevoItemInventario() {
 
       <AlertDialog
         isOpen={isOpenEquipo}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onCloseEquipo}
       >
@@ -897,13 +1061,30 @@ function NuevoItemInventario() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -945,6 +1126,8 @@ function NuevoItemInventario() {
                   setDesc("");
                   setPrestable(false);
                   onCloseEquipo();
+                  setImagen(null);
+                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -986,6 +1169,8 @@ function NuevoItemInventario() {
 
       <AlertDialog
         isOpen={isOpenVarios}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onCloseVarios}
       >
