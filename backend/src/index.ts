@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
 
 dotenv.config();
 const app: Express = express();
@@ -16,23 +17,24 @@ import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
 import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
 import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
 import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
+import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
+import { archivosRoutes } from "./routes/archivos/archivosRoutes";
 import { mailRoutes } from "./routes/correoPrestamo/mailRoutes";
-const validaToken = require('./controllers/usuario/validate-token')
-const admin = require('./controllers/usuario/admin')
+
+const validaToken = require("./controllers/usuario/validate-token");
+const admin = require("./controllers/usuario/admin");
 
 app.use("/api", inventarioRoutes);
 app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
 app.use("/api/admin", validaToken, admin);
-app.use("/api",cancionesRoutes);
-app.use("/api",mailRoutes)
-
-import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
-import { archivosRoutes } from "./routes/archivos/archivosRoutes";
-
+app.use("/api", cancionesRoutes);
+app.use("/api", mailRoutes)
 app.use("/api", inventarioRoutes);
 app.use("/api", prestamoRoutes);
 app.use("/api", archivosRoutes);
+
+app.use("/api/upload", express.static(path.join(__dirname, "../upload")));
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
