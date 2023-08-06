@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   filename: function (req: Request, file, cb) {
     // const nameFile = req.params.name;
     // cb(null, nameFile);
-    cb(null, Date.now() + file.originalname)
+    cb(null, Date.now() + req.params.name)
   },
 });
 
@@ -29,7 +29,8 @@ const filter = (req, file, cb) => {
     cb(null, true)
   }
   else {
-    cb(new Error("Invalid file type"))
+    cb(null, true)
+    //cb(new Error("Invalid file type"))
   }
 
 }
@@ -38,7 +39,7 @@ const upload = multer({
   storage: storage,
   fileFilter: filter,
   limits: {
-    fileSize: 1024 * 1024 * 150
+    fileSize: 1024 * 1024 * 1
   }
 })
 

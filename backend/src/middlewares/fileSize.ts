@@ -1,15 +1,13 @@
 const maxSizeFile = require("../middlewares/fileSize");
 import { Response } from "express";
 
-const fileSizeError = (err, res: Response) => {
-  console.log("atrapado")
-  // return res.status(201).send({ message: "Archivo subido correctamente" });
-  // // if (err) {
-  // //   console.log(err.code)
-  // //   return res.status(413).send({ message: "El archivo es un grande" });
-  // // } else {
-  // //   return res.status(201).send({ message: "Archivo subido correctamente" });
-  // // }
+const fileSizeError = (err, req, res: Response, next) => {
+  if (err) {
+
+    return res.status(413).send({ message: "El archivo es muy grande" });
+  } else {
+    next()
+  }
 };
 
 export { fileSizeError };

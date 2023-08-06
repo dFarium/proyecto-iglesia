@@ -20,21 +20,22 @@ const uploadNewFile = async (req: Request, res: Response) => {
     
     Archivos.findOne({ fileName: req.body.fileName }).then(
         async (file: IArchivos) => {
-            console.log("nueo",newFile);
-            console.log("file",file);
+            //console.log("nueo",newFile);
+            //console.log("file",file);
             if (file) {
                 console.log("Existe");
                 return res.status(400).send({ message: "El archivo ya existe" });
             }
             await newFile
                 .save()
+                .catch((err: CallbackError) => {
+                    console.log("NO Subido");
+                    //console.log(err);
+                    return res.status(400).send({ message: "Error al subir archivo" });
+                })
                 .then(() => {
                     console.log("Subido");
                     return res.status(201).send(newFile);
-                }).catch((err: CallbackError) => {
-                    console.log("NO Subido");
-                    console.log(err);
-                    return res.status(400).send({ message: "Error al subir archivo" });
                 });
         }
     );
