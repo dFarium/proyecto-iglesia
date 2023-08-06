@@ -31,7 +31,11 @@ import { usePathname } from "next/navigation";
 
 export default function SideBar() {
   const { colorMode, toggleColorMode } = useColorMode();
-
+  const router = useRouter();
+  function handleLogout() {
+    localStorage.removeItem('auth-token');  // Elimina el token del local storage
+    router.push('/');
+  }
   return (
     <Box
       height={"100%"}
@@ -64,7 +68,7 @@ export default function SideBar() {
           <SideMenu />
         </VStack>
 
-        <MenuItemSideBar icon={MdLogout} option="Cerrar Sesión" href="/" />
+        <MenuItemSideBar icon={MdLogout} option="Cerrar Sesión" onClick={handleLogout} />
       </VStack>
     </Box>
   );
@@ -73,13 +77,14 @@ export default function SideBar() {
 function MenuItemSideBar(prop: {
   icon: IconType;
   option: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
 }) {
   const pathName: string = usePathname();
 
   const { colorMode } = useColorMode();
   return (
-    <Link as={NextLink} href={prop.href}>
+      <Link as={NextLink} href={prop.href || '#'} onClick={prop.onClick}> {/* '#' usado en caso de que href sea null o undefine */}
       <Box pr={"25px"} as="button">
         <HStack
           _hover={

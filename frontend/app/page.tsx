@@ -3,6 +3,7 @@
 import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode,} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function Page() {
   const { colorMode } = useColorMode();
@@ -24,14 +25,27 @@ export default function Page() {
           password
         })
       });
+      const data = await res.json();
       if (res.status === 200) {
-        router.push("/home/");
+        Swal.fire({
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500
+        })
+        // Guarda el token en el local storage
+        localStorage.setItem('auth-token', data.data.token);
+        console.log("Token guardado:", data.data.token);
+        // Pide el token del local storage(Prueba)
+        const token = localStorage.getItem('auth-token');
+        console.log("Token recibido:", token);
+        router.push("/home");
       } else {
         const errorData = await res.json();
         console.log(errorData);
       }
     } catch (error) {
-      console.log("KE CHUCHA");
+      Swal.fire('', 'Contraseña incorrecta');
+      console.log("Contraseña inválida");
       console.log(error);
     }
   };
@@ -68,7 +82,6 @@ export default function Page() {
           />
         </FormControl>
         <Button type="submit" style={{backgroundColor: '#005FFF', color: '#FFFFFF'}}>Iniciar sesión</Button>
-        <Button style={{backgroundColor: '#06FF47', color: '#FFFFFF'}} onClick={() => router.push("/home/register")}>Crear usuario</Button>
       </VStack>
     </Box>
   );
