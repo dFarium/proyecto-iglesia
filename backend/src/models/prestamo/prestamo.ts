@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import {UsuarioModel} from "../usuario/usuarioModel";
 
 export interface IPrestamoInstrumento {
   instrumento: Schema.Types.ObjectId; 
@@ -13,9 +14,9 @@ export interface IPrestamoInstrumento {
 
 const PrestamoSchema = new Schema<IPrestamoInstrumento>(
   {
-    instrumento: { type: Schema.Types.ObjectId, required: true },
-    prestatario: { type: Schema.Types.ObjectId, required: true },
-    prestamista: { type: Schema.Types.ObjectId, required: true },
+    instrumento: { type: Schema.Types.ObjectId, required: true, ref: UsuarioModel},
+    prestatario: { type: Schema.Types.ObjectId, required: true, ref: UsuarioModel },
+    prestamista: { type: Schema.Types.ObjectId, required: true, ref: UsuarioModel},
     devuelto: { type: Boolean, default: false },
     fechaInicio: { type: Date, required: true },
     fechaLimite: { type: Date, required: true },

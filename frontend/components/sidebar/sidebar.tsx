@@ -12,7 +12,7 @@ import {
   useColorMode,
   Link,
 } from "@chakra-ui/react";
-import React, { ReactNode } from "react";
+import React from "react";
 import { IconType } from "react-icons";
 import {
   MdCalendarMonth,
@@ -25,10 +25,9 @@ import {
   MdPerson,
   MdPiano,
   MdOutlineSavings,
-  MdSavings
 } from "react-icons/md";
 import NextLink from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function SideBar() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -44,6 +43,7 @@ export default function SideBar() {
       pt={"25px"}
       display={{ base: "none", md: "block" }}
       overflowY={"auto"}
+      minW={"260px"}
     >
       <VStack justify={"space-between"} h={"100%"}>
         <VStack spacing={88} align={"left"}>
@@ -132,29 +132,24 @@ function SideMenu() {
           href="/home/canciones"
         />
         <MenuItemSideBar
-          icon={MdOutlineInventory}
-          option="Inventario"
-          href="/home/inventario"
-        />
-        <MenuItemSideBar
           icon={MdPiano}
           option="Instrumentos"
           href="/home/instrumentos"
         />
         <MenuItemSideBar
-          icon={MdSavings}
-          option="Tesorería"
+          icon={MdOutlineInventory}
+          option="Inventario"
+          href="/home/inventario"
+        />
+        <MenuItemSideBar
+          icon={MdOutlineSavings}
+          option="Tesoreria"
           href="/home/tesoreria"
         />
         <MenuItemSideBar
           icon={MdPerson}
           option="Usuarios"
           href="/home/usuarios"
-        />
-        <MenuItemSideBar
-          icon={MdOutlineSavings}
-          option="Tesoreria"
-          href="/home/tesoreria"
         />
       </VStack>
     </Box>
