@@ -14,10 +14,10 @@ export const archivosRoutes = Router();
 
 // post
 archivosRoutes.post("/file/data", uploadNewFile);
+          //name+mimetipe
 archivosRoutes.post(
   "/file/upload/:folderName/:name",
-  upload.array("archivos"), fileSizeError,
-  uploadNewFile
+  upload.array('archivos'), fileSizeError, uploadNewFile
 );
 
 //put
