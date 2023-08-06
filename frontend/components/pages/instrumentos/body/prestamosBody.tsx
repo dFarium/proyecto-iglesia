@@ -223,7 +223,7 @@ export default function PrestamoBody() {
                         <Text
                             //  minW={"100%"} textAlign={"center"}
                         >
-                            Fecha Límite Devolución
+                            Fecha Límite
                         </Text>
                     );
                 },

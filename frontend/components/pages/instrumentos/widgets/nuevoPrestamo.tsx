@@ -124,7 +124,7 @@ function NuevoPrestamoInstrumento(){
         const instrumentosData = instrumentosPrestablesQuery.data;
         return instrumentosData.map((instrumento:IItemInventario)   =>{
             return(
-                <option key={instrumento._id}>{instrumento.nombre}</option>
+                <option value={instrumento._id} key={instrumento._id}>{instrumento.nombre}</option>
             )
         })
     }
@@ -178,14 +178,14 @@ function NuevoPrestamoInstrumento(){
                             Registrar nuevo préstamo
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            <FormControl>
+                            <FormControl isRequired={true}>
                                 <FormLabel>Instrumento</FormLabel>
                                 <Select placeholder={"Escoja Instrumento"} onChange={handleInstrumentoChange}>
                                     {showInstrumentos()}
                                 </Select>
                             </FormControl>
 
-                            <FormControl>
+                            <FormControl isRequired={true}>
                                 <FormLabel>Prestamista</FormLabel>
                                 <Select placeholder={"Escoja Prestamista"} onChange={handlePrestamistaChange}>
                                     <option value={"649380e7537a0232986409b1"}>PRESTAMISTA</option>
@@ -194,7 +194,7 @@ function NuevoPrestamoInstrumento(){
                                 </Select>
                             </FormControl>
 
-                            <FormControl>
+                            <FormControl isRequired={true}>
                                 <FormLabel>Prestatario</FormLabel>
                                 <Select placeholder={"Escoja Prestatario"} onChange={handlePrestatarioChange}>
                                     <option value={"6493cd9b7683e67c6745f0b8"}>pRESTATARIO</option>
@@ -203,7 +203,7 @@ function NuevoPrestamoInstrumento(){
                                 </Select>
                             </FormControl>
 
-                            <FormControl>
+                            <FormControl isRequired={true}>
                                 <FormLabel>Fecha de Inicio</FormLabel>
                                 <Input
                                     type={"date"}
@@ -212,7 +212,7 @@ function NuevoPrestamoInstrumento(){
                                 />
                             </FormControl>
 
-                            <FormControl>
+                            <FormControl isRequired={true}>
                                 <FormLabel>Fecha de Devolución</FormLabel>
                                 <Input
                                     type={"date"}
@@ -269,8 +269,7 @@ function NuevoPrestamoInstrumento(){
                                         fechaLimite,
                                         comentario
                                     })
-
-
+                                    onClose();
                                 }}
                             >
                                 Aceptar
