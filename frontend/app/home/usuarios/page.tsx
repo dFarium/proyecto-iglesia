@@ -1,5 +1,8 @@
-import UsuariosBody from "@/components/pages/usuarios/body/usuariosBody";
+"use client";
+
+import { ElegirBody } from "@/components/pages/usuarios/body/elegirbody";
 
 export default function Page() {
-  return <UsuariosBody />;
+  return <ElegirBody />;
 }
+
