@@ -10,7 +10,6 @@ interface MulterRequest extends Request {
 
 const uploadNewFile = async (req: Request, res: Response) => {
   const newFile = new Archivos(req.body);
-  console.log(newFile);
 
   // if (req.params.fileValido === false){
   //     return res.status(415).send({ message: 'Solo se aceptan archivos con extensión .pdf, .doc y .docx' })
@@ -25,12 +24,13 @@ const uploadNewFile = async (req: Request, res: Response) => {
       }
       await newFile
         .save()
-        .catch((err: CallbackError) => {
-          console.log(err);
-          return res.status(400).send({ message: "Error al subir archivo" });
-        })
         .then(() => {
+          console.log("subido")
           return res.status(201).send(newFile);
+        })
+        .catch((err: CallbackError) => {
+          console.log("error no subido:", err);
+          return res.status(400).send({ message: "Error al subir archivo" });
         });
     }
   );

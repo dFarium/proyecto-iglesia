@@ -16,8 +16,8 @@ export const archivosRoutes = Router();
 archivosRoutes.post("/file/data", uploadNewFile);
 archivosRoutes.post(
   "/file/upload/:folderName/:name",
-  upload.array("archivos"),
-  fileSizeError
+  upload.array("archivos"), fileSizeError,
+  uploadNewFile
 );
 
 //put
