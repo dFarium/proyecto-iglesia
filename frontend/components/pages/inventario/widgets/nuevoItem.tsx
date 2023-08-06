@@ -130,7 +130,7 @@ function NuevoInstrumento() {
     formFile.append("archivos", file);
     try {
       console.log(fileData.url);
-      await uploadNewFile(formFile, "Imagenes", fileData.url);
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName);
       console.log("file si");
     } catch (error) {
       console.log("file no:", error);
@@ -318,7 +318,8 @@ function NuevoInstrumento() {
                         fileName: `${imagen.name}`,
                         tagCategoria: "Inventario",
                         mimetype: imagen.type,
-                        url: `${fechaStd}-${imagen.name}`,
+                        //url: `${fechaStd}-${imagen.name}`,
+                        url: "./upload/Imagenes",
                         userSubida: "user",
                         publico: true,
                       });

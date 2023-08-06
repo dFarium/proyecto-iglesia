@@ -24,18 +24,18 @@ const uploadNewFile = async (req: Request, res: Response) => {
             //console.log("file",file);
             if (file) {
                 console.log("Existe");
-                return res.status(400).send({ message: "El archivo ya existe" });
+                //return res.status(400).send({ message: "El archivo ya existe" });
             }
             await newFile
                 .save()
+                .then(() => {
+                    console.log("Subido");
+                    return res.status(201).send(newFile);
+                })
                 .catch((err: CallbackError) => {
                     console.log("NO Subido");
                     //console.log(err);
                     return res.status(400).send({ message: "Error al subir archivo" });
-                })
-                .then(() => {
-                    console.log("Subido");
-                    return res.status(201).send(newFile);
                 });
         }
     );

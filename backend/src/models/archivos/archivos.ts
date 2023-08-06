@@ -13,7 +13,7 @@ export interface IArchivos {
 
 const ArchivoSchema = new Schema<IArchivos>(
   {
-    fileName: { type: String, required: false }, //cambio
+    fileName: { type: String, required: true }, //cambio
     tagCategoria: { type: String, required: false }, //cambio
     mimetype: { type: String, required: false }, //cambio
     url: { type: String, required: false }, //cambio
