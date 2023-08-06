@@ -129,10 +129,11 @@ function NuevoInstrumento() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
+      console.log(fileData.url);
       await uploadNewFile(formFile, "Imagenes", fileData.url);
       console.log("file si");
     } catch (error) {
-      console.log("file:", error);
+      console.log("file no:", error);
     }
     try {
       await uploadNewFileData(fileData);

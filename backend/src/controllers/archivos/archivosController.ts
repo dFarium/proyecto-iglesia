@@ -10,27 +10,31 @@ interface MulterRequest extends Request {
 
 const uploadNewFile = async (req: Request, res: Response) => {
     const newFile = new Archivos(req.body);
-    console.log(newFile);
+    //console.log("NUEVOOOOO",newFile);
 
     // if (req.params.fileValido === false){
     //     return res.status(415).send({ message: 'Solo se aceptan archivos con extensión .pdf, .doc y .docx' })
     // }
     // if (file.length === 0) {
     //     return res.status(404).send({ message: 'No se ha seleccionado ningun archivo' })
-
+    
     Archivos.findOne({ fileName: req.body.fileName }).then(
         async (file: IArchivos) => {
+            console.log("nueo",newFile);
+            console.log("file",file);
             if (file) {
+                console.log("Existe");
                 return res.status(400).send({ message: "El archivo ya existe" });
             }
             await newFile
                 .save()
-                .catch((err: CallbackError) => {
+                .then(() => {
+                    console.log("Subido");
+                    return res.status(201).send(newFile);
+                }).catch((err: CallbackError) => {
+                    console.log("NO Subido");
                     console.log(err);
                     return res.status(400).send({ message: "Error al subir archivo" });
-                })
-                .then(() => {
-                    return res.status(201).send(newFile);
                 });
         }
     );
@@ -161,3 +165,4 @@ const sendImg = async (req: Request, res: Response) => {
 // }
 
 export { uploadNewFile, getFiles, downloadFile, deleteFile, viewFile, sendImg };
+

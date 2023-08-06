@@ -13,10 +13,10 @@ export interface IArchivos {
 
 const ArchivoSchema = new Schema<IArchivos>(
   {
-    fileName: { type: String, required: true },
-    tagCategoria: { type: String, required: true },
-    mimetype: { type: String, required: true },
-    url: { type: String, required: true },
+    fileName: { type: String, required: false }, //cambio
+    tagCategoria: { type: String, required: false }, //cambio
+    mimetype: { type: String, required: false }, //cambio
+    url: { type: String, required: false }, //cambio
     userSubida: { type: String, default: "" }, //cambio
     userModifica: { type: Schema.Types.ObjectId, default: null },
     publico: { type: Boolean, default: false },
