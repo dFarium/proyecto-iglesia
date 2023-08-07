@@ -52,7 +52,7 @@ const getFiles = async (req: Request, res: Response) => {
 const downloadFile = async (req: Request, res: Response) => {
     await Archivos.findById(req.params.id)
         .then((item) => {
-            console.log(item.url + "/" + item.fileName)
+            //console.log(item.url + "/" + item.fileName)
             return res.download(item.url + "/" + item.fileName, item.originalName);
         })
         .catch((err: CallbackError) => {
@@ -98,6 +98,23 @@ const sendImg = async (req: Request, res: Response) => {
     res.sendFile(imgPath);
 };
 
+const uploadNewFileData = async (req: Request, res: Response) => {
+    const newFile = new Archivos(req.params.originalName);
+
+    Archivos.findOne({ originalName: req.params.originalName }).then(
+        async (file: IArchivos) => {
+        await newFile
+            .save()
+            .catch((err: CallbackError) => {
+            console.log(err);
+            return res.status(400).send({ message: "Error al subir archivo" });
+        })
+        .then(() => {
+            return res.status(201).send(newFile);
+        });
+    });
+};
+
 // const viewFavorite = async (req: Request, res: Response) => {
 //     await Archivos.findById(req.params.id)
 //         .then((item) => {
@@ -133,5 +150,5 @@ const sendImg = async (req: Request, res: Response) => {
 //     })
 // }
 
-export { uploadNewFile, getFiles, downloadFile, deleteFile, viewFile, sendImg };
+export { uploadNewFile, uploadNewFileData, getFiles, downloadFile, deleteFile, viewFile, sendImg };
 

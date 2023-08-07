@@ -129,17 +129,11 @@ function NuevoInstrumento() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      console.log(fileData.url);
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName);
-      console.log("file si");
+      
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName );
+      console.log("file si arriba");
     } catch (error) {
-      console.log("file no:", error);
-    }
-    try {
-      await uploadNewFileData(fileData);
-      console.log("data si");
-    } catch (error) {
-      console.log("data:", error);
+      console.log("file no arriba:", fileData.fileName);
     }
   };
 
@@ -298,7 +292,7 @@ function NuevoInstrumento() {
                   // validation();
                   if (validation()) {
                     const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
                     mutation.mutate({
                       nombre,
                       categoria: "Instrumento",
@@ -315,7 +309,8 @@ function NuevoInstrumento() {
                     });
                     if (imagen) {
                       uploadPicture(imagen, {
-                        fileName: `${imagen.name}`,
+                        originalName: `${imagen.name}`,
+                        fileName: `${fechaStd}-${imagen.name}`,
                         tagCategoria: "Inventario",
                         mimetype: imagen.type,
                         //url: `${fechaStd}-${imagen.name}`,
@@ -441,16 +436,16 @@ function NuevoEquipoElec() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.url);
+      await uploadNewFile(formFile, "Imagenes",fileData.fileName);
       console.log("file si");
     } catch (error) {
-      console.log("file:", error);
+      console.log("file abajo:", error);
     }
     try {
       await uploadNewFileData(fileData);
-      console.log("data si");
+      console.log("data si abajo");
     } catch (error) {
-      console.log("data:", error);
+      console.log("data abajo:", error);
     }
   };
 

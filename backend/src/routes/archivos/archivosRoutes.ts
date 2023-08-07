@@ -8,15 +8,16 @@ import {
   deleteFile,
   viewFile,
   sendImg,
+  uploadNewFileData,
 } from "../../controllers/archivos/archivosController";
 
 export const archivosRoutes = Router();
 
 // post
-archivosRoutes.post("/file/data", uploadNewFile);
+archivosRoutes.post("/file/data", uploadNewFileData);
           //name+mimetipe
 archivosRoutes.post(
-  "/file/upload/:folderName/:name",
+  "/file/upload/:folderName/:saveName",
   upload.array('archivos'), fileSizeError, uploadNewFile
 );
 

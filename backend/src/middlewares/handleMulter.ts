@@ -4,7 +4,7 @@ import { Request } from "express";
 
 const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {
-    console.log("CL en multer destination",req.params.folderName);
+    //console.log("CL en multer destination",req.params.folderName);
     const route = "./upload/" + req.params.folderName;
     if (!fs.existsSync(route)) {
       fs.mkdirSync(route, { recursive: true });
@@ -13,10 +13,9 @@ const storage = multer.diskStorage({
   },
 
   filename: function (req: Request, file, cb) {
-    // const nameFile = req.params.name;
-    // cb(null, nameFile);
-    
-    cb(null, Date.now() + file.originalname)
+
+    //console.log("acac", req.params.saveName)
+    cb(null, req.params.saveName)
   },
 });
 
