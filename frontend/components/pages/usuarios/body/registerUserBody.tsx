@@ -24,6 +24,8 @@ function RegisterUserBody() {
     const [emailTouched, setEmailTouched] = useState(false);
 
     const [telefono, setTelefono] = useState("");
+    const [isValidTelefono, setIsValidTelefono] = useState(true);
+    const [telefonoTouched, setTelefonoTouched] = useState(false);
 
     const [password, setPassword] = useState("");
     const [isValidPassword, setIsValidPassword] = useState(true);
@@ -37,15 +39,13 @@ function RegisterUserBody() {
 
     const [rol, setRoles] = useState<string[]>([]);
 
-    // const [estado, setEstado] = useState<string>("");
-
-    // const [archivos, setArchivos] = useState<string>("");
 
     // Estados para menejo de errores
     const [nameError, setNameError] = useState("");
     const [rutError, setRutError] = useState("");
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [telefonoError, setTelefonoError ] = useState("");
 
     // Manejadores de eventos de 'onBlur'
     const handleNameBlur = () => setNameTouched(true);
@@ -60,6 +60,7 @@ function RegisterUserBody() {
     };
     const handleEmailBlur = () => setEmailTouched(true);
     const handlePasswordBlur = () => setPasswordTouched(true);
+    const handleTelefonoBlur = () => setTelefonoTouched(true);
 
     // Funciones de manejo de cambio actualizadas para incluir la validación
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,11 +89,11 @@ function RegisterUserBody() {
         setRut(e.target.value);
         if(e.target.value.length < 9){
             setIsValidRut(false);
-            setRutError("Debe tener 8 o más caracteres");
+            setRutError("Debe tener más de 8 caracteres");
         }
         else if(e.target.value.length > 12){
             setIsValidRut(false);
-            setRutError("Debe tener 13 o menos caracteres");
+            setRutError("Debe tener menos de 13 caracteres");
         }
         else{
             setIsValidRut(true);
@@ -121,7 +122,7 @@ function RegisterUserBody() {
         setPassword(e.target.value);
         if(e.target.value.length < 5){
             setIsValidPassword(false);
-            setPasswordError("La contraseña debe tener 5 o más caracteres");
+            setPasswordError("La contraseña debe tener más de 4 caracteres");
         }
         else if(e.target.value.length > 1024){
             setIsValidPassword(false);
@@ -135,6 +136,18 @@ function RegisterUserBody() {
     
     const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTelefono(e.target.value);
+        if(e.target.value.length < 11){
+            setIsValidTelefono(false);
+            setTelefonoError("El Nro de Teléfono debe tener más de 10 números");
+        }
+        else if(e.target.value.length > 15){
+            setIsValidTelefono(false);
+            setTelefonoError("El Nro de Teléfono debe tener menos de 16 números");
+        }
+        else{
+            setIsValidTelefono(true);
+            setTelefonoError("");
+        }
     };
 
     const handleDireccionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,14 +161,6 @@ function RegisterUserBody() {
     const handleRRSSChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRRSS(e.target.value);
     };
-
-    // const handleEstadoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     setEstado(e.target.value);
-    // };
-
-    // const handleArchivosChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     setArchivos(e.target.value);
-    // };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -195,10 +200,6 @@ function RegisterUserBody() {
                 },
                 body: JSON.stringify(requestBody)
             });
-            // if (!res.ok) {
-            //     console.error('Error al realizar la solicitud:', res.statusText);
-            //     return;
-            // }
             if (res.status === 200) {
                 Swal.fire({
                     title: 'Usuario Creado',
@@ -208,9 +209,10 @@ function RegisterUserBody() {
                     timer: 2000
                 })
                 setTimeout(() => {
-                    router.push("/home");
+                    router.push("/home/usuarios/getUsuarios");
                 }, 2500);
-            } else {
+            } else if(res.status === 400){
+                console.log("ERROR 400")
                 const errorData = await res.json();
                 if (errorData.message === 'RUT ya registrado') {
                     setIsValidRut(false);
@@ -218,9 +220,9 @@ function RegisterUserBody() {
                 } else if (errorData.message === 'Email ya registrado') {
                     setIsValidEmail(false);
                     setEmailError('Correo en uso');
-                // } else if (errorData.message === 'Teléfono ya registrado') {
-                //     setIsValidPhone(false);
-                //     setPhoneError('Teléfono en uso');
+                } else if (errorData.message === 'Teléfono ya registrado') {
+                    setIsValidTelefono(false);
+                    setTelefonoError('Teléfono en uso');
                 } else {
                     console.log(errorData);
                 }
@@ -243,79 +245,88 @@ function RegisterUserBody() {
         display={"flex"}
         >
             <VStack
-                as="form"
-                onSubmit={handleSubmit}
                 minW={"30%"}
                 maxH={"90vh"}
-                overflowY="auto"
                 margin={"auto"}
                 bg={colorMode === "light" ? "container.light" : "container.dark"}
-                //borderRadius={"10px"}
+                borderRadius={"10px"}
                 p={"40px"}
-                boxShadow="0 0 10px 2px #88AAFF"
-            >
-                <Text textStyle={"titulo"}>Registro de usuario</Text>
-                <FormControl isInvalid={!isValidName && nameTouched}>
-                    <FormLabel>Nombre</FormLabel>
-                    <Input placeholder='Nombre' value={name} onChange={handleNameChange} onBlur={handleNameBlur} required/>
-                    {!isValidName && nameTouched && (
-                        <FormErrorMessage>{nameError}</FormErrorMessage>
-                    )}
-                </FormControl>
-                <FormControl isInvalid={!isValidRut && rutTouched}>
-                    <FormLabel>Rut</FormLabel>
-                    <Input placeholder='xx.xxx.xxx-x' value={rut} onChange={handleRutChange} onBlur={handleRutBlur} required/>
-                    {!isValidRut && rutTouched && (
-                        <FormErrorMessage>{rutError}</FormErrorMessage>
-                    )}
-                </FormControl>
-                <FormControl mt={"25px"}>
-                    <FormLabel>Fecha de nacimiento</FormLabel>
-                    <Input type="date" max={currentDate} value={fechaNacimiento ? fechaNacimiento.toISOString().split('T')[0] : ''} onChange={handleFechaNacimientoChange} required />
-                </FormControl>
-                <FormControl isInvalid={!isValidEmail && emailTouched}>
-                    <FormLabel>Email</FormLabel>
-                    <Input placeholder='email@gmail.com' value={email} onChange={handleEmailChange} onBlur={handleEmailBlur} />
-                    {!isValidEmail && emailTouched && (
-                        <FormErrorMessage>{emailError}</FormErrorMessage>
-                    )}
-                </FormControl>
-                <FormControl isInvalid={!isValidPassword && passwordTouched}>
-                    <FormLabel>Contraseña</FormLabel>
-                    <Input placeholder='*****' type="password" value={password} onChange={handlePasswordChange} onBlur={handlePasswordBlur} required/>
-                    {!isValidPassword && passwordTouched && (
-                        <FormErrorMessage>{passwordError}</FormErrorMessage>
-                    )}
-                </FormControl>
-                <FormControl>
-                    <FormLabel>Teléfono</FormLabel>
-                    <Input placeholder="+569xxxxxxxx" value={telefono} onChange={handleTelefonoChange} required/>
-                </FormControl>
-                <FormControl>
-                    <FormLabel>Dirección</FormLabel>
-                    <Input placeholder="Calle N°" value={direccion} onChange={handleDireccionChange} required/>
-                </FormControl>
-                <FormControl>
-                    <FormLabel>Numero de emergencia</FormLabel>
-                    <Input placeholder="+569xxxxxxxx" value={num_emergencia} onChange={handleNumEmergenciaChange} required/>
-                </FormControl>
-                <FormControl>
-                    <FormLabel>RRSS</FormLabel>
-                    <Input placeholder="@instagram" value={RRSS} onChange={handleRRSSChange}/>
-                </FormControl>
-                <FormControl>
-                <FormLabel>Roles</FormLabel>
-                    <CheckboxGroup colorScheme="green" value={rol} onChange={handleRolesChange}>
-                    <HStack spacing={3}>
-                        <Checkbox value="admin">Admin</Checkbox>
-                        <Checkbox value="directiva">Directiva</Checkbox>
-                        <Checkbox value="miembro">Miembro</Checkbox>
+                boxShadow="0 0 10px 2px #88AAFF">
+                <VStack>
+                    <Text textStyle={"titulo"}>Registro de usuario</Text>
+                </VStack>
+                <VStack
+                as="form"
+                onSubmit={handleSubmit}
+                overflowY="auto"
+                p={"40px"}
+                margin={"auto"}
+                >
+                    <FormControl isInvalid={!isValidName && nameTouched}>
+                        <FormLabel>Nombre</FormLabel>
+                        <Input placeholder='Nombre' value={name} onChange={handleNameChange} onBlur={handleNameBlur} required/>
+                        {!isValidName && nameTouched && (
+                            <FormErrorMessage>{nameError}</FormErrorMessage>
+                        )}
+                    </FormControl>
+                    <FormControl isInvalid={!isValidRut && rutTouched}>
+                        <FormLabel>Rut</FormLabel>
+                        <Input placeholder='xx.xxx.xxx-x' value={rut} onChange={handleRutChange} onBlur={handleRutBlur} required/>
+                        {!isValidRut && rutTouched && (
+                            <FormErrorMessage>{rutError}</FormErrorMessage>
+                        )}
+                    </FormControl>
+                    <FormControl mt={"25px"}>
+                        <FormLabel>Fecha de nacimiento</FormLabel>
+                        <Input type="date" max={currentDate} value={fechaNacimiento ? fechaNacimiento.toISOString().split('T')[0] : ''} onChange={handleFechaNacimientoChange} required />
+                    </FormControl>
+                    <FormControl isInvalid={!isValidEmail && emailTouched}>
+                        <FormLabel>Email</FormLabel>
+                        <Input placeholder='email@gmail.com' value={email} onChange={handleEmailChange} onBlur={handleEmailBlur} />
+                        {!isValidEmail && emailTouched && (
+                            <FormErrorMessage>{emailError}</FormErrorMessage>
+                        )}
+                    </FormControl>
+                    <FormControl isInvalid={!isValidPassword && passwordTouched}>
+                        <FormLabel>Contraseña</FormLabel>
+                        <Input placeholder='*****' type="password" value={password} onChange={handlePasswordChange} onBlur={handlePasswordBlur} required/>
+                        {!isValidPassword && passwordTouched && (
+                            <FormErrorMessage>{passwordError}</FormErrorMessage>
+                        )}
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>Teléfono</FormLabel>
+                        <Input placeholder="+569xxxxxxxx" value={telefono} onChange={handleTelefonoChange} onBlur={handleTelefonoBlur} required/>
+                        {!isValidTelefono && telefonoTouched && (
+                            <FormErrorMessage>{telefonoError}</FormErrorMessage>
+                        )}
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>Dirección</FormLabel>
+                        <Input placeholder="Calle N°" value={direccion} onChange={handleDireccionChange} required/>
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>Numero de emergencia</FormLabel>
+                        <Input placeholder="+569xxxxxxxx" value={num_emergencia} onChange={handleNumEmergenciaChange} required/>
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>RRSS</FormLabel>
+                        <Input placeholder="@instagram" value={RRSS} onChange={handleRRSSChange}/>
+                    </FormControl>
+                    <FormControl>
+                    <FormLabel>Roles</FormLabel>
+                        <CheckboxGroup colorScheme="green" value={rol} onChange={handleRolesChange}>
+                        <HStack spacing={3}>
+                            <Checkbox value="admin">Admin</Checkbox>
+                            <Checkbox value="directiva">Directiva</Checkbox>
+                            <Checkbox value="miembro">Miembro</Checkbox>
+                        </HStack>
+                        </CheckboxGroup>
+                    </FormControl>
+                    <HStack p={"10px"}>
+                        <Button type="submit" colorScheme="green">Crear usuario</Button>
                     </HStack>
-                    </CheckboxGroup>
-                </FormControl>
-                <HStack p={"10px"}>
-                    <Button type="submit" colorScheme="green">Crear usuario</Button>
-                </HStack>
+                </VStack>
             </VStack>
         </Box>
     );
