@@ -302,7 +302,7 @@ function NuevoInstrumento() {
                       uploader: "Yo",
                       desc,
                       cicloMant,
-                      ultMant: date,
+                      ultMant,
                       ultMod: "Yo",
                       prestable,
                       urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
