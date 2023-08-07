@@ -8,45 +8,36 @@ interface MulterRequest extends Request {
     file: any;
 }
 
-const uploadNewFile = async (req: Request, res: Response) => {
-    const newFile = new Archivos(req.body);
-    //console.log("NUEVOOOOO",newFile);
+const uploadNewFile = async(req: Request, res: Response) => {
 
-    // if (req.params.fileValido === false){
-    //     return res.status(415).send({ message: 'Solo se aceptan archivos con extensión .pdf, .doc y .docx' })
-    // }
-    // if (file.length === 0) {
-    //     return res.status(404).send({ message: 'No se ha seleccionado ningun archivo' })
-    
-    Archivos.findOne({ fileName: req.body.fileName }).then(
-        async (file: IArchivos) => {
-            //console.log("nueo",newFile);
-            //console.log("file",file);
-            if (file) {
-                console.log("Existe");
-                //return res.status(400).send({ message: "El archivo ya existe" });
-            }
-            await newFile
-                .save()
-                .then(() => {
-                    console.log("Subido");
-                    return res.status(201).send(newFile);
-                })
-                .catch((err: CallbackError) => {
-                    console.log("NO Subido");
-                    //console.log(err);
-                    return res.status(400).send({ message: "Error al subir archivo" });
-                });
-        }
-    );
-};
+    const file = req.files[0]
+    //console.log("FILE", file)
+
+    const newFile = new Archivos({
+        originalName: file.originalname,
+        fileName: file.filename,
+        mimetype: file.mimetype,
+        url: file.destination ,
+        tagCategoria: "random",
+    })
+    //console.log("newFile:", newFile)
+    await newFile
+        .save()
+        .catch((err: CallbackError) => {
+            //console.log("NO save ",err);
+            return res.status(400).send({ message: "Error al subir el archivo" });
+        }).then(() => {
+            //console.log("Subido");
+            return res.status(201).send(newFile);
+        })
+}
 
 const getFiles = async (req: Request, res: Response) => {
     await Archivos.find({})
         .sort({ createdAt: "desc" })
         .then((items: IArchivos[]) => {
             if (items.length === 0) {
-                console.log("Vacio");
+                //console.log("Vacio");
                 return res.status(200).send([]);
             }
             return res.status(200).send(items);
@@ -61,19 +52,8 @@ const getFiles = async (req: Request, res: Response) => {
 const downloadFile = async (req: Request, res: Response) => {
     await Archivos.findById(req.params.id)
         .then((item) => {
-            let fechaArchivo =
-                item.createdAt.getFullYear() +
-                "_" +
-                (item.createdAt.getMonth() + 1) +
-                "_" +
-                item.createdAt.getDate() +
-                "_" +
-                item.createdAt.getHours() +
-                "_" +
-                item.createdAt.getMinutes() +
-                "_" +
-                item.createdAt.getSeconds();
-            return res.download(item.url + "/" + fechaArchivo + " " + item.fileName);
+            console.log(item.url + "/" + item.fileName)
+            return res.download(item.url + "/" + item.fileName, item.originalName);
         })
         .catch((err: CallbackError) => {
             return res.status(400).send({ message: "Error al encontrar el archivo" });
@@ -83,19 +63,7 @@ const downloadFile = async (req: Request, res: Response) => {
 const deleteFile = async (req: Request, res: Response) => {
     await Archivos.findByIdAndDelete(req.params.id)
         .then((item) => {
-            let fechaArchivo =
-                item.createdAt.getFullYear() +
-                "_" +
-                (item.createdAt.getMonth() + 1) +
-                "_" +
-                item.createdAt.getDate() +
-                "_" +
-                item.createdAt.getHours() +
-                "_" +
-                item.createdAt.getMinutes() +
-                "_" +
-                item.createdAt.getSeconds();
-            let fileUrl = item.url + "/" + fechaArchivo + " " + item.fileName;
+            let fileUrl = item.url + "/" + item.fileName;
             fs.unlink(fileUrl, (err) => {
                 if (err) {
                     return res

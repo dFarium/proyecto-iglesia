@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 
 export interface IArchivos {
+  originalName:string;
   fileName: string;
   tagCategoria: string;
   mimetype: string;
@@ -13,7 +14,8 @@ export interface IArchivos {
 
 const ArchivoSchema = new Schema<IArchivos>(
   {
-    fileName: { type: String, required: true }, //cambio
+    originalName: { type: String, required: false }, //cambio
+    fileName: { type: String, required: false }, //cambio
     tagCategoria: { type: String, required: false }, //cambio
     mimetype: { type: String, required: false }, //cambio
     url: { type: String, required: false }, //cambio
