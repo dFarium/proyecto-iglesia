@@ -45,7 +45,7 @@ import {
     viewOneFile,
     viewFavorite,
     downloadFile,
-    subirArchivo,
+    uploadNewFile,
     deleteFile,
     IArchivos
 } from "@/data/archivos/archivos";
