@@ -2,7 +2,7 @@
 
 import { Text, FormControl, useColorModeValue, HStack, FormLabel, Input, Table, Button, 
     IconButton, Container, Tbody, Thead, Th, Tr, Td, Tooltip, Modal, ModalOverlay, ModalContent,
-    ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from "@chakra-ui/react";
+    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import Swal from 'sweetalert2'
@@ -17,12 +17,23 @@ function GetUsersBody() {
         rut: string;
         email: string;
         rol: {name: string}[];
+        telefono: string;
+        direccion: string;
+        fecha_nacimiento: Date;
+        num_emergencia: string;
+        //más
     }
     const [usuarios, setUsers] = useState<Usuario[]>([]);
     const [admin, setAdmin] = useState(false);
 
-    //Estados para editar el usuario
+    // Estados para editar el usuario
     const [editingUser, setEditingUser] = useState<Usuario | null>(null);
+
+    // Estados para mostrar detalles del usuario
+    const [getUser, setGetUser] = useState<Usuario | null>(null);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const openDetailModal = () => setShowDetailModal(true);
+    const closeDetailModal = () => setShowDetailModal(false);
 
     // Estados de control abrir y cerrar modal
     const [isOpen, setIsOpen] = useState(false);
@@ -175,58 +186,69 @@ function GetUsersBody() {
     }, []);
 
     const showUsers = () => {
-        return usuarios.map(usuario => {
+        return usuarios.map((usuario, index) => {
             const roles = usuario.rol.map(rol => rol.name).join(', ');
+            // Para no mostrar el usuario admin por defecto en la base de datos
             if (usuario.email === 'admin@gmail.com') {
                 return null;
             }
             return(
-                <Tr key={usuario._id}>
+                <Tr key={usuario._id} bgColor={index % 2 === 0 ? "gray.100" : "white"}>
                     <Td isTruncated maxWidth="400px">{usuario.name}</Td>
                     <Td isTruncated maxWidth="200px">{usuario.rut}</Td>
                     <Td isTruncated maxWidth="350px">{usuario.email}</Td>
                     <Td isTruncated maxWidth="400px">{roles}</Td>
                     {admin && (
-                        <Tooltip label="Editar">
-                            <IconButton 
-                            aria-label="Editar"
-                            icon={<FaRegEdit />} colorScheme="green" 
-                            variant="ghost" 
-                            _hover={{ bg: editHoverColor }} 
-                            _active={{ bg: editActiveColor }}
-                            onClick={() => { setIsOpen(true); setEditingUser(usuario); }}
-                            mr={3}
-                            isRound
-                            />
-                        </Tooltip>)}
-                    {admin &&(
-                        <Tooltip label="Eliminar">
-                            <IconButton 
-                            aria-label="Eliminar" 
-                            icon={<FaRegTrashAlt />} 
-                            colorScheme="red" 
-                            variant="ghost" 
-                            _hover={{ bg: deleteHoverColor }} 
-                            _active={{ bg: deleteActiveColor }} 
-                            onClick={() => deleteUser(usuario)}
-                            isRound
-                            />
-                        </Tooltip>)}
+                        <Td maxW={"70px"}>
+                            <Button colorScheme="twitter" variant='link' fontWeight="thin"
+                            onClick={() => { openDetailModal(); setGetUser(usuario); }}>detalle</Button>
+                        </Td>)}
+                    {admin && (
+                        <Td maxW={"1px"}>
+                            <Tooltip label="Editar">
+                                <IconButton 
+                                aria-label="Editar"
+                                icon={<FaRegEdit />} colorScheme="green" 
+                                variant="ghost" 
+                                _hover={{ bg: editHoverColor }} 
+                                _active={{ bg: editActiveColor }}
+                                onClick={() => { setIsOpen(true); setEditingUser(usuario); }}
+                                mr={3}
+                                isRound
+                                />
+                        </Tooltip>
+                        </Td>)}
                         
+                    {admin &&(
+                        <Td maxW={"1px"}>
+                            <Tooltip label="Eliminar">
+                                <IconButton 
+                                aria-label="Eliminar" 
+                                icon={<FaRegTrashAlt />} 
+                                colorScheme="red" 
+                                variant="ghost" 
+                                _hover={{ bg: deleteHoverColor }} 
+                                _active={{ bg: deleteActiveColor }} 
+                                onClick={() => deleteUser(usuario)}
+                                isRound
+                                />
+                            </Tooltip>
+                        </Td>)}
                 </Tr>
             );
         });
     }
     return(
-        <Container maxW='1250px'>
+        <Container maxW='1250px' >
             <HStack justifyContent={"space-between"} h='100px'>
                 <Text textStyle={"titulo"}>Lista de usuarios</Text>
                 {admin && (<Button leftIcon={<FaUserPlus/>} colorScheme="green" onClick={() => window.location.href="/home/usuarios/register"}>
                     Crear Usuario
                 </Button>)}
             </HStack>
-            <Table variant="simple">
-                <Thead>
+            <Box maxH="520px" overflowY="auto">
+            <Table variant="simple" >
+                <Thead >
                 <Tr>
                     <Th>NOMBRE</Th>
                     <Th>RUT</Th>
@@ -234,10 +256,12 @@ function GetUsersBody() {
                     <Th>ROL</Th>
                 </Tr>
                 </Thead>
-                <Tbody>
+                <Tbody >
                     {showUsers()}
                 </Tbody>
             </Table>
+            </Box>
+
             {editingUser && (
                 <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -260,6 +284,54 @@ function GetUsersBody() {
                         <Button colorScheme="blue" mr={3} onClick={onClose}>cancelar</Button>
                         <Button colorScheme="green" type="submit" onClick={EditUser}>aceptar</Button>
                     </ModalFooter>
+                </ModalContent>
+            </Modal>
+            )}
+            {getUser && (
+            <Modal isOpen={showDetailModal} onClose={closeDetailModal}>
+                <ModalOverlay />
+                <ModalContent>
+                <ModalHeader>Detalles del Usuario</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <VStack spacing={4} align="start">
+                        <HStack>
+                            <Text>Nombre: </Text>
+                            <Text>{getUser.name}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>RUT: </Text>
+                            <Text>{getUser.rut}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>Email: </Text>
+                            <Text>{getUser.email}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>Telefono: </Text>
+                            <Text>{getUser.telefono}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>Direccion: </Text>
+                            <Text>{getUser.direccion}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>Fecha_nacimiento: </Text>
+                            <Text>{new Date(getUser.fecha_nacimiento).toLocaleDateString()}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>Nro de emergencia: </Text>
+                            <Text>{getUser.num_emergencia}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>Rol: </Text>
+                            <Text>{getUser.rol.map(rol => rol.name).join(', ')}</Text>
+                        </HStack>
+                    </VStack>
+                </ModalBody>
+                <ModalFooter>
+                    <Button colorScheme="blue" mr={3} onClick={closeDetailModal}>Cerrar</Button>
+                </ModalFooter>
                 </ModalContent>
             </Modal>
             )}
