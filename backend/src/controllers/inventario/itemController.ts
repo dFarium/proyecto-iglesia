@@ -101,6 +101,8 @@ const getItemsInventarioCategoria = async (req: Request, res: Response) => {
     });
 };
 
+
+
 export {
   createItemInventario,
   getItemInventario,
