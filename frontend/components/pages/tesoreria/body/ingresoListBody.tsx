@@ -196,7 +196,6 @@ export function IngresoListBody() {
               tipo={row.getValue("tipo")}
               descripcion={row.getValue("descripcion")}
               fechaGasto={row.getValue("fechaGasto")}
-
             />
           );
         },
