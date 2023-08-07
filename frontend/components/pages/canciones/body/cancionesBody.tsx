@@ -24,17 +24,12 @@ export default function CancionesBody() {
           <Seleccionar
           titulo="Lista de Canciones"
           href="/home/canciones/ListaCanciones"
-          image="varios.webp"
+          image="Partituras.png"
           />
           <Seleccionar
           titulo="Subir Canciones"
           href="/home/canciones/SubirCanciones"
-          image="varios.webp"
-          />
-          <Seleccionar
-          titulo="Editar Canciones"
-          href="/home/canciones/EditarCanciones"
-          image="varios.webp"
+          image="Notas_Musicales.png"
           />
       </Grid>
     </VStack>

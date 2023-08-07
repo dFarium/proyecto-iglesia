@@ -20,10 +20,12 @@ app.options("*", cors());
 import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
 import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
 import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
+import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
 
 app.use("/api", inventarioRoutes);
 app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
+app.use("/api", cancionesRoutes);
 
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
