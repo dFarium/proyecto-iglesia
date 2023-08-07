@@ -94,7 +94,7 @@ export default function ArchivosPubBody() {
             },
             // { id: "imgScr", accessorKey: "urlPic" },
             {
-                id: "nombre",
+                id: "fileName",
                 header: () => {
                         return (
                         <Text
@@ -104,13 +104,13 @@ export default function ArchivosPubBody() {
                         </Text>
                     );
                 },
-                accessorKey: "nombre",
+                accessorKey: "fileName",
                 cell: ({ row }) => {
                     return (
                         <Text
                             minW={"100%"} textAlign={"center"}
                         >
-                            {row.getValue("nombre")}
+                            {row.getValue("fileName")}
                         </Text>
                     );
                 },
@@ -138,7 +138,7 @@ export default function ArchivosPubBody() {
                 },
             },
             {
-                id: "categoria",
+                id: "tagCategoria",
                 header: () => {
                     return (
                         <Text
@@ -225,7 +225,7 @@ export default function ArchivosPubBody() {
                 },
             },
             {
-                id: "fechaCreado",
+                id: "createdAt",
                 header: () => {
                     return (
                         <Text
@@ -235,9 +235,9 @@ export default function ArchivosPubBody() {
                         </Text>
                     );
                 },
-                accessorKey: "fechaCreado",
+                accessorKey: "createdAt",
                 cell: ({ row }) => {
-                    const date = textDate(row.getValue<Date>("fechaCreado"));
+                    const date = textDate(row.getValue<Date>("createdAt"));
                     return (
                         <Text
                         //  minW={"100%"} textAlign={"center"}
@@ -335,7 +335,7 @@ export default function ArchivosPubBody() {
                     if (userAccess) {
                         return (
                             <EliminarItemArchivo
-                                name={row.getValue("nombre")}
+                                name={row.getValue("fileName")}
                                 id={row.getValue("id")}
                             />
                         );
@@ -373,7 +373,7 @@ export default function ArchivosPubBody() {
         <Box w={"100%"} h={"100%"}>
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
-                    <Text textStyle={"titulo"}>Lista Archivos</Text>
+                    <Text textStyle={"titulo"}>Lista de Archivos</Text>
                     <NuevoArchivo />
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
