@@ -53,7 +53,21 @@ const obtenerGastoTesoreria = async () => {
   return res.data;
 };
 
+const obtenerGastosTesoreriaPorFecha = async (fechaInicio: Date, fechaFin: Date) => {
+  const res = await axios.delete(`${process.env.API_URL}/tesoreria/getgasfecha/`, {
+    data: { fechaInicio, fechaFin },
+  });
+  console.log(res);
+  return res.data;
+};
 
+const obtenerIngresoTesoreriaPorFecha = async (fechaInicio: Date, fechaFin: Date) => {
+  const res = await axios.delete(`${process.env.API_URL}/tesoreria/delete`, {
+    data: { fechaInicio, fechaFin },
+  });
+  console.log(res);
+  return res.data;
+};
 export {
 
   ObtenerGastoIngresoTesoreria,
@@ -63,4 +77,6 @@ export {
   crearGastoIngresoTesoreria,
   obtenerIngresoTesoreria,
   obtenerGastoTesoreria,
+  obtenerGastosTesoreriaPorFecha,
+  obtenerIngresoTesoreriaPorFecha
 };

@@ -35,7 +35,7 @@ import {
     MdReceiptLong,
 } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { minDate, textDate } from "@/utils/dateUtils";
+import { minDate, textDate, maxDate } from "@/utils/dateUtils";
 import { ItemTesoreria, crearGastoIngresoTesoreria } from "@/data/tesoreria/item";
 
 
@@ -54,21 +54,39 @@ function NuevoIngresoTesoreria() {
     const [descripcion, setDescripcion] = useState<string>("");
 
     const [descripcionErr, setDescripcionErr] = useState<boolean>(false);
+    const [fechaGastoErr, setFechaGastoErr] = useState<boolean>(false);
+
+
     const [tipo, setTipo] = useState<string>("");
 
     const queryClient = useQueryClient();
 
-    const date = new Date();
+    const [mensajeNombre, setMensajeNombre] = useState<string>("");
+    const [mensajeValorCaja, setMensajeValorCaja] = useState<string>("");
+    const [mensajeDescripcion, setMensajeDescripcion] = useState<string>("");
 
     const handleNombreChange = (e: any) => {
-        setNombre(e.target.value);
-        setNombreErr(false);
+        const value = e.target.value;
+        const isValid = /^[a-zA-Z0-9._ -]*$/.test(value);
+        if (!isValid) {
+            setNombreErr(true);
+            setMensajeNombre("Nombre inválido.");
+        } else {
+            setNombreErr(false);
+            setNombre(e.target.value);
+            setMensajeNombre("");
+        }
     }
-
     const handleValorCajaChange = (e: any) => {
         const r = e.target.value.replace(/\D/g, "");
-        setValorCaja(r);
-        setValorCajaErr(false);
+        if (parseInt(r) < 999999999) {
+            setValorCaja(r);
+            setValorCajaErr(false);
+            setMensajeValorCaja("");
+        } else {
+            setValorCajaErr(true);
+            setMensajeValorCaja("Monto ingresado inválido");
+        }
     };
 
     const handleFechaGastoChange = (e: any) => {
@@ -78,10 +96,17 @@ function NuevoIngresoTesoreria() {
     };
 
     const handleDescripcionChange = (e: any) => {
-        setDescripcion(e.target.value);
-        setDescripcionErr(false);
-    };
-
+        const value = e.target.value;
+        const isValid = /^[a-zA-Z0-9,._-]*$/.test(value) && value.length <= 250;
+        if (isValid) {
+            setDescripcion(value);
+            setDescripcionErr(false);
+            setMensajeDescripcion("");
+        } else {
+            setDescripcionErr(true);
+            setMensajeDescripcion("Descripción inválida.");
+        }
+    }
 
     const validation = (): boolean => {
         let error: boolean = false;
@@ -94,7 +119,6 @@ function NuevoIngresoTesoreria() {
             error = true;
         }
         if (error) {
-            valorCaja
             return false;
         } else {
             setValorCajaErr(false);
@@ -122,7 +146,7 @@ function NuevoIngresoTesoreria() {
                 fontSize={"1.6em"}
                 fontWeight={"bold"}
                 p={"35px"}
-                colorScheme={"newTesoreriaItem"}
+                colorScheme={"newTesoreriaItemButton"}
                 display={{ base: "none", md: "flex" }}
                 onClick={onOpen}
             >
@@ -134,7 +158,7 @@ function NuevoIngresoTesoreria() {
                 isRound
                 w={{ base: "60px", md: "70px" }}
                 h={{ base: "60px", md: "70px" }}
-                colorScheme={"newTesoreriaItem"}
+                colorScheme={"newTesoreriaItemButton"}
                 aria-label={"Agregar Item"}
                 fontSize={{ base: "3em", md: "3.3em" }}
                 icon={<MdAdd />}
@@ -157,7 +181,6 @@ function NuevoIngresoTesoreria() {
                             Agregar Ingreso
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            {/* <HStack align={"start"}> */}
                             <FormControl>
                                 <FormLabel>Nombre</FormLabel>
                                 <Input
@@ -178,13 +201,13 @@ function NuevoIngresoTesoreria() {
                                 <Input
                                     placeholder="Monto"
                                     onChange={handleValorCajaChange}
-                                    maxLength={50}
+                                    maxLength={9}
                                 />
                                 {valorCajaErr ? (
                                     <FormErrorMessage>Ingrese un monto</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 100000
+                                        {valorCaja} / 999999999
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -193,10 +216,10 @@ function NuevoIngresoTesoreria() {
                                 <Input
                                     type="date"
                                     onChange={handleFechaGastoChange}
-                                    min={minDate(date)}
+                                    //min={minDate(date)}
+                                    max={maxDate(new Date())}
                                 />
                             </FormControl>
-                            {/* </HStack> */}
                             <FormControl mt={"25px"}>
                                 <FormLabel>Descripción</FormLabel>
                                 <Textarea
@@ -205,7 +228,7 @@ function NuevoIngresoTesoreria() {
                                     onChange={handleDescripcionChange}
                                 />
                                 <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 200
+                                    {descripcion.length} / 250
                                 </FormHelperText>
                             </FormControl>
                         </AlertDialogBody>
@@ -216,15 +239,16 @@ function NuevoIngresoTesoreria() {
                                 onClick={() => {
                                     setNombreErr(false);
                                     setValorCajaErr(false);
+                                    setDescripcionErr(false);
+                                    setFechaGastoErr(false);
                                     onClose();
                                 }}
                             >
                                 Cancelar
                             </Button>
                             <Button
-                                colorScheme="blue"
                                 onClick={() => {
-                                    if (validation()) {
+                                    /* if (validation()) {
                                         mutation.mutate({
                                             nombre,
                                             valorCaja,
@@ -232,13 +256,47 @@ function NuevoIngresoTesoreria() {
                                             descripcion,
                                             tipo: "Ingreso",
                                         });
+                                    }
+                                    setNombre("");
+                                    setNombreErr(false)
+                                    setValorCaja(1);
+                                    setValorCajaErr(false);
+                                    setFechaGasto(undefined);
+                                    setDescripcion("");
+                                    setTipo("")
+                                    onClose();
+                                }} */
+
+                                    if (mensajeNombre || mensajeValorCaja || mensajeDescripcion) {
+                                        let mensaje = "";
+                                        if (mensajeNombre) {
+                                            mensaje += mensajeNombre + "\n";
+                                        }
+                                        if (mensajeValorCaja) {
+                                            mensaje += mensajeValorCaja + "\n";
+                                        }
+                                        if (mensajeDescripcion) {
+                                            mensaje += mensajeDescripcion;
+                                        }
+                                        alert(mensaje);
+                                    }
+
+                                    else {
+                                        if (validation()) {
+                                            mutation.mutate({
+                                                nombre,
+                                                valorCaja,
+                                                fechaGasto,
+                                                descripcion,
+                                                tipo: "Ingreso",
+                                            });
+                                        }
                                         setNombre("");
                                         setNombreErr(false)
                                         setValorCaja(1);
                                         setValorCajaErr(false);
                                         setFechaGasto(undefined);
                                         setDescripcion("");
-                                        setDescripcionErr(false);
                                         setTipo("")
                                         onClose();
                                     }
@@ -247,9 +305,10 @@ function NuevoIngresoTesoreria() {
                                 Aceptar
                             </Button>
                         </AlertDialogFooter>
+
                     </AlertDialogContent>
                 </AlertDialogOverlay>
-            </AlertDialog>
+            </AlertDialog >
         </>
     );
 }
@@ -260,6 +319,7 @@ function NuevoGastoTesoreria() {
     const cancelRef = useRef(null);
 
     const date = new Date();
+
 
     const [nombre, setNombre] = useState<string>("");
     const [nombreErr, setNombreErr] = useState<boolean>(false);
@@ -335,11 +395,11 @@ function NuevoGastoTesoreria() {
                 fontSize={"1.6em"}
                 fontWeight={"bold"}
                 p={"35px"}
-                colorScheme={"newTesoreriaItem"}
+                colorScheme={"newTesoreriaItemButton"}
                 display={{ base: "none", md: "flex" }}
                 onClick={onOpen}
             >
-                Nuevo
+                Nuevo Item
             </Button>
 
             <IconButton
@@ -347,7 +407,7 @@ function NuevoGastoTesoreria() {
                 isRound
                 w={{ base: "60px", md: "70px" }}
                 h={{ base: "60px", md: "70px" }}
-                colorScheme={"newTesoreriaItem"}
+                colorScheme={"newTesoreriaItemButton"}
                 aria-label={"Agregar Item"}
                 fontSize={{ base: "3em", md: "3.3em" }}
                 icon={<MdAdd />}
@@ -387,7 +447,7 @@ function NuevoGastoTesoreria() {
                                 )}
                             </FormControl>
                             <FormControl>
-                                <FormLabel>Ingreso</FormLabel>
+                                <FormLabel>Gasto</FormLabel>
                                 <Input
                                     placeholder="Monto"
                                     onChange={handleValorCajaChange}
@@ -397,7 +457,7 @@ function NuevoGastoTesoreria() {
                                     <FormErrorMessage>Ingrese un valor</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 100000
+                                        {valorCaja} / 999999999
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -468,6 +528,7 @@ function NuevoGastoTesoreria() {
 
 
 function NuevoGastoIngresoTesoreria() {
+
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef(null);
 
@@ -509,6 +570,9 @@ function NuevoGastoIngresoTesoreria() {
         setDescripcionErr(false);
     };
 
+    const handleTipoChange = (e: any) => {
+        setTipo(e.target.value);
+    };
 
     const validation = (): boolean => {
         let error: boolean = false;
@@ -549,11 +613,11 @@ function NuevoGastoIngresoTesoreria() {
                 fontSize={"1.6em"}
                 fontWeight={"bold"}
                 p={"35px"}
-                colorScheme={"newTesoreriaItem"}
+                colorScheme={"newTesoreriaItemButton"}
                 display={{ base: "none", md: "flex" }}
                 onClick={onOpen}
             >
-                Nuevo
+                Nuevo Item
             </Button>
 
             <IconButton
@@ -561,7 +625,7 @@ function NuevoGastoIngresoTesoreria() {
                 isRound
                 w={{ base: "60px", md: "70px" }}
                 h={{ base: "60px", md: "70px" }}
-                colorScheme={"newTesoreriaItem"}
+                colorScheme={"newTesoreriaItemButton"}
                 aria-label={"Agregar Item"}
                 fontSize={{ base: "3em", md: "3.3em" }}
                 icon={<MdAdd />}
@@ -569,6 +633,7 @@ function NuevoGastoIngresoTesoreria() {
             >
                 Nuevo Item
             </IconButton>
+
 
             {/* AGREGAR TODO */}
 
@@ -602,13 +667,17 @@ function NuevoGastoIngresoTesoreria() {
                             </FormControl>
                             <Box>
                                 <FormLabel>Tipo</FormLabel>
-                                <Select placeholder='Seleccione una opción'>
-                                    <option value='Ingreso'>Ingreso</option>
-                                    <option value='Gasto'>Gasto</option>
+                                <Select
+                                    placeholder="Seleccione un tipo"
+                                    value={tipo}
+                                    onChange={handleTipoChange}
+                                >
+                                    <option value="Ingreso">Ingreso</option>
+                                    <option value="Gasto">Gasto</option>
                                 </Select>
                             </Box>
                             <FormControl>
-                                <FormLabel>Ingreso</FormLabel>
+                                <FormLabel>Monto</FormLabel>
                                 <Input
                                     placeholder="Monto"
                                     onChange={handleValorCajaChange}
@@ -618,7 +687,7 @@ function NuevoGastoIngresoTesoreria() {
                                     <FormErrorMessage>Ingrese un valor</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 100000
+                                        {valorCaja} / 100000000000000
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -659,6 +728,7 @@ function NuevoGastoIngresoTesoreria() {
                                 colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
+                                        (console.log("tipo"))
                                         mutation.mutate({
                                             nombre,
                                             valorCaja,
@@ -687,8 +757,6 @@ function NuevoGastoIngresoTesoreria() {
         </>
     );
 }
-
-
 
 
 export { NuevoIngresoTesoreria, NuevoGastoTesoreria, NuevoGastoIngresoTesoreria }

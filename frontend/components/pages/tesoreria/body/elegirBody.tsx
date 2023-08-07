@@ -33,17 +33,17 @@ export function ElegirBody() {
           <Categoria
             titulo="Ingresos"
             href="/home/tesoreria/ingresos"
-            image="instrumentos.webp"
+            image="alcanciaFeliz.png"
           />
           <Categoria
             titulo="Gastos"
             href="/home/tesoreria/gastos  "
-            image="equipos.png"
+            image="alcanciaTriste.png"
           />
           <Categoria
             titulo="Total"
             href="/home/tesoreria/total"
-            image="varios.webp"
+            image="vs.png"
           />
         </Grid>
       </VStack>

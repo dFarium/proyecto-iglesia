@@ -17,31 +17,17 @@ import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
 import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
 import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
 import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
-<<<<<<< HEAD
-import { mailRoutes } from "./routes/correoPrestamo/mailRoutes";
-const validaToken = require('./controllers/usuario/validate-token')
-const admin = require('./controllers/usuario/admin')
-=======
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
 
 const validaToken = require("./controllers/usuario/validate-token");
 const admin = require("./controllers/usuario/admin");
->>>>>>> d7a4fb39a3527cc5bed6a8a0af05e1166615508b
 
 app.use("/api", inventarioRoutes);
 app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
 app.use("/api/admin", validaToken, admin);
-<<<<<<< HEAD
-app.use("/api",cancionesRoutes);
-app.use("/api",mailRoutes)
-
-import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
-import { archivosRoutes } from "./routes/archivos/archivosRoutes";
-=======
 app.use("/api", cancionesRoutes);
->>>>>>> d7a4fb39a3527cc5bed6a8a0af05e1166615508b
 
 app.use("/api", inventarioRoutes);
 app.use("/api", prestamoRoutes);

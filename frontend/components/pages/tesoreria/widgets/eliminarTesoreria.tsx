@@ -30,15 +30,14 @@ function EliminarTesoreria(props: { name: string; id: string }) {
         }, onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["obtenerTodoTesoreria"] });
             queryClient.invalidateQueries({ queryKey: ["obtenerIngresoTesoreria"] });
-            queryClient.invalidateQueries({ 
-                queryKey: ["obtenerGastoTesoreria"], 
+            queryClient.invalidateQueries({
+                queryKey: ["obtenerGastoTesoreria"],
             });
         },
     });
 
     return (
         <>
-
             <IconButton
                 borderColor={
                     colorMode == "light"
@@ -47,7 +46,7 @@ function EliminarTesoreria(props: { name: string; id: string }) {
                 }
                 isRound
                 fontSize={"1.4em"}
-                aria-label={"Editar"}
+                aria-label={"Elimnar"}
                 icon={<MdDeleteOutline />}
                 onClick={onOpen}
                 color={

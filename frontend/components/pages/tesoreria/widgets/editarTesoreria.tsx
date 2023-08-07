@@ -22,6 +22,8 @@ import {
     Menu,
     MenuList,
     MenuItem,
+    Circle,
+    Select,
 } from "@chakra-ui/react";
 
 import { useRef, useState } from "react";
@@ -158,33 +160,32 @@ function EditarTesoreria(props: {
             <IconButton
                 bg={
                     colorMode == "light"
-                        ? "inventarioItemEditBg.light"
-                        : "inventarioItemEditBg.dark"
+                        ? "tesoreriaItemEditBg.light"
+                        : "tesoreriaItemEditBg.dark"
                 }
-                isRound
-                _hover={{ bg: "#66b4ff" }}
+                icon={<MdCreate />}
                 fontSize={"1.4em"}
                 aria-label={"Editar"}
-                icon={<MdCreate />}
-
+                _hover={{ bg: "#66b4ff" }}
+                isRound
                 onClick={() => {
                     if (props.tipo == "Ingreso") {
-                        console.log("Ingreso");
+                        console.log("Hola");
                         setTodoInicio();
                         onOpenIngreso();
                     } else if (props.tipo == "Gasto") {
-                        console.log("Gasto");
                         setTodoInicio();
                         onOpenGasto();
                     } else {
-                        console.log("Todo");
                         setTodoInicio();
                         onOpenTodo();
                     }
                 }}
                 color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+
             />
-            {{/* INGRESO */ }}
+
+            {/* INGRESO */}
             <AlertDialog
                 isOpen={isOpenIngreso}
                 leastDestructiveRef={cancelRef}
@@ -197,89 +198,74 @@ function EditarTesoreria(props: {
                             Editar Ingreso
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            <HStack align={"start"}>
-                                <FormControl>
-                                    <FormLabel>Nombre</FormLabel>
-                                    <Input
-                                        placeholder="Nombre"
-                                        value={nombre}
-                                        onChange={handleNombreChange}
-                                        maxLength={50}
-                                    />
-                                    {nombreErr ? (
-                                        <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {nombre.length} / 50
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-
-                                <Box>
-                                    <FormLabel>Tipo</FormLabel>
-                                    <Menu autoSelect={false}>
-                                        <MenuButton as={Button} rightIcon={<MdExpandMore />}>
-                                            {tipo}
-                                        </MenuButton>
-                                        <MenuList>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setTipo("Ingreso");
-                                                }}
-                                            >
-                                                Ingreso
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setTipo("Gasto");
-                                                }}
-                                            >
-                                                Gasto
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Box>
-
-                                <FormControl>
-                                    <FormLabel>Monto</FormLabel>
-                                    <Input
-                                        placeholder="Monto"
-                                        value={valorCaja}
-                                        onChange={handleValorCajaChange}
-                                        maxLength={50}
-                                    />
-                                    {valorCajaErr ? (
-                                        <FormErrorMessage>Ingrese un valor</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {valorCaja} / 100
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                <FormControl mt={"25px"}>
-                                    <FormLabel>Fecha de ingreso</FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={textDefaultDate(oldDate)}
-                                        onChange={handleFechaGastoChange}
-                                        min={minDate(date)}
-                                    />
-                                    <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                        {showDate(oldDate)}
-                                    </FormHelperText>
-                                </FormControl>
-                            </HStack>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
-                                    onChange={(e) => {
-                                        setDescripcion(e.target.value);
-                                    }}
+                            <FormControl>
+                                <FormLabel>Nombre</FormLabel>
+                                <Input
+                                    placeholder="Nombre"
+                                    value={nombre}
+                                    onChange={handleNombreChange}
+                                    maxLength={50}
                                 />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 200
+                                {nombreErr ? (
+                                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {nombre.length} / 50
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+
+                            <Box>
+                                <FormLabel>Tipo</FormLabel>
+                                <Menu autoSelect={false}>
+                                    <MenuButton as={Button} rightIcon={<MdExpandMore />}>
+                                        {tipo}
+                                    </MenuButton>
+                                    <MenuList>{/* Cambiar por Select */}
+                                        <MenuItem
+                                            onClick={() => {
+                                                setTipo("Ingreso");
+                                            }}
+                                        >
+                                            Ingreso
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() => {
+                                                setTipo("Gasto");
+                                            }}
+                                        >
+                                            Gasto
+                                        </MenuItem>
+                                    </MenuList>
+                                </Menu>
+                            </Box>
+
+                            <FormControl>
+                                <FormLabel>Monto</FormLabel>
+                                <Input
+                                    placeholder="Monto"
+                                    value={valorCaja}
+                                    onChange={handleValorCajaChange}
+                                    maxLength={50}
+                                />
+                                {valorCajaErr ? (
+                                    <FormErrorMessage>Ingrese un valor</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {valorCaja} / 999999999
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+                            <FormControl mt={"25px"}>
+                                <FormLabel>Fecha de ingreso</FormLabel>
+                                <Input
+                                    type="date"
+                                    value={textDefaultDate(oldDate)}
+                                    onChange={handleFechaGastoChange}
+                                    min={minDate(date)}
+                                />
+                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
+                                    {showDate(oldDate)}
                                 </FormHelperText>
                             </FormControl>
                             <FormControl mt={"25px"}>
@@ -287,10 +273,11 @@ function EditarTesoreria(props: {
                                 <Textarea
                                     placeholder="Descripción"
                                     maxH={"300px"}
+                                    value={descripcion}
                                     onChange={handleDescripcionChange}
                                 />
                                 <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 200
+                                    {descripcion.length} / 250
                                 </FormHelperText>
                             </FormControl>
                         </AlertDialogBody>
@@ -329,8 +316,7 @@ function EditarTesoreria(props: {
                 </AlertDialogOverlay>
             </AlertDialog>
 
-            {{/* GASTO */ }}
-
+            {/* GASTO */}
             <AlertDialog
                 isOpen={isOpenGasto}
                 leastDestructiveRef={cancelRef}
@@ -343,90 +329,86 @@ function EditarTesoreria(props: {
                             Editar Gasto
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            <HStack align={"start"}>
-                                <FormControl>
-                                    <FormLabel>Nombre</FormLabel>
-                                    <Input
-                                        placeholder="Nombre"
-                                        value={nombre}
-                                        onChange={handleNombreChange}
-                                        maxLength={50}
-                                    />
-                                    {nombreErr ? (
-                                        <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {nombre.length} / 50
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-
-                                <Box>
-                                    <FormLabel>Tipo</FormLabel>
-                                    <Menu autoSelect={false}>
-                                        <MenuButton as={Button} rightIcon={<MdExpandMore />}>
-                                            {tipo}
-                                        </MenuButton>
-                                        <MenuList>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setTipo("Ingreso");
-                                                }}
-                                            >
-                                                Ingreso
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setTipo("Gasto");
-                                                }}
-                                            >
-                                                Gasto
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Box>
-
-                                <FormControl>
-                                    <FormLabel>Ingreso</FormLabel>
-                                    <Input
-                                        placeholder="Monto"
-                                        value={valorCaja}
-                                        onChange={handleValorCajaChange}
-                                        maxLength={50}
-                                    />
-                                    {valorCajaErr ? (
-                                        <FormErrorMessage>Ingrese un valor</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {valorCaja} / 100
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                <FormControl mt={"25px"}>
-                                    <FormLabel>Fecha de gasto</FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={textDefaultDate(fechaGasto)}
-                                        onChange={handleFechaGastoChange}
-                                        min={minDate(date)}
-                                    />
-                                    <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                        {showDate(fechaGasto)}
+                            <FormControl>
+                                <FormLabel>Nombre</FormLabel>
+                                <Input
+                                    placeholder="Nombre"
+                                    value={nombre}
+                                    onChange={handleNombreChange}
+                                    maxLength={50}
+                                />
+                                {nombreErr ? (
+                                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {nombre.length} / 50
                                     </FormHelperText>
-                                </FormControl>
-                            </HStack>
+                                )}
+                            </FormControl>
+
+                            <Box>
+                                <FormLabel>Tipo</FormLabel>
+                                <Menu autoSelect={false}>
+                                    <MenuButton as={Button} rightIcon={<MdExpandMore />}>
+                                        {tipo}
+                                    </MenuButton>
+                                    <MenuList>{/* Cambiar por Select */}
+                                        <MenuItem
+                                            onClick={() => {
+                                                setTipo("Ingreso");
+                                            }}
+                                        >
+                                            Ingreso
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() => {
+                                                setTipo("Gasto");
+                                            }}
+                                        >
+                                            Gasto
+                                        </MenuItem>
+                                    </MenuList>
+                                </Menu>
+                            </Box>
+
+                            <FormControl>
+                                <FormLabel>Monto</FormLabel>
+                                <Input
+                                    placeholder="Monto"
+                                    value={valorCaja}
+                                    onChange={handleValorCajaChange}
+                                    maxLength={50}
+                                />
+                                {valorCajaErr ? (
+                                    <FormErrorMessage>Ingrese un valor</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {valorCaja} / 999999999
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+                            <FormControl mt={"25px"}>
+                                <FormLabel>Fecha de ingreso</FormLabel>
+                                <Input
+                                    type="date"
+                                    value={textDefaultDate(oldDate)}
+                                    onChange={handleFechaGastoChange}
+                                    min={minDate(date)}
+                                />
+                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
+                                    {showDate(oldDate)}
+                                </FormHelperText>
+                            </FormControl>
                             <FormControl mt={"25px"}>
                                 <FormLabel>Descripción</FormLabel>
                                 <Textarea
                                     placeholder="Descripción"
                                     maxH={"300px"}
                                     value={descripcion}
-                                    onChange={(e) => {
-                                        setDescripcion(e.target.value);
-                                    }}
+                                    onChange={handleDescripcionChange}
                                 />
                                 <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 200
+                                    {descripcion.length} / 250
                                 </FormHelperText>
                             </FormControl>
                         </AlertDialogBody>
@@ -437,7 +419,7 @@ function EditarTesoreria(props: {
                                 onClick={() => {
                                     setNombreErr(false);
                                     setValorCajaErr(false);
-                                    onCloseGasto();
+                                    onCloseIngreso();
                                 }}
                             >
                                 Cancelar
@@ -445,6 +427,7 @@ function EditarTesoreria(props: {
                             <Button
                                 colorScheme="blue"
                                 onClick={() => {
+                                    // validation();
                                     if (validation()) {
                                         mutation.mutate({
                                             nombre,
@@ -453,7 +436,7 @@ function EditarTesoreria(props: {
                                             descripcion,
                                             tipo
                                         });
-                                        onCloseGasto();
+                                        onCloseIngreso();
                                     }
                                 }}
                             >
@@ -464,9 +447,7 @@ function EditarTesoreria(props: {
                 </AlertDialogOverlay>
             </AlertDialog>
 
-
-            {{/* GASTO */ }}
-
+            {/* TODO */}
             <AlertDialog
                 isOpen={isOpenTodo}
                 leastDestructiveRef={cancelRef}
@@ -479,78 +460,64 @@ function EditarTesoreria(props: {
                             Editar
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            <HStack align={"start"}>
-                                <FormControl>
-                                    <FormLabel>Nombre</FormLabel>
-                                    <Input
-                                        placeholder="Nombre"
-                                        value={nombre}
-                                        onChange={handleNombreChange}
-                                        maxLength={50}
-                                    />
-                                    {nombreErr ? (
-                                        <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {nombre.length} / 50
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-
-                                <Box>
-                                    <FormLabel>Tipo</FormLabel>
-                                    <Menu autoSelect={false}>
-                                        <MenuButton as={Button} rightIcon={<MdExpandMore />}>
-                                            {tipo}
-                                        </MenuButton>
-                                        <MenuList>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setTipo("Ingreso");
-                                                }}
-                                            >
-                                                Ingreso
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setTipo("Gasto");
-                                                }}
-                                            >
-                                                Gasto
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Box>
-
-                                <FormControl>
-                                    <FormLabel>Ingreso</FormLabel>
-                                    <Input
-                                        placeholder="Monto"
-                                        value={valorCaja}
-                                        onChange={handleValorCajaChange}
-                                        maxLength={50}
-                                    />
-                                    {valorCajaErr ? (
-                                        <FormErrorMessage>Ingrese un valor</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {valorCaja} / 100
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                <FormControl mt={"25px"}>
-                                    <FormLabel>Fecha de gasto</FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={textDefaultDate(oldDate)}
-                                        onChange={handleFechaGastoChange}
-                                        min={minDate(date)}
-                                    />
-                                    <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                        {showDate(oldDate)}
+                            <FormControl>
+                                <FormLabel>Nombre</FormLabel>
+                                <Input
+                                    placeholder="Nombre"
+                                    value={nombre}
+                                    onChange={handleNombreChange}
+                                    maxLength={50}
+                                />
+                                {nombreErr ? (
+                                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {nombre.length} / 50
                                     </FormHelperText>
-                                </FormControl>
-                            </HStack>
+                                )}
+                            </FormControl>
+
+                            <Box>
+                                <FormLabel>Tipo</FormLabel>
+                                <Select
+                                    placeholder={tipo}
+                                    onChange={(e) => {
+                                        setTipo(e.target.value);
+                                    }}
+                                >
+                                    <option value="Ingreso">Ingreso</option>
+                                    <option value="Gasto">Gasto</option>
+                                </Select>
+                            </Box>
+
+                            <FormControl>
+                                <FormLabel>Monto</FormLabel>
+                                <Input
+                                    placeholder="Monto"
+                                    value={valorCaja}
+                                    onChange={handleValorCajaChange}
+                                    maxLength={50}
+                                />
+                                {valorCajaErr ? (
+                                    <FormErrorMessage>Ingrese un monto</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {valorCaja} / 999999999
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+                            <FormControl mt={"25px"}>
+                                <FormLabel>Fecha de ingreso</FormLabel>
+                                <Input
+                                    type="date"
+                                    value={textDefaultDate(oldDate)}
+                                    onChange={handleFechaGastoChange}
+                                    min={minDate(date)}
+                                />
+                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
+                                    {showDate(oldDate)}
+                                </FormHelperText>
+                            </FormControl>
                             <FormControl mt={"25px"}>
                                 <FormLabel>Descripción</FormLabel>
                                 <Textarea
@@ -561,7 +528,7 @@ function EditarTesoreria(props: {
                                     }}
                                 />
                                 <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 200
+                                    {descripcion.length} / 250
                                 </FormHelperText>
                             </FormControl>
                         </AlertDialogBody>
@@ -589,7 +556,7 @@ function EditarTesoreria(props: {
                                             descripcion,
                                             tipo
                                         });
-                                        onCloseTodo();
+                                        onCloseGasto();
                                     }
                                 }}
                             >
@@ -606,3 +573,4 @@ function EditarTesoreria(props: {
 }
 
 export default EditarTesoreria
+
