@@ -39,7 +39,7 @@ function NuevaCancion(){
     const [nombre, setNombre] = useState<string>("");
     const [nombreErr, setNombreErr] = useState<boolean>(false);
 
-    const [key, setKey] = useState<string>("");
+    const [clave, setKey] = useState<string>("");
 
     const [letra, setLetra] = useState<File | null>(null);
     const [uploadLetra, setUploadLetra] = useState<boolean>(false);
@@ -282,6 +282,7 @@ function NuevaCancion(){
                         setInstrumentos("");
                         setAudio(null);
                         setUploadAudio(false);
+                        onClose();
                     }}
                     >Cancelar</Button>
                     <Button colorScheme="blue"
@@ -291,7 +292,7 @@ function NuevaCancion(){
                             const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
                             mutation.mutate({
                                 nombre,
-                                key,
+                                clave,
                                 letra: letra ? `${fechaStd}-${letra.name}`:"" ,
                                 genero,
                                 autor,

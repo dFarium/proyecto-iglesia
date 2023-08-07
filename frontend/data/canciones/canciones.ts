@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 export interface IModeloCancion {
     nombre: string;
-    key?: string;
+    clave?: string;
     letra?: string;
     genero?: string;
     autor?: string;
@@ -18,7 +18,9 @@ const createCancion = async (cancion: IModeloCancion) => {
 };
 
 const editarCancion = async (id: string, newCancion: IModeloCancion) => {
-    const res = await axios.put(`${process.env.API_URL}/canciones/edit/${id}`,{newCancion});
+    console.log(id,newCancion);
+    const res = await axios.put(`${process.env.API_URL}/canciones/edit/${id}`,newCancion);
+    console.log(res);
     return res.data;
 }
 

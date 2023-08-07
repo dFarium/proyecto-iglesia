@@ -45,6 +45,8 @@ import { useMemo, useState } from "react";
 import {IModeloCancion, getAllCancion} from "@/data/canciones/canciones";
 import { headers } from "next/dist/client/components/headers";
 import { NuevaCancion } from "@/components/pages/canciones/widgets/nuevaCancion"
+import EliminarCancion from "../widgets/eliminarCancion";
+import Editarcancion from "../widgets/editarCancion";
 
 export function ListCancionesBody() {
     //query todas las canciones
@@ -99,7 +101,7 @@ export function ListCancionesBody() {
                 }
             },
             {
-                id: "key",
+                id: "clave",
                 header: () =>{
                 return (
                     <Text
@@ -108,11 +110,11 @@ export function ListCancionesBody() {
                     </Text>
                 );
                 },
-                accessorKey: "key",
+                accessorKey: "clave",
                 cell: ({row}) => {
                     return (
                         <Text>
-                            {row.getValue("key")}
+                            {row.getValue("clave")}
                         </Text>
                     )
                 }
@@ -232,9 +234,14 @@ export function ListCancionesBody() {
                 },
                 cell: ({row}) => {
                     return (
-                        <Text>
-                            IMPLEMENTAR EDITAR CANCION
-                        </Text>
+                        <Editarcancion
+                        id={row.getValue("id")}
+                        nombre={row.getValue("nombre")}
+                        clave={row.getValue("clave")}
+                        genero={row.getValue("genero")}
+                        autor={row.getValue("autor")}
+                        instrumentos={row.getValue("instrumentos")}
+                        />
                     )
                 }
             },
@@ -267,9 +274,8 @@ export function ListCancionesBody() {
                 },
                 cell: ({row}) => {
                     return (
-                        <Text>
-                            IMPLEMENTAR ELIMINAR CANCION
-                        </Text>
+                        <EliminarCancion
+                        id={row.getValue("id")}/>
                     )
                 }
             }
