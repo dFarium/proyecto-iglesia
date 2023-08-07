@@ -1,5 +1,3 @@
-import {editItemInventario, IItemInventario} from "@/data/inventario/item";
-import {minDate} from "@/utils/dateUtils";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -7,34 +5,43 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
-    Button,
-    Center,
+    Button, Flex,
     FormControl,
     FormErrorMessage,
-    FormHelperText,
     FormLabel,
     IconButton,
     Input,
-    Select,
-    Text,
-    Textarea,
+    Select, Switch,
+    useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
 
 import {useRef, useState} from "react";
-import {MdAdd,} from "react-icons/md";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {createPrestamoInstrumento, getInstrumentosPrestables, ICrearInstrumento} from "@/data/prestamos/prestamos";
-import {getUsers, IUsuarioModel} from "@/data/usuarios/usuarios";
+import {MdCreate} from "react-icons/md";
+import {minDate, textDate} from "@/utils/dateUtils";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {editPrestamoInstrumento} from "@/data/prestamos/prestamos";
 
-const lista = ["hola", "que", "tal"]
 
-function NuevoPrestamoInstrumento() {
+function EditarPrestamo(props: {
+    id: string;
+    instrumento: string;
+    prestatario: string;
+    prestamista: string;
+    devuelto: boolean;
+    fechaInicio: Date;
+    fechaDevolucion: Date;
+    fechaLimite: Date;
+    comentario?: string;
+}) {
+    // use disclosures
+
     const {isOpen, onOpen, onClose} = useDisclosure();
-
     const cancelRef = useRef(null);
+    const {colorMode} = useColorMode();
+    const date = new Date();
 
-    //variables
+    // variables
     const hoy = new Date();
     const [instrumento, setInstrumento] = useState<string>("");
     const [prestatario, setPrestatario] = useState<string>("");
@@ -43,100 +50,79 @@ function NuevoPrestamoInstrumento() {
     const [devuelto, setDevuelto] = useState<boolean>(false);
     const [fechaInicio, setFechaInicio] = useState<Date>(hoy);
     const [fechaLimite, setFechaLimite] = useState<Date>(hoy);
+    const [fechaDevolucion, setFechaDevolucion] = useState<Date>(hoy);
     const [comentario, setComentario] = useState<string>("");
 
-    const [isInstrumentoValid, setIsInstrumentoValid] = useState(false);
-    const [isPrestamistaValid, setIsPrestamistaValid] = useState(false);
-    const [isPrestatarioValid, setIsPrestatarioValid] = useState(false);
-    const [isFechaInicioValid, setIsFechaInicioValid] = useState(false);
+    const [isFechaInicioValid, setIsFechaInicioValid] = useState(true);
     const [isFechaLimiteValid, setIsFechaLimiteValid] = useState(false);
+    const [isFechaDevolucionValid, setIsFechaDevolucionValid] = useState(true);
 
-    const date = new Date();
+    const setTodoInicio = () => {
+        setInstrumento(props.instrumento);
+        setPrestatario(props.prestatario);
+        setPrestamista(props.prestamista);
+        setDevuelto(props.devuelto);
+        setFechaInicio(props.fechaInicio);
+        setFechaLimite(props.fechaLimite);
+        setFechaDevolucion(props.fechaDevolucion);
+        //setComentario(props.comentario);
+    };
+
+    const fechaToValue = (fecha: Date) => {
+        if (!fecha) return undefined;
+        const objDate = new Date(fecha);
+        return objDate.toISOString().split('T')[0];
+    }
+
+    const showDate = (date: Date): string => {
+        if (date) {
+            return "Actual: " + textDate(date);
+        }
+        return "Sin fecha";
+    };
+
     const queryClient = useQueryClient();
-
-    const handleInstrumentoChange = (e: any) => {
-        setInstrumento(e.target.value);
-        setIsInstrumentoValid(!!e.target.value);
-    }
-
-    const handlePrestatarioChange = (e: any) => {
-        setPrestatario(e.target.value);
-        setIsPrestatarioValid(!!e.target.value);
-    }
-
-    const handlePrestamistaChange = (e: any) => {
-        setPrestamista(e.target.value);
-        setIsPrestamistaValid(!!e.target.value);
-    }
 
     const handleFechaInicioChange = (e: any) => {
         const d = new Date(e.target.value);
         const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
         setFechaInicio(date);
         setIsFechaInicioValid(!!e.target.value);
+        console.log("FECHA INICIO: ",fechaInicio);
+    };
+
+    const handleDevueltoChange = (e: any) => {
+        setDevuelto(e.target.value);
+    }
+
+    const handleFechaLimiteChange = (e: any) => {
+        const d = new Date(e.target.value);
+        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        setFechaLimite(date);
+        setIsFechaLimiteValid(!isMenorQueInicio(fechaInicio, fechaLimite));
+        console.log("FECHA LIMITE: ",fechaLimite)
     };
 
     const handleFechaDevolucionChange = (e: any) => {
         const d = new Date(e.target.value);
         const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        setFechaLimite(date);
-        setIsFechaLimiteValid(!isLimiteMenorAInicio(fechaInicio, date));
+        setFechaDevolucion(date);
+        setIsFechaDevolucionValid(!isMenorQueInicio(fechaInicio, date));
     };
 
+
     const mutation = useMutation({
-        mutationFn: async (newPrestamo: ICrearInstrumento) => {
-            const res = await createPrestamoInstrumento(newPrestamo);
+        mutationFn: async (newItem: any) => {
+            console.log("ID", props.id);
+            console.log("body ",newItem);
+            const res = await editPrestamoInstrumento(props.id, newItem);
             return res;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            itemMutationToPrestableFalse.mutate({prestable:false});
+            queryClient.invalidateQueries({queryKey: ["instrumentosPrestables"]});
         },
     });
-
-    const itemMutationToPrestableFalse = useMutation({
-        mutationFn: async (newItem: any) =>{
-            const res = await editItemInventario(instrumento, newItem);
-
-            return res;
-        }
-    })
-
-    const instrumentosPrestablesQuery = useQuery({
-        queryKey: ["instrumentosPrestables"],
-        queryFn: async () => {
-            const data = await getInstrumentosPrestables();
-            return data;
-        },
-        initialData: [],
-    });
-
-    const usuariosQuery = useQuery({
-        queryKey: ["usuarios"],
-        queryFn: async () => {
-            const data = await getUsers();
-            return data;
-        },
-        initialData: [],
-    });
-
-    const showInstrumentos = () => {
-        const instrumentosData = instrumentosPrestablesQuery.data;
-        return instrumentosData.map((instrumento: IItemInventario) => {
-            return (
-                <option value={instrumento._id} key={instrumento._id}>{instrumento.nombre}</option>
-            )
-        })
-    }
-
-    const showUsuarios = () => {
-        const userData = usuariosQuery.data;
-        return userData.map((usuario: IUsuarioModel) => {
-            return (
-                <option value={usuario._id} key={usuario._id}>{usuario.name}</option>
-            )
-        })
-    }
 
     const isFechaMenorAActual = (fecha: Date) => {
         const ayer: Date = new Date();
@@ -144,69 +130,59 @@ function NuevoPrestamoInstrumento() {
         return fecha && fecha < ayer;
     }
 
-    const isLimiteMenorAInicio = (inicio: Date, limite: Date) => {
+    const isMenorQueInicio = (inicio: Date, limite: Date) => {
         return limite && limite < inicio;
     }
 
     return (
         <>
-            <Button
-                fontSize={"1.6em"}
-                fontWeight={"bold"}
-                p={"35px"}
-                colorScheme={"newPrestamoInstrumentoButton"}
-                display={{base: "none", md: "flex"}}
-                onClick={onOpen}
-            >
-                Nuevo Prestamo
-            </Button>
-
             <IconButton
-                display={{base: "flex", md: "none"}}
+                bg={
+                    colorMode == "light"
+                        ? "inventarioItemEditBg.light"
+                        : "inventarioItemEditBg.dark"
+                }
                 isRound
-                w={{base: "60px", md: "70px"}}
-                h={{base: "60px", md: "70px"}}
-                colorScheme={"newInventarioItemButton"}
-                aria-label={"Agregar Item"}
-                fontSize={{base: "3em", md: "3.3em"}}
-                icon={<MdAdd/>}
-                onClick={onOpen}
-            >
-                Nuevo Préstamo
-            </IconButton>
+                _hover={{bg: "#66b4ff"}}
+                fontSize={"1.4em"}
+                aria-label={"Editar"}
+                icon={<MdCreate/>}
+                onClick={() => {
+                    onOpen();
+                    setTodoInicio();
+                }}
+                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+            />
+            {/* Alerta de Instrumento */}
 
-            {/* AlertDialog Instrumento TODO */}
             <AlertDialog
-                leastDestructiveRef={cancelRef}
                 isOpen={isOpen}
+                leastDestructiveRef={cancelRef}
                 onClose={onClose}
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Registrar nuevo préstamo
+                            Editar Prestamo
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            <FormControl isInvalid={!instrumento}>
+                            <FormControl isDisabled={true}>
                                 <FormLabel>Instrumento</FormLabel>
-                                <Select placeholder={"Escoja Instrumento"} onChange={handleInstrumentoChange}>
-                                    {showInstrumentos()}
+                                <Select placeholder={instrumento}>
                                 </Select>
                                 <FormErrorMessage>Debe escoger un instrumento</FormErrorMessage>
                             </FormControl>
 
-                            <FormControl isInvalid={!prestamista}>
+                            <FormControl isDisabled={true}>
                                 <FormLabel>Prestamista</FormLabel>
-                                <Select placeholder={"Escoja Prestamista"} onChange={handlePrestamistaChange}>
-                                    {showUsuarios()}
+                                <Select placeholder={prestamista}>
                                 </Select>
                                 <FormErrorMessage>Debe escoger un prestamista</FormErrorMessage>
                             </FormControl>
 
-                            <FormControl isInvalid={!prestatario}>
+                            <FormControl isDisabled={true}>
                                 <FormLabel>Prestatario</FormLabel>
-                                <Select placeholder={"Escoja Prestatario"} onChange={handlePrestatarioChange}>
-                                    {showUsuarios()}
+                                <Select placeholder={prestatario}>
                                 </Select>
                                 <FormErrorMessage>Debe escoger un prestatario</FormErrorMessage>
                             </FormControl>
@@ -214,6 +190,7 @@ function NuevoPrestamoInstrumento() {
                             <FormControl isInvalid={isFechaMenorAActual(fechaInicio)}>
                                 <FormLabel>Fecha de Inicio</FormLabel>
                                 <Input
+                                    defaultValue={fechaToValue(props.fechaInicio)}
                                     type={"date"}
                                     onChange={handleFechaInicioChange}
                                     min={minDate(date)}
@@ -221,11 +198,36 @@ function NuevoPrestamoInstrumento() {
                                 <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
                             </FormControl>
 
-                            <FormControl isInvalid={isLimiteMenorAInicio(fechaInicio, fechaLimite)}>
+                            <Flex align="center">
+                                <FormControl display="flex" alignItems="center" mr={4}>
+                                    <FormLabel htmlFor="date-switch" mb="0">
+                                        ¿Devuelto?
+                                    </FormLabel>
+                                    <Switch
+                                        id="date-switch"
+                                        isChecked={devuelto}
+                                        onChange={() => setDevuelto(!devuelto)}
+                                    />
+                                </FormControl>
+                                <FormControl mt={4}>
+                                    <Input
+                                        defaultValue={fechaToValue(props.fechaDevolucion)}
+                                        id="fecha"
+                                        type="date"
+                                        isDisabled={!devuelto}
+                                        onChange={handleFechaDevolucionChange}
+                                        isInvalid={isMenorQueInicio(fechaInicio, fechaDevolucion)}
+                                    />
+                                    <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
+                                </FormControl>
+                            </Flex>
+
+                            <FormControl isInvalid={isMenorQueInicio(fechaInicio, fechaLimite)}>
                                 <FormLabel>Fecha Límite</FormLabel>
                                 <Input
+                                    defaultValue={fechaToValue(props.fechaLimite)}
                                     type={"date"}
-                                    onChange={handleFechaDevolucionChange}
+                                    onChange={handleFechaLimiteChange}
                                     min={minDate(date)}
                                 />
                                 <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
@@ -244,16 +246,13 @@ function NuevoPrestamoInstrumento() {
                                     setComentario("");
                                     setIsFechaInicioValid(false);
                                     setIsFechaLimiteValid(false);
-                                    setIsInstrumentoValid(false);
-                                    setIsPrestatarioValid(false);
-                                    setIsPrestamistaValid(false);
                                     onClose();
                                 }}
                             >
                                 Cancelar
                             </Button>
                             <Button
-                                colorScheme={"blue"}
+                                colorScheme="blue"
                                 onClick={() => {
                                     if (
                                         instrumento &&
@@ -263,26 +262,21 @@ function NuevoPrestamoInstrumento() {
                                         fechaLimite
                                     ) {
                                         mutation.mutate({
-                                            instrumento,
-                                            prestatario,
-                                            prestamista,
                                             fechaInicio,
-                                            fechaLimite
+                                            fechaLimite,
+                                            fechaDevolucion,
+                                            comentario,
+                                            devuelto
                                         })
                                         setIsFechaInicioValid(false);
                                         setIsFechaLimiteValid(false);
-                                        setIsInstrumentoValid(false);
-                                        setIsPrestatarioValid(false);
-                                        setIsPrestamistaValid(false);
                                         onClose();
                                     }
                                 }}
                                 isDisabled={
-                                    !isInstrumentoValid ||
-                                    !isPrestamistaValid ||
-                                    !isPrestatarioValid ||
                                     !isFechaInicioValid ||
-                                    !isFechaLimiteValid
+                                    isFechaLimiteValid ||
+                                    !isFechaDevolucionValid
                                 }
                             >
                                 Aceptar
@@ -292,7 +286,7 @@ function NuevoPrestamoInstrumento() {
                 </AlertDialogOverlay>
             </AlertDialog>
         </>
-    )
+    );
 }
 
-export {NuevoPrestamoInstrumento};
+export default EditarPrestamo;

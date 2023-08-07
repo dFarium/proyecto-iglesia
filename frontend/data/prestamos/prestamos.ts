@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, {AxiosResponse} from "axios";
 import {IItemInventario} from "@/data/inventario/item";
 
 export interface IPrestamoInstrumento {
@@ -29,8 +29,10 @@ export interface ICrearInstrumento {
     instrumento: string,
     prestatario: string,
     prestamista: string,
+    devuelto?: boolean,
     fechaInicio: Date,
     fechaLimite: Date,
+    fechaDevolucion?: Date,
     comentario?: string
 }
 
@@ -60,9 +62,9 @@ const createPrestamoInstrumento = async (prestamo: ICrearInstrumento) => {
     return res.data;
 };
 
-const deletePrestamoInstrumnto = async (id: string) => {
+const deletePrestamoInstrumento = async (id: string) => {
     const res = await axios.delete(`${process.env.API_URL}/prestamo/delete`, {
-        data: { id },
+        data: {id},
     });
     console.log(res);
     return res.data;
@@ -76,12 +78,11 @@ const getInstrumentosPrestables = async () => {
 }
 
 
-
 export {
     getAllPrestamoInstrumento,
     getPrestamoInstrumento,
     editPrestamoInstrumento,
     createPrestamoInstrumento,
-    deletePrestamoInstrumnto,
+    deletePrestamoInstrumento,
     getInstrumentosPrestables
 };

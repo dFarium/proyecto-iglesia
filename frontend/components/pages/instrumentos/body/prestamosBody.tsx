@@ -47,6 +47,10 @@ import {textDate} from "@/utils/dateUtils";
 import {IPrestamoInstrumento, getAllPrestamoInstrumento} from "@/data/prestamos/prestamos";
 import {useQuery} from "@tanstack/react-query";
 import {NuevoPrestamoInstrumento} from "@/components/pages/instrumentos/widgets/nuevoPrestamo";
+import EliminarItemInventario from "@/components/pages/inventario/widgets/eliminarItem";
+import EliminarPrestamoInstrumento from "@/components/pages/instrumentos/widgets/eliminarPrestamo";
+import EditarItemInventario from "@/components/pages/inventario/widgets/editarItem";
+import EditarPrestamo from "@/components/pages/instrumentos/widgets/editarPrestamo";
 // import EliminarItemInventario from "../widgets/eliminarItem";
 // import { VerFotoItem } from "../widgets/verFotoItem";
 
@@ -217,6 +221,39 @@ export default function PrestamoBody() {
                 sortingFn: "datetime",
             },
             {
+                id: "fechaDevolucion",
+                header: () => {
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            Fecha Devolución
+                        </Text>
+                    );
+                },
+                accessorKey: "fechaDevolucion",
+                cell: ({row}) => {
+                    if (!row.getValue("fechaDevolucion")) {
+                        return (
+                            <Text
+                                //  minW={"100%"} textAlign={"center"}
+                            >
+                                No ha sido devuelto
+                            </Text>
+                        );
+                    }
+
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            {textDate(row.getValue("fechaDevolucion"))}
+                        </Text>
+                    );
+                },
+                sortingFn: "datetime",
+            },
+            {
                 id: "fechaLimite",
                 header: () => {
                     return (
@@ -249,226 +286,84 @@ export default function PrestamoBody() {
                 },
                 sortingFn: "datetime",
             },
-
-            // {
-            //     id: "categoria",
-            //     header: () => {
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 Categoría
-            //             </Text>
-            //         );
-            //     },
-            //     accessorKey: "categoria",
-            //     cell: ({row}) => {
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 {row.getValue("categoria")}
-            //             </Text>
-            //         );
-            //     },
-            // },
-            // {
-            //     id: "estado",
-            //     header: () => {
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 Estado
-            //             </Text>
-            //         );
-            //     },
-            //     accessorKey: "estado",
-            //     cell: ({row}) => {
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 {row.getValue("estado")}
-            //             </Text>
-            //         );
-            //     },
-            // },
-            // {
-            //     id: "prestable",
-            //     header: () => {
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 ¿Prestable?
-            //             </Text>
-            //         );
-            //     },
-            //     accessorKey: "prestable",
-            //     cell({row}) {
-            //         const prestable: boolean = row.getValue("prestable");
-            //
-            //         if (prestable) {
-            //             return (
-            //                 <Text
-            //                     //  minW={"100%"} textAlign={"center"}
-            //                 >
-            //                     Si
-            //                 </Text>
-            //             );
-            //         } else {
-            //             if (prestable === false) {
-            //                 return (
-            //                     <Text
-            //                         //  minW={"100%"} textAlign={"center"}
-            //                     >
-            //                         No
-            //                     </Text>
-            //                 );
-            //             }
-            //             return (
-            //                 <Text
-            //                     //  minW={"100%"} textAlign={"center"}
-            //                 >
-            //                     -
-            //                 </Text>
-            //             );
-            //         }
-            //     },
-            // },
-            // {
-            //     id: "createdAt",
-            //     header: () => {
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 Fecha de Ingreso
-            //             </Text>
-            //         );
-            //     },
-            //     accessorKey: "createdAt",
-            //     cell: ({row}) => {
-            //         const date = textDate(row.getValue<Date>("createdAt"));
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 {date}
-            //             </Text>
-            //         );
-            //     },
-            //     sortingFn: "datetime",
-            // },
-            // {
-            //     id: "fechaSalida",
-            //     header: () => {
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 Fecha de Salida
-            //             </Text>
-            //         );
-            //     },
-            //     accessorKey: "fechaSalida",
-            //     cell: ({row}) => {
-            //         if (!row.getValue("fechaSalida")) {
-            //             return (
-            //                 <Text
-            //                     //  minW={"100%"} textAlign={"center"}
-            //                 >
-            //                     -
-            //                 </Text>
-            //             );
-            //         }
-            //
-            //         return (
-            //             <Text
-            //                 //  minW={"100%"} textAlign={"center"}
-            //             >
-            //                 {textDate(row.getValue("fechaSalida"))}
-            //             </Text>
-            //         );
-            //     },
-            //     sortingFn: "datetime",
-            // },
-            // {id: "desc", accessorKey: "desc"},
-            // {id: "ultMant", accessorKey: "ultMant"},
-            // {id: "cicloMant", accessorKey: "cicloMant"},
-            // {
-            //     id: "edit",
-            //     enableSorting: false,
-            //     header: () => {
-            //         return (
-            //             <>
-            //                 <Circle
-            //                     bg={"#F6AD55"}
-            //                     size={"1.5em"}
-            //                     fontSize={"1.2em"}
-            //                     color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-            //                     cursor={"default"}
-            //                 >
-            //                     <MdCreate/>
-            //                 </Circle>
-            //             </>
-            //         );
-            //     },
-            //     cell: ({row}) => {
-            //         return (
-            //             // <VerDetallesItem itemInventario={row.getValue("id")} />
-            //             <EditarItemInventario
-            //                 id={row.getValue("id")}
-            //                 nombre={row.getValue("nombre")}
-            //                 estado={row.getValue("estado")}
-            //                 prestable={row.getValue("prestable")}
-            //                 cantidad={row.getValue("cantidad")}
-            //                 categoria={row.getValue("categoria")}
-            //                 cicloMant={row.getValue("cicloMant")}
-            //                 desc={row.getValue("desc")}
-            //                 fechaSalida={row.getValue("fechaSalida")}
-            //                 ultMant={row.getValue("ultMant")}
-            //             />
-            //         );
-            //     },
-            // },
-            // {
-            //     id: "delete",
-            //     enableSorting: false,
-            //     header: () => {
-            //         return (
-            //             <>
-            //                 <Circle
-            //                     border={"2px solid"}
-            //                     borderColor={
-            //                         colorMode == "light"
-            //                             ? "inventarioDeleteItem.light"
-            //                             : "inventarioDeleteItem.dark"
-            //                     }
-            //                     size={"1.5em"}
-            //                     fontSize={"1.2em"}
-            //                     color={
-            //                         colorMode == "light"
-            //                             ? "inventarioDeleteItem.light"
-            //                             : "inventarioDeleteItem.dark"
-            //                     }
-            //                     cursor={"default"}
-            //                 >
-            //                     <MdDelete/>
-            //                 </Circle>
-            //             </>
-            //         );
-            //     },
-            //     cell: ({row}) => {
-            //         return (
-            //             <EliminarItemInventario
-            //                 name={row.getValue("nombre")}
-            //                 id={row.getValue("id")}
-            //             />
-            //         );
-            //     },
-            // },
+            {
+                id: "edit",
+                enableSorting: false,
+                header: () => {
+                    return (
+                        <>
+                            <Circle
+                                bg={"#F6AD55"}
+                                size={"1.5em"}
+                                fontSize={"1.2em"}
+                                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                                cursor={"default"}
+                            >
+                                <MdCreate />
+                            </Circle>
+                        </>
+                    );
+                },
+                cell: ({ row }) => {
+                    return (
+                        // <VerDetallesItem itemInventario={row.getValue("id")} />
+                        <EditarPrestamo
+                            id={row.getValue("id")}
+                            instrumento={row.getValue("instrumento.nombre")}
+                            prestatario={row.getValue("prestatario.name")}
+                            prestamista={row.getValue("prestamista.name")}
+                            devuelto={row.getValue("devuelto")}
+                            fechaInicio={row.getValue("fechaInicio")}
+                            fechaDevolucion={row.getValue("fechaDevolucion")}
+                            fechaLimite={row.getValue("fechaLimite")}
+                            //comentario={row.getValue("comentario")}
+                        />
+                    );
+                },
+            },
+            {
+                id: "delete",
+                enableSorting: false,
+                header: () => {
+                    return (
+                        <>
+                            <Circle
+                                border={"2px solid"}
+                                borderColor={
+                                    colorMode == "light"
+                                        ? "inventarioDeleteItem.light"
+                                        : "inventarioDeleteItem.dark"
+                                }
+                                size={"1.5em"}
+                                fontSize={"1.2em"}
+                                color={
+                                    colorMode == "light"
+                                        ? "inventarioDeleteItem.light"
+                                        : "inventarioDeleteItem.dark"
+                                }
+                                cursor={"default"}
+                            >
+                                <MdDelete />
+                            </Circle>
+                        </>
+                    );
+                },
+                cell: ({ row }) => {
+                    return (
+                        <EliminarPrestamoInstrumento
+                            instrumentoId={row.getValue("instrumento._id")}
+                            id={row.getValue("id")}
+                        />
+                    );
+                },
+            },
+            {
+                id: "instrumento._id",
+                header: "",
+                accessorKey: "instrumento._id",
+                cell: ({ row }) => {
+                },
+            },
         ],
         [colorMode]
     );
