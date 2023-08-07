@@ -24,13 +24,13 @@ const registerUser = async (req: Request, res: Response) => {
     const isRutExist = await UsuarioModel.findOne({ rut: req.body.rut })
     if (isRutExist) return res.status(400).json({error: true, message: 'RUT ya registrado'})
 
+    // Validación de Nro teléfono único
+    const isTelefonoExist = await UsuarioModel.findOne({ telefono: req.body.telefono })
+    if (isTelefonoExist) return res.status(400).json({error: true, message: 'Teléfono ya registrado'})
+
     // Validación de email único
     const isEmailExist = await UsuarioModel.findOne({ email: req.body.email })
     if (isEmailExist) return res.status(400).json({error: true, message: 'Email ya registrado'})
-
-    // Validación de teléfono único
-    // const isPhoneExist = await UsuarioModel.findOne({ telefono: req.body.telefono }) 
-    // if (isPhoneExist) return res.status(400).json({error: true, message: 'Teléfono ya registrado'})
 
     // Encriptación de clave
     const salt = await bcrypt.genSalt(10);
@@ -126,7 +126,6 @@ const updateUser = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
-        
         // Si se incluye 'password' en la actualización, no se actualiza la contraseña, todo lo demás sí.
         if (updates.password) {
             delete updates.password;
