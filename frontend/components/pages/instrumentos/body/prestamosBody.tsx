@@ -15,6 +15,7 @@ import {
     Circle,
     IconButton,
     useColorMode,
+    Icon,
 } from "@chakra-ui/react";
 
 import {
@@ -38,47 +39,39 @@ import {
     MdNavigateBefore,
     MdNavigateNext,
 } from "react-icons/md";
-import { useMemo, useState } from "react";
-import { textDate } from "@/utils/dateUtils";
-import {
-    viewAllFiles,
-    viewOneFile,
-    viewFavorite,
-    downloadFile,
-    subirArchivo,
-    deleteFile,
-    IArchivos
-} from "@/data/archivos/archivos";
-import { useQuery } from "@tanstack/react-query";
+import {useMemo, useState} from "react";
+import {textDate} from "@/utils/dateUtils";
+import {IPrestamoInstrumento, getAllPrestamoInstrumento} from "@/data/prestamos/prestamos";
+import {useQuery} from "@tanstack/react-query";
+import {NuevoPrestamoInstrumento} from "@/components/pages/instrumentos/widgets/nuevoPrestamo";
+import EliminarPrestamoInstrumento from "@/components/pages/instrumentos/widgets/eliminarPrestamo";
+import EditarPrestamo from "@/components/pages/instrumentos/widgets/editarPrestamo";
 
-export default function ArchivosFavBody() {
-    // query todos los archivos
-    const filesQuery = useQuery({
-        queryKey: ["AllFiles"],
-        queryFn: async () => {
-            const data = viewAllFiles();
-            return data;
-        },
+const userAccess = true;
+
+export default function PrestamoBody() {
+    // query todos los items
+    const allPrestamosQuery = useQuery({
+        queryKey: ["allPrestamos"],
+        queryFn: getAllPrestamoInstrumento,
         initialData: [],
     });
-    const filesData = filesQuery.data;
+    const allPrestamosData = allPrestamosQuery.data;
 
     const [columnVisibility] = useState({
         id: false,
+        desc: false,
         index: false,
-        mimetype: true,
-        publico: true,
     });
-
     const [sorting, setSorting] = useState<SortingState>([]);
-    const { colorMode } = useColorMode();
+    const {colorMode} = useColorMode();
 
     // definicion de las columnas de la tabla
-    const columns: ColumnDef<IArchivos>[] = useMemo<
-        ColumnDef<IArchivos>[]
+    const columns: ColumnDef<IPrestamoInstrumento>[] = useMemo<
+        ColumnDef<IPrestamoInstrumento>[]
     >(
         () => [
-            { id: "id", accessorKey: "_id" },
+            {id: "id", accessorKey: "_id"},
             {
                 id: "index",
                 header: "#",
@@ -86,165 +79,92 @@ export default function ArchivosFavBody() {
                 sortingFn: "basic",
             },
             {
-                id: "fileName",
-                header: () => {
+                id: "instrumento.nombre",
+                header: "Instrumento",
+                accessorKey: "instrumento.nombre",
+                cell: ({row}) => {
                     return (
                         <Text
-                            minW={"100%"} textAlign={"center"}
+                            //  minW={"100%"} textAlign={"center"}
                         >
-                            Nombre
-                        </Text>
-                    );
-                },
-                accessorKey: "fileName",
-                cell: ({ row }) => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            {row.getValue("fileName")}
+                            {row.getValue("instrumento.nombre")}
                         </Text>
                     );
                 },
             },
             {
-                id: "mimetype",
+                id: "prestatario.name",
                 header: () => {
                     return (
                         <Text
-                            minW={"100%"} textAlign={"center"}
+                            //  minW={"100%"} textAlign={"center"}
                         >
-                            Mimetype
+                            Prestatario
                         </Text>
                     );
                 },
-                accessorKey: "mimetype",
-                cell: ({ row }) => {
+                accessorKey: "prestatario.name",
+                cell: ({row}) => {
                     return (
                         <Text
-                            minW={"100%"} textAlign={"center"}
+                            //  minW={"100%"} textAlign={"center"}
                         >
-                            {row.getValue("mimetype")}
+                            {row.getValue("prestatario.name")}
                         </Text>
                     );
                 },
-            },
-            {
-                id: "tagCategoria",
-                header: () => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            Categoría
-                        </Text>
-                    );
-                },
-                accessorKey: "tagCategoria",
-                cell: ({ row }) => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            {row.getValue("tagCategoria")}
-                        </Text>
-                    );
-                },
-            },
-            {
-                id: "url",
-                header: () => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            Enlace
-                        </Text>
-                    );
-                },
-                accessorKey: "url",
-                cell: ({ row }) => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            {row.getValue("url")}
-                        </Text>
-                    );
-                },
-            },
-            {
-                id: "userSubida",
-                header: () => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            Dueño
-                        </Text>
-                    );
-                },
-                accessorKey: "userSubida",
-                cell: ({ row }) => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            {row.getValue("userSubida")}
-                        </Text>
-                    );
-                },
-            },
-            {
-                id: "userModifica",
-                header: () => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            Ultima modificacion
-                        </Text>
-                    );
-                },
-                accessorKey: "userModifica",
-                cell: ({ row }) => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            {row.getValue("userModifica")}
-                        </Text>
-                    );
-                },
-            },
-            {
-                id: "publico",
-                header: () => {
-                    return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
-                            ¿Publico?
-                        </Text>
-                    );
-                },
-                accessorKey: "publico",
-                cell({ row }) {
-                    const publico: boolean = row.getValue("publico");
 
-                    if (publico) {
+            },
+            {
+                id: "prestamista.name",
+                header: () => {
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            Prestamista
+                        </Text>
+                    );
+                },
+                accessorKey: "prestamista.name",
+                cell: ({row}) => {
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            {row.getValue("prestamista.name")}
+                        </Text>
+                    );
+                },
+            },
+            {
+                id: "devuelto",
+                header: () => {
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            ¿Devuelto?
+                        </Text>
+                    );
+                },
+                accessorKey: "devuelto",
+                cell({row}) {
+                    const devuelto: boolean = row.getValue("devuelto");
+
+                    if (devuelto) {
                         return (
                             <Text
-                            //  minW={"100%"} textAlign={"center"}
+                                //  minW={"100%"} textAlign={"center"}
                             >
                                 Si
                             </Text>
                         );
                     } else {
-                        if (!publico) {
+                        if (!devuelto) {
                             return (
                                 <Text
-                                //  minW={"100%"} textAlign={"center"}
+                                    //  minW={"100%"} textAlign={"center"}
                                 >
                                     No
                                 </Text>
@@ -252,12 +172,198 @@ export default function ArchivosFavBody() {
                         }
                         return (
                             <Text
-                            //  minW={"100%"} textAlign={"center"}
+                                //  minW={"100%"} textAlign={"center"}
                             >
                                 -
                             </Text>
                         );
                     }
+                }
+            },
+            {
+                id: "fechaInicio",
+                header: () => {
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            Fecha Prestamo
+                        </Text>
+                    );
+                },
+                accessorKey: "fechaInicio",
+                cell: ({row}) => {
+                    if (!row.getValue("fechaInicio")) {
+                        return (
+                            <Text
+                                //  minW={"100%"} textAlign={"center"}
+                            >
+                                -
+                            </Text>
+                        );
+                    }
+
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            {textDate(row.getValue("fechaInicio"))}
+                        </Text>
+                    );
+                },
+                sortingFn: "datetime",
+            },
+            {
+                id: "fechaDevolucion",
+                header: () => {
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            Fecha Devolución
+                        </Text>
+                    );
+                },
+                accessorKey: "fechaDevolucion",
+                cell: ({row}) => {
+                    if (!row.getValue("fechaDevolucion")) {
+                        return (
+                            <Text
+                                //  minW={"100%"} textAlign={"center"}
+                            >
+                                No ha sido devuelto
+                            </Text>
+                        );
+                    }
+
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            {textDate(row.getValue("fechaDevolucion"))}
+                        </Text>
+                    );
+                },
+                sortingFn: "datetime",
+            },
+            {
+                id: "fechaLimite",
+                header: () => {
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            Fecha Límite
+                        </Text>
+                    );
+                },
+                accessorKey: "fechaLimite",
+                cell: ({row}) => {
+                    if (!row.getValue("fechaLimite")) {
+                        return (
+                            <Text
+                                //  minW={"100%"} textAlign={"center"}
+                            >
+                                -
+                            </Text>
+                        );
+                    }
+
+                    return (
+                        <Text
+                            //  minW={"100%"} textAlign={"center"}
+                        >
+                            {textDate(row.getValue("fechaLimite"))}
+                        </Text>
+                    );
+                },
+                sortingFn: "datetime",
+            },
+            {
+                id: "edit",
+                enableSorting: false,
+                header: () => {
+                    if (userAccess) {
+                        return (
+                            <>
+                                <Circle
+                                    bg={"#F6AD55"}
+                                    size={"1.5em"}
+                                    fontSize={"1.2em"}
+                                    color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                                    cursor={"default"}
+                                >
+                                    <MdCreate/>
+                                </Circle>
+                            </>
+                        );
+                    }
+                },
+                cell: ({row}) => {
+                    if (userAccess) {
+                        return (
+                            // <VerDetallesItem itemInventario={row.getValue("id")} />
+                            <EditarPrestamo
+                                id={row.getValue("id")}
+                                instrumento={row.getValue("instrumento.nombre")}
+                                prestatario={row.getValue("prestatario.name")}
+                                prestamista={row.getValue("prestamista.name")}
+                                devuelto={row.getValue("devuelto")}
+                                fechaInicio={row.getValue("fechaInicio")}
+                                fechaDevolucion={row.getValue("fechaDevolucion")}
+                                fechaLimite={row.getValue("fechaLimite")}
+                                itemId={row.getValue("instrumento._id")}
+                                //comentario={row.getValue("comentario")}
+                            />
+                        );
+                    }
+                },
+            },
+            {
+                id: "delete",
+                enableSorting: false,
+                header: () => {
+                    if (userAccess) {
+                        return (
+                            <>
+                                <Circle
+                                    border={"2px solid"}
+                                    borderColor={
+                                        colorMode == "light"
+                                            ? "inventarioDeleteItem.light"
+                                            : "inventarioDeleteItem.dark"
+                                    }
+                                    size={"1.5em"}
+                                    fontSize={"1.2em"}
+                                    color={
+                                        colorMode == "light"
+                                            ? "inventarioDeleteItem.light"
+                                            : "inventarioDeleteItem.dark"
+                                    }
+                                    cursor={"default"}
+                                >
+                                    <MdDelete/>
+                                </Circle>
+                            </>
+                        );
+                    }
+                },
+                cell: ({row}) => {
+                    if (userAccess) {
+                        return (
+                            <EliminarPrestamoInstrumento
+                                instrumentoId={row.getValue("instrumento._id")}
+                                id={row.getValue("id")}
+                            />
+                        );
+                    }
+                },
+            },
+            {
+                id: "instrumento._id",
+                header: "",
+                accessorKey: "instrumento._id",
+                cell: ({row}) => {
                 },
             },
         ],
@@ -266,7 +372,7 @@ export default function ArchivosFavBody() {
 
     // api react table
     const table = useReactTable({
-        data: filesData,
+        data: allPrestamosData,
         columns,
         initialState: {
             columnVisibility,
@@ -285,7 +391,8 @@ export default function ArchivosFavBody() {
         <Box w={"100%"} h={"100%"}>
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
-                    <Text textStyle={"titulo"}>Lista Archivos</Text>
+                    <Text textStyle={"titulo"}>Prestamo de Instrumentos</Text>
+                    {userAccess ? <NuevoPrestamoInstrumento/> : null}
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
                     <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -312,9 +419,9 @@ export default function ArchivosFavBody() {
                                                     <Box fontSize={"1.5em"}>
                                                         {header.column.getIsSorted() ? (
                                                             header.column.getIsSorted() === "desc" ? (
-                                                                <MdArrowDropDown />
+                                                                <MdArrowDropDown/>
                                                             ) : (
-                                                                <MdArrowDropUp />
+                                                                <MdArrowDropUp/>
                                                             )
                                                         ) : null}
                                                     </Box>
@@ -368,31 +475,37 @@ export default function ArchivosFavBody() {
                             </Text>
                             <HStack>
                                 <IconButton
-                                    icon={<MdKeyboardDoubleArrowLeft />}
+                                    icon={<MdKeyboardDoubleArrowLeft/>}
                                     aria-label="Primera página"
                                     onClick={() => table.setPageIndex(0)}
                                     isDisabled={!table.getCanPreviousPage()}
                                 />
                                 <IconButton
-                                    icon={<MdNavigateBefore />}
+                                    icon={<MdNavigateBefore/>}
                                     aria-label="Página anterior"
                                     onClick={() => table.previousPage()}
                                     isDisabled={!table.getCanPreviousPage()}
                                 />
                                 <IconButton
-                                    icon={<MdNavigateNext />}
+                                    icon={<MdNavigateNext/>}
                                     aria-label="Página siguiente"
                                     onClick={() => table.nextPage()}
                                     isDisabled={!table.getCanNextPage()}
                                 />
                                 <IconButton
-                                    icon={<MdKeyboardDoubleArrowRight />}
+                                    icon={<MdKeyboardDoubleArrowRight/>}
                                     aria-label="Última página"
                                     onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                                     isDisabled={!table.getCanNextPage()}
                                 />
                             </HStack>
                         </HStack>
+                        {/*<HStack display={{base: "none", lg: "flex"}}>
+                            <MdHelp size={"20px"}/>
+                            <Text minW={"400px"}>
+                                Puede ver las fotos dando click en el nombre del Item
+                            </Text>
+                        </HStack>*/}
                     </HStack>
                 </VStack>
             </VStack>
@@ -407,3 +520,5 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
         return pageSize * currentIndex + pageSize;
     }
 }
+
+  

@@ -44,4 +44,44 @@ const viewImg = async (folderName: string, imgName: string) => {
   return res;
 };
 
-export { uploadNewFile, viewImg, uploadNewFileData };
+const viewAllFiles = async () => {
+    const res = await axios.get(`${process.env.API_URL}/files/`);
+    return res.data;
+};
+
+const viewOneFile = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/specific/${id}`);
+    return res.data;
+};
+
+const viewFavorite = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/${id}`);
+    return res.data;
+};
+
+const downloadFile = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/download/${id}`);
+    return res.data;
+};
+
+const subirArchivo = async () => {
+    const res = await axios.get(`${process.env.API_URL}/file/upload/`);
+    return res.data;
+};
+
+const deleteFile = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/delete/${id}`);
+    return res.data;
+};
+
+export {
+    viewAllFiles,
+    viewOneFile,
+    viewFavorite,
+    downloadFile,
+    subirArchivo,
+    deleteFile,
+  uploadNewFile,
+  viewImg,
+  uploadNewFileData
+};
