@@ -28,7 +28,9 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpe
                                 <FormLabel>
                                     <Text>Descripción</Text>
                                 </FormLabel>
+
                                 <Text
+                                    borderRadius="10px"
                                     border="1px"
                                     p={2}
                                 >
@@ -39,7 +41,6 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpe
                                 </FormLabel>
                             </Stack>
                         </AlertDialogBody>
-
                         <AlertDialogFooter>
                             <Button ref={cancelRef} onClick={onClose}>
                                 Cerrar

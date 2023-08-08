@@ -64,7 +64,7 @@ const GraficosTesoreria = () => {
             </Grid>
             <Grid marginTop={10} /* w={"100%"} */ marginLeft={5}>
 
-                {/* <VictoryPie
+                <VictoryPie
                     key={`${totalGasto}-${totalIngreso}`}
                     data={[
                         { x: "Gastos", y: totalGasto, label: `${Math.round((totalGasto / (totalGasto + totalIngreso)) * 100)}%` },
@@ -75,7 +75,7 @@ const GraficosTesoreria = () => {
                     }}
                     colorScale={["#F97D08", "#084DF9"]}
                     theme={VictoryTheme.material}
-                /> */}
+                />
 
                 {/* <VictoryChart domainPadding={{ x: [10, 0] }} padding={{ left: 60 }} >
                     <VictoryGroup offset={-250}>
@@ -84,12 +84,12 @@ const GraficosTesoreria = () => {
                     </VictoryGroup>
                 </VictoryChart> */}
 
-                <VictoryChart domainPadding={{ x: [10, 0] }} padding={{ left: 60 }}>
+                {/* <VictoryChart domainPadding={{ x: [10, 0] }} padding={{ left: 60 }}>
                     <VictoryGroup offset={-250}>
                         <VictoryBar data={[{ x: "Ingresos", y: totalIngreso }]} style={{ data: { fill: "#084DF9" } }} />
                         <VictoryBar data={[{ x: "Gastos", y: totalGasto }]} style={{ data: { fill: "#F97D08" } }} />
                     </VictoryGroup>
-                </VictoryChart>
+                </VictoryChart> */}
             </Grid>
             <Grid alignContent={"left"}>
                 <VictoryLegend x={125} y={50}

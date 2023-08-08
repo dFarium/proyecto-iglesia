@@ -66,6 +66,7 @@ export function IngresoListBody() {
   const [columnVisibility] = useState({
     id: false,
     nombre: true,
+    index: false,
     valorCaja: true,
     fechaGasto: true,
     descripcion: false,

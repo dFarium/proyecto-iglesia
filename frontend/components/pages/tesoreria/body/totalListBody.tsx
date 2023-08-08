@@ -18,6 +18,7 @@ import {
   Grid,
   Flex,
   Container,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -50,6 +51,7 @@ import EditarTesoreria from '../widgets/editarTesoreria';
 import EliminarTesoreria from '../widgets/eliminarTesoreria';
 import { NuevoGastoIngresoTesoreria } from '../widgets/nuevoTesoreria';
 import GraficosTesoreria from '../widgets/graficosTesoreria';
+import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 
 export function TotalListBody() {
@@ -77,7 +79,7 @@ export function TotalListBody() {
 
   const [columnVisibility] = useState({
     id: false,
-    index: true,
+    index: false,
     nombre: true,
     valorCaja: true,
     fechaGasto: true,
@@ -110,10 +112,14 @@ export function TotalListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+          const { isOpen, onOpen, onClose } = useDisclosure();
           return (
-            <Text>
-              {row.getValue("nombre")}
-            </Text>
+            <>
+              <Text onClick={onOpen}>
+                {row.getValue("nombre")}
+              </Text>
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} />
+            </>
           )
         },
       },
