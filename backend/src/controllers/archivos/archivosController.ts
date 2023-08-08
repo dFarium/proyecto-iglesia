@@ -18,6 +18,7 @@ const uploadNewFile = async(req: Request, res: Response) => {
         mimetype: file.mimetype,
         url: file.destination ,
         tagCategoria: req.params.tag,
+        publico: req.params.acceso
     })
     //console.log("newFile:", newFile)
     await newFile

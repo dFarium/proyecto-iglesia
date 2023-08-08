@@ -79,7 +79,7 @@ function NuevoArchivo() {
             const formFile = new FormData();
             formFile.append("archivos", archivoFile.archivoFile);
             console.log(archivoFile.archivoFile.name);
-            const res = await uploadNewFile( formFile, "Archivos", `${fechaStd}-${archivoFile.archivoFile.name}` /*nombre archivo*/, "Random" /*tag*/ );
+            const res = await uploadNewFile( formFile, "Archivos", `${fechaStd}-${archivoFile.archivoFile.name}` /*nombre archivo*/, "Random" /*tag*/, false );
             return res;
         },
         onSuccess: () => {
