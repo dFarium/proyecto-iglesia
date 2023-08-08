@@ -45,7 +45,7 @@ import {
     viewOneFile,
     viewFavorite,
     downloadFile,
-    subirArchivo,
+    uploadNewFile,
     deleteFile,
     IArchivos
 } from "@/data/archivos/archivos";
@@ -66,8 +66,11 @@ export default function ArchivosFavBody() {
     const [columnVisibility] = useState({
         id: false,
         index: false,
-        mimetype: true,
+        mimetype: false,
         publico: true,
+        url: false,
+        userSubida: false,
+        userModifica: false
     });
 
     const [sorting, setSorting] = useState<SortingState>([]);
