@@ -2,13 +2,14 @@
 
 import {Box, Button, Text, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox, CheckboxGroup, FormErrorMessage } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from 'sweetalert2'
 
 function RegisterUserBody() {
+
     const { colorMode } = useColorMode();
     const router = useRouter();
-    
+
     const [name, setName] = useState("");
     const [isValidName, setIsValidName] = useState(true);
     const [nameTouched, setNameTouched] = useState(false);
@@ -172,17 +173,20 @@ function RegisterUserBody() {
             }
 
             // Construcción condicional del cuerpo de la solicitud
-            const requestBody: { name: string; rut: string; fecha_nacimiento?: string; email: string; password: string; rol?: string[]; telefono: string;
-            direccion: string; num_emergencia: string; RRSS: string, estado?: string; archivos?: string } = {
+            const requestBody: { name: string; rut: string; fecha_nacimiento?: string; email: string; password: string; rol?: string[]; telefono?: string;
+            direccion?: string; num_emergencia?: string; RRSS?: string, estado?: string; archivos?: string } = {
                 name,
                 rut,
                 email,
                 password,
-                telefono,
-                direccion,
-                num_emergencia,
-                RRSS
             };
+            if (telefono) { requestBody.telefono = telefono }
+
+            if (direccion) { requestBody.direccion = direccion }
+
+            if (num_emergencia) { requestBody.num_emergencia = num_emergencia }
+
+            if (RRSS) { requestBody.RRSS = RRSS }
 
             if (fechaNacimiento) {
                 requestBody.fecha_nacimiento = fechaNacimiento.toISOString();
@@ -212,8 +216,8 @@ function RegisterUserBody() {
                     router.push("/home/usuarios/getUsuarios");
                 }, 2500);
             } else if(res.status === 400){
-                console.log("ERROR 400")
                 const errorData = await res.json();
+                console.log("ERROR 400", errorData)
                 if (errorData.message === 'RUT ya registrado') {
                     setIsValidRut(false);
                     setRutError('RUT en uso');
@@ -296,18 +300,18 @@ function RegisterUserBody() {
                     </FormControl>
                     <FormControl>
                         <FormLabel>Teléfono</FormLabel>
-                        <Input placeholder="+569xxxxxxxx" value={telefono} onChange={handleTelefonoChange} onBlur={handleTelefonoBlur} required/>
+                        <Input placeholder="+569xxxxxxxx" value={telefono} onChange={handleTelefonoChange} onBlur={handleTelefonoBlur} />
                         {!isValidTelefono && telefonoTouched && (
                             <FormErrorMessage>{telefonoError}</FormErrorMessage>
                         )}
                     </FormControl>
                     <FormControl>
                         <FormLabel>Dirección</FormLabel>
-                        <Input placeholder="Calle N°" value={direccion} onChange={handleDireccionChange} required/>
+                        <Input placeholder="Calle N°" value={direccion} onChange={handleDireccionChange} />
                     </FormControl>
                     <FormControl>
                         <FormLabel>Numero de emergencia</FormLabel>
-                        <Input placeholder="+569xxxxxxxx" value={num_emergencia} onChange={handleNumEmergenciaChange} required/>
+                        <Input placeholder="+569xxxxxxxx" value={num_emergencia} onChange={handleNumEmergenciaChange} />
                     </FormControl>
                     <FormControl>
                         <FormLabel>RRSS</FormLabel>
@@ -316,11 +320,11 @@ function RegisterUserBody() {
                     <FormControl>
                     <FormLabel>Roles</FormLabel>
                         <CheckboxGroup colorScheme="green" value={rol} onChange={handleRolesChange}>
-                        <HStack spacing={3}>
-                            <Checkbox value="admin">Admin</Checkbox>
-                            <Checkbox value="directiva">Directiva</Checkbox>
-                            <Checkbox value="miembro">Miembro</Checkbox>
-                        </HStack>
+                            <HStack spacing={3}>
+                                <Checkbox value="admin">Admin</Checkbox>
+                                <Checkbox value="directiva">Directiva</Checkbox>
+                                <Checkbox value="miembro">Miembro</Checkbox>
+                            </HStack>
                         </CheckboxGroup>
                     </FormControl>
                     <HStack p={"10px"}>

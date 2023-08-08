@@ -41,26 +41,32 @@ export function ElegirBody() {
     }
   }, []);
 
-  // const handleClick = (e: React.MouseEvent) => {
-  //   Swal.fire('Se hizo clic en un botón');
-  // };
-
   return (
     <VStack w={"full"} h={"full"}>
-      <Text textStyle={"titulo"}>Prueba</Text>
+      <Text textStyle={"titulo"}>Mostrar todos los usuarios</Text>
       <VStack w={"full"} h={"full"} justify={"space-between"} overflow={"auto"} p={"20px"} >
-        <Grid templateColumns={{ base: "repeat(1,1fr)", lg: "repeat(2,1fr)", xl: "repeat(3,1fr)", }} gap={"40px"} m={"auto"} >
-          {/* {admin && (
-            <Categoria titulo="crear usuario" href="/home/usuarios/register"/>
-          )} */}
-          <Categoria titulo="Ver usuario" href="/home/usuarios/getUsuarios"/>
+        <Grid
+          templateColumns={{
+            base: "repeat(1,1fr)",
+            lg: "repeat(2,1fr)",
+            xl: "repeat(3,1fr)",
+          }}
+          gap={"40px"}
+          m={"auto"}
+        >
+          {/* ... Tus otros componentes Categoria ... */}
+          <Categoria
+            titulo="Ver usuarios"
+            href="/home/usuarios/getUsuarios"
+            image="equipos.png"
+          />
         </Grid>
       </VStack>
     </VStack>
   );
 }
 
-function Categoria(props: { titulo: string; href: string}) { // Agregación de función onclick , onClick: (e: any) => void 
+function Categoria(props: { titulo: string; href: string; image: string }) { // Agregación de función onclick , onClick: (e: any) => void 
   const { colorMode } = useColorMode();
   const outlineDark = "2px white solid";
   const outlineLight = "2px grey solid";

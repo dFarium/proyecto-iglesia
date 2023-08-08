@@ -149,7 +149,7 @@ function SideMenu() {
         <MenuItemSideBar
           icon={MdPerson}
           option="Usuarios"
-          href="/home/usuarios"
+          href="/home/usuarios/getUsuarios"
         />
       </VStack>
     </Box>
