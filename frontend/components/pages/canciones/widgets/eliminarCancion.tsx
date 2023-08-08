@@ -16,7 +16,7 @@ import {useRef} from "react";
 import {MdDeleteOutline} from "react-icons/md";
 
 
-import {deleteCancion,editarCancion} from "@/data/canciones/canciones"
+import {deleteCancion} from "@/data/canciones/canciones"
 
 function EliminarCancion (props: {id: string}){
 

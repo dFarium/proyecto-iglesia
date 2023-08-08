@@ -5,6 +5,7 @@ import {
     AlertDialogHeader,
     AlertDialogContent,
     AlertDialogOverlay,
+    useColorMode,
     Button,
     useDisclosure,
     IconButton,
@@ -54,6 +55,7 @@ function NuevaCancion(){
     const [uploadAudio, setUploadAudio] = useState<boolean>(false);
 
     const queryClient = useQueryClient();
+    const {colorMode} = useColorMode();
 
     const handleNombreChange = (e:any)=>{
         setNombre(e.target.value);
@@ -171,7 +173,7 @@ function NuevaCancion(){
         onClick={onOpen}
         >
         Nueva Canción
-        </IconButton>
+        </IconButton >
 
         <AlertDialog
         isOpen={isOpen}
@@ -241,7 +243,7 @@ function NuevaCancion(){
                                 left="0"
                                 opacity="0"
                                 aria-hidden="true"
-                                accept="image/*"
+                                accept="application/*"
                                 onChange={handleLetraChange}
                                 />
                             </Button>
@@ -259,7 +261,7 @@ function NuevaCancion(){
                                 left="0"
                                 opacity="0"
                                 aria-hidden="true"
-                                accept="image/*"
+                                accept="audio/*"
                                 onChange={handleAudioChange}
                                 />
                             </Button>
