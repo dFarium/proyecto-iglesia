@@ -8,7 +8,6 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
     Button,
-    Center,
     FormControl,
     FormErrorMessage,
     FormHelperText,
@@ -16,8 +15,6 @@ import {
     IconButton,
     Input,
     Select,
-    Text,
-    Textarea,
     useDisclosure,
 } from "@chakra-ui/react";
 
@@ -90,12 +87,12 @@ function NuevoPrestamoInstrumento() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            itemMutationToPrestableFalse.mutate({prestable:false});
+            itemMutationToPrestableFalse.mutate({prestable: false});
         },
     });
 
     const itemMutationToPrestableFalse = useMutation({
-        mutationFn: async (newItem: any) =>{
+        mutationFn: async (newItem: any) => {
             const res = await editItemInventario(instrumento, newItem);
 
             return res;

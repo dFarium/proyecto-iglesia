@@ -2,14 +2,19 @@
 
 import { Text, FormControl, useColorModeValue, HStack, FormLabel, Input, Table, Button, 
     IconButton, Container, Tbody, Thead, Th, Tr, Td, Tooltip, Modal, ModalOverlay, ModalContent,
-    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack } from "@chakra-ui/react";
+    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack, Checkbox, CheckboxGroup } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import Swal from 'sweetalert2'
+import { useRouter } from "next/navigation";
+import { ArrowUpIcon, ArrowDownIcon } from "@chakra-ui/icons";
 //instalar -> npm install react-icons
 import { FaRegEdit, FaRegTrashAlt, FaUserPlus } from 'react-icons/fa';
 
 function GetUsersBody() {
+
+    const router = useRouter();
+    const [loading, setLoading] = useState(true);
 
     interface Usuario {
         _id: string;
@@ -26,8 +31,33 @@ function GetUsersBody() {
     const [usuarios, setUsers] = useState<Usuario[]>([]);
     const [admin, setAdmin] = useState(false);
 
+    const [directiva, setDirectiva] = useState(false);
+
+    const [rol, setRoles] = useState<string[]>([]);
+
+    const [isAscendingOrder, setIsAscendingOrder] = useState(true);
+
+    const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("asc");
+
     // Estados para editar el usuario
     const [editingUser, setEditingUser] = useState<Usuario | null>(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem('auth-token');
+    
+        if (!token) {
+            router.push('/');
+        } else {
+            setLoading(false);
+        }
+
+    }, []);
+
+    useEffect(() => {
+        if (editingUser) {
+            setRoles(editingUser.rol.map(role => role.name));
+        }
+    }, [editingUser]);
 
     // Estados para mostrar detalles del usuario
     const [getUser, setGetUser] = useState<Usuario | null>(null);
@@ -66,7 +96,13 @@ function GetUsersBody() {
                 body: JSON.stringify({
                     name: editingUser.name,
                     rut: editingUser.rut,
-                    email: editingUser.email
+                    email: editingUser.email,
+                    telefono: editingUser.telefono,
+                    direccion: editingUser.direccion,
+                    fecha_nacimiento: editingUser.fecha_nacimiento,
+                    num_emergencia: editingUser.num_emergencia,
+                    RRSS: editingUser.num_emergencia,
+                    rol: rol.map(role => ({ name: role })),
                 }),
             });
             if (!res.ok) {
@@ -143,6 +179,14 @@ function GetUsersBody() {
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if(editingUser) {
+            let value = event.target.value;
+
+            // Si el input es una fecha, ajustamos al mediodía
+            if (event.target.type === 'date') {
+                const dateValue = new Date(value);
+                dateValue.setHours(12); // Ajustamos al mediodía del tiempo local
+                value = dateValue.toISOString();
+            }
             setEditingUser({
                 ...editingUser,
                 [event.target.name]: event.target.value
@@ -171,17 +215,20 @@ function GetUsersBody() {
             return;
         }
 
-        // Arreglo que contiene el rol, leído para ver si es administrador y fijar el admin como true o false
+        // Arreglo que contiene el rol, leído para ver si es administrador, directiva u miembro y fijarlos como true o false
         if (decoded) {
             if (Array.isArray(decoded.rol)) {
                 decoded.rol.forEach((roleObject) => {
                     if (roleObject.name === 'admin') {
                         setAdmin(true);
+                    } else if (roleObject.name === 'directiva'){
+                        setDirectiva(true);
                     }
                 });
             }
         } else {
             setAdmin(false);
+            setDirectiva(false);
         }
     }, []);
 
@@ -198,10 +245,10 @@ function GetUsersBody() {
                     <Td isTruncated maxWidth="200px">{usuario.rut}</Td>
                     <Td isTruncated maxWidth="350px">{usuario.email}</Td>
                     <Td isTruncated maxWidth="400px">{roles}</Td>
-                    {admin && (
+                    {(admin || directiva) && (
                         <Td maxW={"70px"}>
                             <Button colorScheme="twitter" variant='link' fontWeight="thin"
-                            onClick={() => { openDetailModal(); setGetUser(usuario); }}>detalle</Button>
+                            onClick={() => { openDetailModal(); setGetUser(usuario); setRoles(usuario.rol.map(rol => rol.name));}}>detalle</Button>
                         </Td>)}
                     {admin && (
                         <Td maxW={"1px"}>
@@ -212,7 +259,7 @@ function GetUsersBody() {
                                 variant="ghost" 
                                 _hover={{ bg: editHoverColor }} 
                                 _active={{ bg: editActiveColor }}
-                                onClick={() => { setIsOpen(true); setEditingUser(usuario); }}
+                                onClick={() => { setIsOpen(true); setEditingUser(usuario);}}
                                 mr={3}
                                 isRound
                                 />
@@ -238,6 +285,30 @@ function GetUsersBody() {
             );
         });
     }
+
+    // const handleRolesChange = (values: string[]) => {
+    //     setRoles(values);
+    // };
+
+    if (loading) {
+        return null;
+    }
+
+    // Constante usada para establecer el calendario hasta la fecha actual.
+    const currentDate = new Date().toISOString().split('T')[0];
+
+    const sortUsersByName = () => {
+        const sortedUsers = [...usuarios];
+        if (orderDirection === "asc") {
+            sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
+            setOrderDirection("desc");
+        } else {
+            sortedUsers.sort((a, b) => b.name.localeCompare(a.name));
+            setOrderDirection("asc");
+        }
+        setUsers(sortedUsers);
+    };
+    
     return(
         <Container maxW='1250px' >
             <HStack justifyContent={"space-between"} h='100px'>
@@ -250,7 +321,7 @@ function GetUsersBody() {
             <Table variant="simple" >
                 <Thead >
                 <Tr>
-                    <Th>NOMBRE</Th>
+                <Th onClick={sortUsersByName}>NOMBRE{orderDirection === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}</Th>
                     <Th>RUT</Th>
                     <Th>CORREO</Th>
                     <Th>ROL</Th>
@@ -271,12 +342,31 @@ function GetUsersBody() {
                     <ModalBody>
                         <form onSubmit={EditUser}>
                             <FormControl>
-                                <FormLabel htmlFor="name">Name</FormLabel>
+                                <FormLabel htmlFor="name">Nombre</FormLabel>
                                 <Input type="text" id="name" name="name" value={editingUser?.name || ''} onChange={handleInputChange} />
                                 <FormLabel htmlFor="rut">RUT</FormLabel>
                                 <Input type="text" id="rut" name="rut" value={editingUser?.rut || ''} onChange={handleInputChange} />
                                 <FormLabel htmlFor="email">Email</FormLabel>
-                                <Input type="email" id="email" name="email" value={editingUser?.email || ''} onChange={handleInputChange} />
+                                <Input type="text" id="email" name="email" value={editingUser?.email || ''} onChange={handleInputChange} />
+                                <FormLabel htmlFor="telefono">Telefono</FormLabel>
+                                <Input type="text" id="telefono" name="telefono" value={editingUser?.telefono || ''} onChange={handleInputChange} />
+                                <FormLabel htmlFor="direccion">Direccion</FormLabel>
+                                <Input type="text" id="direccion" name="direccion" value={editingUser?.direccion || ''} onChange={handleInputChange} />
+                                <FormLabel htmlFor="fecha_nacimiento">Fecha de nacimiento</FormLabel>
+                                <Input type="date" id="fecha_nacimiento" name="fecha_nacimiento" max={currentDate}
+                                    value={editingUser?.fecha_nacimiento ? new Date(editingUser.fecha_nacimiento).toISOString().split('T')[0] : ''} 
+                                    onChange={handleInputChange} 
+                                />
+                                <FormLabel htmlFor="num_emergencia">Nro de emergencia</FormLabel>
+                                <Input type="text" id="num_emergencia" name="num_emergencia" value={editingUser?.num_emergencia || ''} onChange={handleInputChange} />
+                                {/* <FormLabel htmlFor="rol">Rol</FormLabel> */}
+                                {/* <CheckboxGroup colorScheme="green" value={rol} onChange={(roles: any) => handleRolesChange(roles)}>
+                                    <HStack spacing={3}>
+                                        <Checkbox value="admin">Admin</Checkbox>
+                                        <Checkbox value="directiva">Directiva</Checkbox>
+                                        <Checkbox value="miembro">Miembro</Checkbox>
+                                    </HStack>
+                                </CheckboxGroup> */}
                             </FormControl>
                         </form>
                     </ModalBody>
