@@ -167,6 +167,12 @@ const colors = {
   },
 
   // archivos
+  newArchivoItemButton: {
+    500: "#F07B3F", // light mode
+    600: "#dc6529", // light mode _hover
+    200: "#ff9655", // dark mode
+    300: "#ff7520", // dark mode _hover
+  },
 
   //prestamo instrumentos
   newPrestamoInstrumentoButton: {

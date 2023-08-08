@@ -128,18 +128,13 @@ function NuevoInstrumento() {
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
+    console.log("file:", formFile)
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.url);
-      console.log("file si");
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria );
+      console.log("file si arriba");
     } catch (error) {
-      console.log("file:", error);
-    }
-    try {
-      await uploadNewFileData(fileData);
-      console.log("data si");
-    } catch (error) {
-      console.log("data:", error);
+      console.log("file no arriba:", fileData.fileName);
     }
   };
 
@@ -298,7 +293,7 @@ function NuevoInstrumento() {
                   // validation();
                   if (validation()) {
                     const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
                     mutation.mutate({
                       nombre,
                       categoria: "Instrumento",
@@ -315,10 +310,12 @@ function NuevoInstrumento() {
                     });
                     if (imagen) {
                       uploadPicture(imagen, {
-                        fileName: `${imagen.name}`,
-                        tagCategoria: "Inventario",
+                        originalName: `${imagen.name}`,
+                        fileName: `${fechaStd}-${imagen.name}`,
+                        tagCategoria: "Fotos Inventario",
                         mimetype: imagen.type,
-                        url: `${fechaStd}-${imagen.name}`,
+                        //url: `${fechaStd}-${imagen.name}`,
+                        url: "./upload/Imagenes",
                         userSubida: "user",
                         publico: true,
                       });
@@ -440,16 +437,16 @@ function NuevoEquipoElec() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.url);
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria );
       console.log("file si");
     } catch (error) {
-      console.log("file:", error);
+      console.log("file abajo:", error);
     }
     try {
       await uploadNewFileData(fileData);
-      console.log("data si");
+      console.log("data si abajo");
     } catch (error) {
-      console.log("data:", error);
+      console.log("data abajo:", error);
     }
   };
 
@@ -766,7 +763,8 @@ function NuevoItemInventario() {
       const resFile = await uploadNewFile(
         formFile,
         "Imagenes",
-        fileData.fileName
+        fileData.fileName,
+        fileData.tagCategoria
       );
       const resData = await uploadNewFileData(fileData);
     } catch (error) {
