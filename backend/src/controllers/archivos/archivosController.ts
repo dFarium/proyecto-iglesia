@@ -32,8 +32,25 @@ const uploadNewFile = async(req: Request, res: Response) => {
         })
 }
 
+// const getFiles = async (req: Request, res: Response) => {
+//     await Archivos.find({tagCategoria: "-random"})
+//         .sort({ createdAt: "desc" })
+//         .then((items: IArchivos[]) => {
+//             if (items.length === 0) {
+//                 //console.log("Vacio");
+//                 return res.status(200).send([]);
+//             }
+//             return res.status(200).send(items);
+//         })
+//         .catch((err: CallbackError) => {
+//             return res
+//                 .status(400)
+//                 .send({ message: "Error al obtener los archivos completos" });
+//         });
+// };
+
 const getFiles = async (req: Request, res: Response) => {
-    await Archivos.find({})
+    await Archivos.find({tagCategoria: {$nin: ["Fotos Inventario","Random"]}})
         .sort({ createdAt: "desc" })
         .then((items: IArchivos[]) => {
             if (items.length === 0) {
@@ -48,6 +65,7 @@ const getFiles = async (req: Request, res: Response) => {
                 .send({ message: "Error al obtener los archivos completos" });
         });
 };
+
 
 const downloadFile = async (req: Request, res: Response) => {
     await Archivos.findById(req.params.id)

@@ -74,12 +74,10 @@ function NuevoArchivo() {
         mutationFn: async (archivoFile: any) => {
             const fecha: Date = new Date();
             const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-
-
+            console.log("Nombre", archivoFile.nombre);
             const formFile = new FormData();
             formFile.append("archivos", archivoFile.archivoFile);
-            console.log(archivoFile.archivoFile.name);
-            const res = await uploadNewFile( formFile, "Archivos", `${fechaStd}-${archivoFile.archivoFile.name}` /*nombre archivo*/, "Random" /*tag*/, false );
+            const res = await uploadNewFile( formFile, "Archivos", `${fechaStd}-${archivoFile.nombre}` /*nombre archivo*/, "Biblioteca" /*tag*/, false );
             return res;
         },
         onSuccess: () => {
@@ -223,7 +221,7 @@ function NuevoArchivo() {
                                 onClick={() => {
                                     if (archivoFile) {
                                         mutation.mutate({
-                                            archivoFile
+                                            archivoFile, nombre
                                         });
                                     }
                                     setNombre("");
