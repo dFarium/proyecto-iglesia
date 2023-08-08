@@ -133,7 +133,7 @@ function SideMenu() {
         />
         <MenuItemSideBar
           icon={MdPiano}
-          option="Instrumentos"
+          option="Préstamos"
           href="/home/instrumentos"
         />
         <MenuItemSideBar
