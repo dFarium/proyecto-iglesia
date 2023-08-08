@@ -242,6 +242,7 @@ function EditarPrestamo(props: {
                                         isDisabled={!devuelto}
                                         onChange={handleFechaDevolucionChange}
                                         value={fechaToValue(fechaActualOrDevolucion(fechaDevolucion))}
+                                        min={minDate(new Date(fechaInicio))}
                                     />
                                     <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
                                 </FormControl>
@@ -253,7 +254,7 @@ function EditarPrestamo(props: {
                                     defaultValue={fechaToValue(props.fechaLimite)}
                                     type={"date"}
                                     onChange={handleFechaLimiteChange}
-                                    min={minDate(date)}
+                                    min={minDate(new Date(fechaInicio))}
                                 />
                                 <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
                             </FormControl>

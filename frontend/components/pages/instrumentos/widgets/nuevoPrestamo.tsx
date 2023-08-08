@@ -8,7 +8,6 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
     Button,
-    Center,
     FormControl,
     FormErrorMessage,
     FormHelperText,
@@ -16,8 +15,6 @@ import {
     IconButton,
     Input,
     Select,
-    Text,
-    Textarea,
     useDisclosure,
 } from "@chakra-ui/react";
 
