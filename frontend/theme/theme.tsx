@@ -201,6 +201,12 @@ const colors = {
     light: "#C53030",
     dark: "#FC8181",
   },
+
+  //Color Canciones
+  CancionDelete: {
+    light: "#C53030",
+    dark: "#FC8181",
+  },
 };
 
 const theme = extendTheme({
