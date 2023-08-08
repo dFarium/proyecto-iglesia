@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 export interface IArchivos {
   _id?: string;
+  originalName: string;
   fileName: string;
   tagCategoria: string;
   mimetype: string;
@@ -24,10 +25,12 @@ const uploadNewFileData = async (fileData: IArchivos) => {
 const uploadNewFile = async (
   file: FormData,
   folderName: string,
-  fileName: string
+  saveName: string,
+  tag: string,
+  acceso: boolean
 ) => {
   const resFile = await axios.post(
-    `${process.env.API_URL}/file/upload/${folderName}/${fileName}`,
+    `${process.env.API_URL}/file/upload/${folderName}/${saveName}/${tag}/${acceso}`,
     file,
     {
       headers: { "Content-Type": "multipart-formdata" },
@@ -64,10 +67,10 @@ const downloadFile = async (id: string) => {
     return res.data;
 };
 
-const subirArchivo = async () => {
-    const res = await axios.get(`${process.env.API_URL}/file/upload/`);
-    return res.data;
-};
+// const subirArchivo = async () => {
+//     const res = await axios.get(`${process.env.API_URL}/file/upload/`);
+//     return res.data;
+// };
 
 const deleteFile = async (id: string) => {
     const res = await axios.get(`${process.env.API_URL}/file/delete/${id}`);
@@ -79,7 +82,7 @@ export {
     viewOneFile,
     viewFavorite,
     downloadFile,
-    subirArchivo,
+   // subirArchivo,
     deleteFile,
   uploadNewFile,
   viewImg,
