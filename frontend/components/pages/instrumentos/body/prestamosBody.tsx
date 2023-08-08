@@ -39,20 +39,15 @@ import {
     MdNavigateBefore,
     MdNavigateNext,
 } from "react-icons/md";
-// import EditarItemInventario from "../widgets/editarItem";
-// import { NuevoItemInventario } from "../widgets/nuevoItem";
 import {useMemo, useState} from "react";
 import {textDate} from "@/utils/dateUtils";
-// import {IItemInventario, getAllItemsInventario} from "@/data/inventario/item";
 import {IPrestamoInstrumento, getAllPrestamoInstrumento} from "@/data/prestamos/prestamos";
 import {useQuery} from "@tanstack/react-query";
 import {NuevoPrestamoInstrumento} from "@/components/pages/instrumentos/widgets/nuevoPrestamo";
-import EliminarItemInventario from "@/components/pages/inventario/widgets/eliminarItem";
 import EliminarPrestamoInstrumento from "@/components/pages/instrumentos/widgets/eliminarPrestamo";
-import EditarItemInventario from "@/components/pages/inventario/widgets/editarItem";
 import EditarPrestamo from "@/components/pages/instrumentos/widgets/editarPrestamo";
-// import EliminarItemInventario from "../widgets/eliminarItem";
-// import { VerFotoItem } from "../widgets/verFotoItem";
+
+const userAccess = true;
 
 export default function PrestamoBody() {
     // query todos los items
@@ -66,8 +61,6 @@ export default function PrestamoBody() {
     const [columnVisibility] = useState({
         id: false,
         desc: false,
-        // ultMant: false,
-        // cicloMant: false,
         index: false,
     });
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -290,78 +283,87 @@ export default function PrestamoBody() {
                 id: "edit",
                 enableSorting: false,
                 header: () => {
-                    return (
-                        <>
-                            <Circle
-                                bg={"#F6AD55"}
-                                size={"1.5em"}
-                                fontSize={"1.2em"}
-                                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-                                cursor={"default"}
-                            >
-                                <MdCreate />
-                            </Circle>
-                        </>
-                    );
+                    if (userAccess) {
+                        return (
+                            <>
+                                <Circle
+                                    bg={"#F6AD55"}
+                                    size={"1.5em"}
+                                    fontSize={"1.2em"}
+                                    color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                                    cursor={"default"}
+                                >
+                                    <MdCreate/>
+                                </Circle>
+                            </>
+                        );
+                    }
                 },
-                cell: ({ row }) => {
-                    return (
-                        // <VerDetallesItem itemInventario={row.getValue("id")} />
-                        <EditarPrestamo
-                            id={row.getValue("id")}
-                            instrumento={row.getValue("instrumento.nombre")}
-                            prestatario={row.getValue("prestatario.name")}
-                            prestamista={row.getValue("prestamista.name")}
-                            devuelto={row.getValue("devuelto")}
-                            fechaInicio={row.getValue("fechaInicio")}
-                            fechaDevolucion={row.getValue("fechaDevolucion")}
-                            fechaLimite={row.getValue("fechaLimite")}
-                            //comentario={row.getValue("comentario")}
-                        />
-                    );
+                cell: ({row}) => {
+                    if (userAccess) {
+                        return (
+                            // <VerDetallesItem itemInventario={row.getValue("id")} />
+                            <EditarPrestamo
+                                id={row.getValue("id")}
+                                instrumento={row.getValue("instrumento.nombre")}
+                                prestatario={row.getValue("prestatario.name")}
+                                prestamista={row.getValue("prestamista.name")}
+                                devuelto={row.getValue("devuelto")}
+                                fechaInicio={row.getValue("fechaInicio")}
+                                fechaDevolucion={row.getValue("fechaDevolucion")}
+                                fechaLimite={row.getValue("fechaLimite")}
+                                itemId={row.getValue("instrumento._id")}
+                                //comentario={row.getValue("comentario")}
+                            />
+                        );
+                    }
                 },
             },
             {
                 id: "delete",
                 enableSorting: false,
                 header: () => {
-                    return (
-                        <>
-                            <Circle
-                                border={"2px solid"}
-                                borderColor={
-                                    colorMode == "light"
-                                        ? "inventarioDeleteItem.light"
-                                        : "inventarioDeleteItem.dark"
-                                }
-                                size={"1.5em"}
-                                fontSize={"1.2em"}
-                                color={
-                                    colorMode == "light"
-                                        ? "inventarioDeleteItem.light"
-                                        : "inventarioDeleteItem.dark"
-                                }
-                                cursor={"default"}
-                            >
-                                <MdDelete />
-                            </Circle>
-                        </>
-                    );
+                    if (userAccess) {
+                        return (
+                            <>
+                                <Circle
+                                    border={"2px solid"}
+                                    borderColor={
+                                        colorMode == "light"
+                                            ? "inventarioDeleteItem.light"
+                                            : "inventarioDeleteItem.dark"
+                                    }
+                                    size={"1.5em"}
+                                    fontSize={"1.2em"}
+                                    color={
+                                        colorMode == "light"
+                                            ? "inventarioDeleteItem.light"
+                                            : "inventarioDeleteItem.dark"
+                                    }
+                                    cursor={"default"}
+                                >
+                                    <MdDelete/>
+                                </Circle>
+                            </>
+                        );
+                    }
                 },
-                cell: ({ row }) => {
-                    return (
-                        <EliminarPrestamoInstrumento
-                            instrumentoId={row.getValue("instrumento._id")}
-                            id={row.getValue("id")}
-                        />
-                    );
+                cell: ({row}) => {
+                    if (userAccess) {
+                        return (
+                            <EliminarPrestamoInstrumento
+                                instrumentoId={row.getValue("instrumento._id")}
+                                id={row.getValue("id")}
+                            />
+                        );
+                    }
                 },
             },
             {
                 id: "instrumento._id",
                 header: "",
                 accessorKey: "instrumento._id",
-                cell: ({ row }) => {
+                cell: ({row}) => {
                 },
             },
         ],
@@ -389,8 +391,8 @@ export default function PrestamoBody() {
         <Box w={"100%"} h={"100%"}>
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
-                    <Text textStyle={"titulo"}>Prestamos Instrumentos</Text>
-                    <NuevoPrestamoInstrumento/>
+                    <Text textStyle={"titulo"}>Prestamo de Instrumentos</Text>
+                    {userAccess ? <NuevoPrestamoInstrumento/> : null}
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
                     <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -498,12 +500,12 @@ export default function PrestamoBody() {
                                 />
                             </HStack>
                         </HStack>
-                        <HStack display={{base: "none", lg: "flex"}}>
+                        {/*<HStack display={{base: "none", lg: "flex"}}>
                             <MdHelp size={"20px"}/>
                             <Text minW={"400px"}>
                                 Puede ver las fotos dando click en el nombre del Item
                             </Text>
-                        </HStack>
+                        </HStack>*/}
                     </HStack>
                 </VStack>
             </VStack>
