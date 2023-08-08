@@ -32,7 +32,6 @@ import { minDate, textDate, textDefaultDate } from "@/utils/dateUtils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ItemTesoreria, editarGastoIngresoTesoreria } from "@/data/tesoreria/item";
 
-
 function EditarTesoreria(props: {
     id: string;
     nombre: string;
@@ -118,8 +117,13 @@ function EditarTesoreria(props: {
     };
 
     const handleDescripcionChange = (e: any) => {
-        setNombre(e.target.value);
+        setDescripcion(e.target.value);
     };
+
+    const handleTipoChange = (e: any) => {
+        setTipo(e.target.value);
+    };
+
 
     const validation = (): boolean => {
         let error: boolean = false;
@@ -152,7 +156,6 @@ function EditarTesoreria(props: {
             queryClient.invalidateQueries({ queryKey: ["obtenerGastoTesoreria"] });
         },
     });
-
 
     return (
         <>
@@ -191,7 +194,6 @@ function EditarTesoreria(props: {
                 leastDestructiveRef={cancelRef}
                 onClose={onCloseIngreso}
             >
-
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
@@ -217,27 +219,10 @@ function EditarTesoreria(props: {
 
                             <Box>
                                 <FormLabel>Tipo</FormLabel>
-                                <Menu autoSelect={false}>
-                                    <MenuButton as={Button} rightIcon={<MdExpandMore />}>
-                                        {tipo}
-                                    </MenuButton>
-                                    <MenuList>{/* Cambiar por Select */}
-                                        <MenuItem
-                                            onClick={() => {
-                                                setTipo("Ingreso");
-                                            }}
-                                        >
-                                            Ingreso
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => {
-                                                setTipo("Gasto");
-                                            }}
-                                        >
-                                            Gasto
-                                        </MenuItem>
-                                    </MenuList>
-                                </Menu>
+                                <Select value={tipo} onChange={handleTipoChange}>
+                                    <option value="Ingreso">Ingreso</option>
+                                    <option value="Gasto">Gasto</option>
+                                </Select>
                             </Box>
 
                             <FormControl>
@@ -246,13 +231,13 @@ function EditarTesoreria(props: {
                                     placeholder="Monto"
                                     value={valorCaja}
                                     onChange={handleValorCajaChange}
-                                    maxLength={50}
+                                    maxLength={9}
                                 />
                                 {valorCajaErr ? (
                                     <FormErrorMessage>Ingrese un valor</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 999999999
+                                        {valorCaja} / 9{"99999999"}
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -322,7 +307,6 @@ function EditarTesoreria(props: {
                 leastDestructiveRef={cancelRef}
                 onClose={onCloseGasto}
             >
-
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
@@ -348,27 +332,10 @@ function EditarTesoreria(props: {
 
                             <Box>
                                 <FormLabel>Tipo</FormLabel>
-                                <Menu autoSelect={false}>
-                                    <MenuButton as={Button} rightIcon={<MdExpandMore />}>
-                                        {tipo}
-                                    </MenuButton>
-                                    <MenuList>{/* Cambiar por Select */}
-                                        <MenuItem
-                                            onClick={() => {
-                                                setTipo("Ingreso");
-                                            }}
-                                        >
-                                            Ingreso
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => {
-                                                setTipo("Gasto");
-                                            }}
-                                        >
-                                            Gasto
-                                        </MenuItem>
-                                    </MenuList>
-                                </Menu>
+                                <Select value={tipo} onChange={handleTipoChange}>
+                                    <option value="Ingreso">Ingreso</option>
+                                    <option value="Gasto">Gasto</option>
+                                </Select>
                             </Box>
 
                             <FormControl>
@@ -377,13 +344,13 @@ function EditarTesoreria(props: {
                                     placeholder="Monto"
                                     value={valorCaja}
                                     onChange={handleValorCajaChange}
-                                    maxLength={50}
+                                    maxLength={9}
                                 />
                                 {valorCajaErr ? (
                                     <FormErrorMessage>Ingrese un valor</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 999999999
+                                        {valorCaja} / 9{"99999999"}
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -419,7 +386,7 @@ function EditarTesoreria(props: {
                                 onClick={() => {
                                     setNombreErr(false);
                                     setValorCajaErr(false);
-                                    onCloseIngreso();
+                                    onCloseGasto();
                                 }}
                             >
                                 Cancelar
@@ -436,7 +403,7 @@ function EditarTesoreria(props: {
                                             descripcion,
                                             tipo
                                         });
-                                        onCloseIngreso();
+                                        onCloseGasto();
                                     }
                                 }}
                             >
@@ -479,12 +446,7 @@ function EditarTesoreria(props: {
 
                             <Box>
                                 <FormLabel>Tipo</FormLabel>
-                                <Select
-                                    placeholder={tipo}
-                                    onChange={(e) => {
-                                        setTipo(e.target.value);
-                                    }}
-                                >
+                                <Select value={tipo} onChange={handleTipoChange}>
                                     <option value="Ingreso">Ingreso</option>
                                     <option value="Gasto">Gasto</option>
                                 </Select>
@@ -496,13 +458,13 @@ function EditarTesoreria(props: {
                                     placeholder="Monto"
                                     value={valorCaja}
                                     onChange={handleValorCajaChange}
-                                    maxLength={50}
+                                    maxLength={9}
                                 />
                                 {valorCajaErr ? (
                                     <FormErrorMessage>Ingrese un monto</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 999999999
+                                        {valorCaja} / 9{"99999999"}
                                     </FormHelperText>
                                 )}
                             </FormControl>

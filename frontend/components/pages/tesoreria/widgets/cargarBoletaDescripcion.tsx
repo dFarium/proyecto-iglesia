@@ -1,4 +1,4 @@
-import { Text, AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, useDisclosure } from '@chakra-ui/react'
+import { Text, AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, useDisclosure, FormLabel, Image, Stack } from '@chakra-ui/react'
 import React, { useRef } from 'react'
 
 interface CargarBoletaDescripcionProps {
@@ -23,16 +23,21 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpe
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"} textAlign={"center"}>
                             Item "{nombre}"
                         </AlertDialogHeader>
-
-
                         <AlertDialogBody>
-
-                            <Text>
-                                ID: {id}
-                            </Text>
-                            <Text>
-                                Descripción: {descripcion}
-                            </Text>
+                            <Stack spacing={3}>
+                                <FormLabel>
+                                    <Text>Descripción</Text>
+                                </FormLabel>
+                                <Text
+                                    border="1px"
+                                    p={2}
+                                >
+                                    {descripcion}
+                                </Text>
+                                <FormLabel>
+                                    <Text>Archvios adjuntos</Text>
+                                </FormLabel>
+                            </Stack>
                         </AlertDialogBody>
 
                         <AlertDialogFooter>

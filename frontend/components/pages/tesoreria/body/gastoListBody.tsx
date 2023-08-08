@@ -16,6 +16,7 @@ import {
   Circle,
   IconButton,
   useColorMode,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -47,6 +48,7 @@ import { ItemTesoreria, obtenerGastoTesoreria } from '@/data/tesoreria/item';
 import EditarTesoreria from '../widgets/editarTesoreria';
 import EliminarTesoreria from '../widgets/eliminarTesoreria';
 import { NuevoGastoTesoreria } from '../widgets/nuevoTesoreria';
+import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 export function GastoListBody() {
 
@@ -91,10 +93,14 @@ export function GastoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+          const { isOpen, onOpen, onClose } = useDisclosure();
           return (
-            <Text>
-              {row.getValue("nombre")}
-            </Text>
+            <>
+              <Text onClick={onOpen}>
+                {row.getValue("nombre")}
+              </Text>
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} />
+            </>
           )
         },
       },
@@ -103,7 +109,6 @@ export function GastoListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               Monto
             </Text>
@@ -113,7 +118,6 @@ export function GastoListBody() {
         cell: ({ row }) => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               ${formatCLP(row.getValue("valorCaja"))}
             </Text>
@@ -373,12 +377,12 @@ export function GastoListBody() {
                 />
               </HStack>
             </HStack>
-            {/* <HStack display={{ base: "none", lg: "flex" }}>
+            <HStack display={{ base: "none", lg: "flex" }}>
               <MdHelp size={"20px"} />
               <Text minW={"400px"}>
-                Puede ver las fotos dando click en el nombre del Item
+                Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
               </Text>
-            </HStack> */}
+            </HStack>
           </HStack>
         </VStack>
       </VStack>

@@ -35,9 +35,8 @@ import {
     MdReceiptLong,
 } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { minDate, textDate, maxDate } from "@/utils/dateUtils";
+import { minDate, maxDate } from "@/utils/dateUtils";
 import { ItemTesoreria, crearGastoIngresoTesoreria } from "@/data/tesoreria/item";
-
 
 function NuevoIngresoTesoreria() {
 
@@ -68,7 +67,10 @@ function NuevoIngresoTesoreria() {
     const handleNombreChange = (e: any) => {
         const value = e.target.value;
         const isValid = /^[a-zA-Z0-9._ -]*$/.test(value);
-        if (!isValid) {
+        if (value === "") {
+            setNombreErr(true);
+            setMensajeNombre("El nombre no puede ser vacío.");
+        } else if (!isValid) {
             setNombreErr(true);
             setMensajeNombre("Nombre inválido.");
         } else {
@@ -77,9 +79,14 @@ function NuevoIngresoTesoreria() {
             setMensajeNombre("");
         }
     }
+    
     const handleValorCajaChange = (e: any) => {
-        const r = e.target.value.replace(/\D/g, "");
-        if (parseInt(r) < 999999999) {
+        const value = e.target.value;
+        const r = value.replace(/\D/g, "");
+        if (/\D/.test(value)) {
+            setValorCajaErr(true);
+            setMensajeValorCaja("Monto ingresado inválido");
+        } else if (parseInt(r) < 999999999) {
             setValorCaja(r);
             setValorCajaErr(false);
             setMensajeValorCaja("");
@@ -89,11 +96,23 @@ function NuevoIngresoTesoreria() {
         }
     };
 
+
     const handleFechaGastoChange = (e: any) => {
-        const d = new Date(e.target.value);
-        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        setFechaGasto(date);
+        /*  const d = new Date(e.target.value);
+            const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+            setFechaGasto(date);
+        }; */
+
+        console.log("AAAAAAAAAAAAAAAAAAAAa")
+        console.log(e.target.value)
+
+        if (!(e.target.value === "")) {        
+            const d = new Date(e.target.value);
+            const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+            setFechaGasto(date);
+        }
     };
+
 
     const handleDescripcionChange = (e: any) => {
         const value = e.target.value;
@@ -207,7 +226,7 @@ function NuevoIngresoTesoreria() {
                                     <FormErrorMessage>Ingrese un monto</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 999999999
+                                        {valorCaja} / 9{"99999999"}
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -248,24 +267,6 @@ function NuevoIngresoTesoreria() {
                             </Button>
                             <Button
                                 onClick={() => {
-                                    /* if (validation()) {
-                                        mutation.mutate({
-                                            nombre,
-                                            valorCaja,
-                                            fechaGasto,
-                                            descripcion,
-                                            tipo: "Ingreso",
-                                        });
-                                    }
-                                    setNombre("");
-                                    setNombreErr(false)
-                                    setValorCaja(1);
-                                    setValorCajaErr(false);
-                                    setFechaGasto(undefined);
-                                    setDescripcion("");
-                                    setTipo("")
-                                    onClose();
-                                }} */
 
                                     if (mensajeNombre || mensajeValorCaja || mensajeDescripcion) {
                                         let mensaje = "";
@@ -667,11 +668,7 @@ function NuevoGastoIngresoTesoreria() {
                             </FormControl>
                             <Box>
                                 <FormLabel>Tipo</FormLabel>
-                                <Select
-                                    placeholder="Seleccione un tipo"
-                                    value={tipo}
-                                    onChange={handleTipoChange}
-                                >
+                                <Select value={tipo} onChange={handleTipoChange}>
                                     <option value="Ingreso">Ingreso</option>
                                     <option value="Gasto">Gasto</option>
                                 </Select>

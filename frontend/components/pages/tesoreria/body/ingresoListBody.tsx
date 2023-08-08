@@ -81,13 +81,6 @@ export function IngresoListBody() {
   const { colorMode } = useColorMode();
 
 
-  interface CargarBoletaDescripcionProps {
-    isOpen: boolean;
-    onClose: () => void;
-  }
-
-
-
   const columns: ColumnDef<ItemTesoreria>[] = useMemo<
     ColumnDef<ItemTesoreria>[]
   >(
@@ -388,7 +381,7 @@ export function IngresoListBody() {
             <HStack display={{ base: "none", lg: "flex" }}>
               <MdHelp size={"20px"} />
               <Text minW={"400px"}>
-                Puede ver la descripción y archivos dando click en el nombre del Item.
+                Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
               </Text>
             </HStack>
           </HStack>

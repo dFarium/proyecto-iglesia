@@ -50,6 +50,8 @@ import EditarTesoreria from '../widgets/editarTesoreria';
 import EliminarTesoreria from '../widgets/eliminarTesoreria';
 import { NuevoGastoIngresoTesoreria } from '../widgets/nuevoTesoreria';
 import GraficosTesoreria from '../widgets/graficosTesoreria';
+
+
 export function TotalListBody() {
 
   const totalQuery = useQuery({
@@ -269,7 +271,6 @@ export function TotalListBody() {
     debugTable: true,
   });
 
-
   return (
 
     <>
@@ -386,12 +387,12 @@ export function TotalListBody() {
                     />
                   </HStack>
                 </HStack>
-                {/* <HStack display={{ base: "none", lg: "flex" }}>
-              <MdHelp size={"20px"} />
-              <Text minW={"400px"}>
-                Puede ver las fotos dando click en el nombre del Item
-              </Text>
-            </HStack> */}
+                <HStack display={{ base: "none", lg: "flex" }}>
+                  <MdHelp size={"20px"} />
+                  <Text minW={"400px"}>
+                    Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
+                  </Text>
+                </HStack>
               </HStack>
             </VStack>
           </VStack>
