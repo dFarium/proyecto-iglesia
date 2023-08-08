@@ -71,6 +71,7 @@ export function InventarioEquiposBody() {
     desc: false,
     ultMant: false,
     cicloMant: false,
+    imgScr: false,
   });
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -88,12 +89,13 @@ export function InventarioEquiposBody() {
         accessorFn: (_row: any, i: number) => i + 1,
         sortingFn: "basic",
       },
+      { id: "imgScr", accessorKey: "urlPic" },
       {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={""} />;
+          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={row.getValue("imgScr")} />;
         },
       },
       {

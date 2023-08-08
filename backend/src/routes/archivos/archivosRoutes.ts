@@ -17,7 +17,7 @@ export const archivosRoutes = Router();
 archivosRoutes.post("/file/data", uploadNewFileData);
           //name+mimetipe
 archivosRoutes.post(
-  "/file/upload/:folderName/:saveName/:tag",
+  "/file/upload/:folderName/:saveName/:tag/:acceso",
   upload.array('archivos'), fileSizeError, uploadNewFile
 );
 

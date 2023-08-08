@@ -94,7 +94,7 @@ export default function ArchivosPubBody() {
             },
             // { id: "imgScr", accessorKey: "urlPic" },
             {
-                id: "fileName",
+                id: "originalName",
                 header: () => {
                         return (
                         <Text
@@ -104,13 +104,13 @@ export default function ArchivosPubBody() {
                         </Text>
                     );
                 },
-                accessorKey: "fileName",
+                accessorKey: "originalName",
                 cell: ({ row }) => {
                     return (
                         <Text
                             minW={"100%"} textAlign={"center"}
                         >
-                            {row.getValue("fileName")}
+                            {row.getValue("originalName")}
                         </Text>
                     );
                 },
