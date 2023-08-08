@@ -47,6 +47,7 @@ import { headers } from "next/dist/client/components/headers";
 import { NuevaCancion } from "@/components/pages/canciones/widgets/nuevaCancion"
 import EliminarCancion from "../widgets/eliminarCancion";
 import Editarcancion from "../widgets/editarCancion";
+import ReproducirAudio from "../widgets/audioCanciones";
 
 export function ListCancionesBody() {
     //query todas las canciones
@@ -208,9 +209,7 @@ export function ListCancionesBody() {
                 accessorKey: "id_song",
                 cell: ({row}) => {
                     return (
-                        <Text>
-                            {row.getValue("id_song")}
-                        </Text>
+                        <ReproducirAudio/>
                     )
                 }
             },
