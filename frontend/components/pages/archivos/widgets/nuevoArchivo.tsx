@@ -74,10 +74,9 @@ function NuevoArchivo() {
         mutationFn: async (archivoFile: any) => {
             const fecha: Date = new Date();
             const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-            console.log("Nombre", archivoFile.nombre);
             const formFile = new FormData();
             formFile.append("archivos", archivoFile.archivoFile);
-            const res = await uploadNewFile( formFile, "Archivos", `${fechaStd}-${archivoFile.nombre}` /*nombre archivo*/, "Biblioteca" /*tag*/, false );
+            const res = await uploadNewFile( formFile, "Archivos", `${fechaStd}-${archivoFile.archivoFile.name}` /*nombre archivo*/, archivoFile.nombre /*tag*/, archivoFile.acceso );
             return res;
         },
         onSuccess: () => {
@@ -136,7 +135,7 @@ function NuevoArchivo() {
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             <FormControl>
-                                <FormLabel>Nombre</FormLabel>
+                                <FormLabel>Define una categoria</FormLabel>
 
                                 <Input
                                     placeholder="Nombre"
@@ -145,7 +144,7 @@ function NuevoArchivo() {
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>
-                                        Ingrese nombre
+                                        Define una categoria
                                     </FormErrorMessage>
                                 ) : (
                                     <FormHelperText
@@ -221,7 +220,7 @@ function NuevoArchivo() {
                                 onClick={() => {
                                     if (archivoFile) {
                                         mutation.mutate({
-                                            archivoFile, nombre
+                                            archivoFile, nombre, acceso
                                         });
                                     }
                                     setNombre("");

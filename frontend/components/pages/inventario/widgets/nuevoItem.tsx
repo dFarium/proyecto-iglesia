@@ -424,8 +424,8 @@ function NuevoEquipoElec() {
   });
 
   const handlePicChange = async (file: any) => {
-    const fecha: Date = new Date();
-    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+    // const fecha: Date = new Date();
+    // const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
 
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
@@ -436,16 +436,10 @@ function NuevoEquipoElec() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico);
-      console.log("file si");
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
+      console.log("file");
     } catch (error) {
-      console.log("file abajo:", error);
-    }
-    try {
-      await uploadNewFileData(fileData);
-      console.log("data si abajo");
-    } catch (error) {
-      console.log("data abajo:", error);
+      console.log("file:", fileData.fileName);
     }
   };
 
@@ -619,6 +613,8 @@ function NuevoEquipoElec() {
                 colorScheme="blue"
                 onClick={() => {
                   if (validation()) {
+                    const fecha: Date = new Date();
+                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
                     mutation.mutate({
                       nombre,
                       categoria: "Equipo",
@@ -632,6 +628,18 @@ function NuevoEquipoElec() {
                       ultMod: "Yo",
                       prestable,
                     });
+                    if (imagen) {
+                      uploadPicture(imagen, {
+                        originalName: `${imagen.name}`,
+                        fileName: `${fechaStd}-${imagen.name}`,
+                        tagCategoria: "Fotos Inventario",
+                        mimetype: imagen.type,
+                        //url: `${fechaStd}-${imagen.name}`,
+                        url: "./upload/Imagenes",
+                        userSubida: "user",
+                        publico: true,
+                      });
+                    }
                     setNombre("");
                     setFechaSalida(undefined);
                     setDesc("");
@@ -746,8 +754,8 @@ function NuevoItemInventario() {
   });
 
   const handlePicChange = async (file: any) => {
-    const fecha: Date = new Date();
-    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+    // const fecha: Date = new Date();
+    // const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
 
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
@@ -756,19 +764,12 @@ function NuevoItemInventario() {
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
-    formFile.append("file", file);
-
+    formFile.append("archivos", file);
     try {
-      const resFile = await uploadNewFile(
-        formFile,
-        "Imagenes",
-        fileData.fileName,
-        fileData.tagCategoria,
-        fileData.publico
-      );
-      const resData = await uploadNewFileData(fileData);
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
+      console.log("file");
     } catch (error) {
-      console.log("error");
+      console.log("file:", fileData.fileName);
     }
   };
 
@@ -957,6 +958,8 @@ function NuevoItemInventario() {
                 onClick={() => {
                   // validation();
                   if (validation()) {
+                    const fecha: Date = new Date();
+                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
                     mutation.mutate({
                       nombre,
                       categoria: "Instrumento",
@@ -971,6 +974,18 @@ function NuevoItemInventario() {
                       prestable,
                       urlPic: "",
                     });
+                    if (imagen) {
+                      uploadPicture(imagen, {
+                        originalName: `${imagen.name}`,
+                        fileName: `${fechaStd}-${imagen.name}`,
+                        tagCategoria: "Fotos Inventario",
+                        mimetype: imagen.type,
+                        //url: `${fechaStd}-${imagen.name}`,
+                        url: "./upload/Imagenes",
+                        userSubida: "user",
+                        publico: true,
+                      });
+                    }
                     setNombre("");
                     setNombreErr(false);
                     setCantidad(1);
@@ -1134,6 +1149,8 @@ function NuevoItemInventario() {
                 colorScheme="blue"
                 onClick={() => {
                   if (validation()) {
+                    const fecha: Date = new Date();
+                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
                     mutation.mutate({
                       nombre,
                       categoria: "Equipo",
@@ -1147,6 +1164,18 @@ function NuevoItemInventario() {
                       ultMod: "Yo",
                       prestable,
                     });
+                    if (imagen) {
+                      uploadPicture(imagen, {
+                        originalName: `${imagen.name}`,
+                        fileName: `${fechaStd}-${imagen.name}`,
+                        tagCategoria: "Fotos Inventario",
+                        mimetype: imagen.type,
+                        //url: `${fechaStd}-${imagen.name}`,
+                        url: "./upload/Imagenes",
+                        userSubida: "user",
+                        publico: true,
+                      });
+                    }
                     setNombre("");
                     setFechaSalida(undefined);
                     setDesc("");
