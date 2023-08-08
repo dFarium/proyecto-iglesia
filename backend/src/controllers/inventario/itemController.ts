@@ -5,6 +5,7 @@ import { Archivos } from "../../models/archivos/archivos";
 
 const createItemInventario = async (req: Request, res: Response) => {
   let newItem = new ItemInventario(req.body);
+  console.log(newItem.ultMant);
 
   ItemInventario.findOne({ nombre: req.body.nombre }).then(
     async (item: IItemInventario) => {
@@ -99,6 +100,8 @@ const getItemsInventarioCategoria = async (req: Request, res: Response) => {
       return res.status(400).send({ message: "Error al encontrar los items" });
     });
 };
+
+
 
 export {
   createItemInventario,
