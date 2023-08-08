@@ -436,7 +436,7 @@ function NuevoEquipoElec() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, false);
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico);
       console.log("file si");
     } catch (error) {
       console.log("file abajo:", error);
