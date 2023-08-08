@@ -23,6 +23,7 @@ import {
     Switch,
     Box,
     Select,
+    VStack
 } from "@chakra-ui/react";
 
 import { useRef, useState } from "react";
@@ -35,10 +36,16 @@ import {
     MdReceiptLong,
 } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { minDate, maxDate } from "@/utils/dateUtils";
+import { minDate } from "@/utils/dateUtils";
 import { ItemTesoreria, crearGastoIngresoTesoreria } from "@/data/tesoreria/item";
+import { IArchivos, uploadNewFile, uploadNewFileData } from "@/data/archivos/archivos";
+import { getUsers, IUsuarioModel } from "@/data/usuarios/usuarios";
+
+
 
 function NuevoIngresoTesoreria() {
+
+    const hoy = new Date();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef(null);
@@ -46,86 +53,70 @@ function NuevoIngresoTesoreria() {
     const [nombre, setNombre] = useState<string>("");
     const [nombreErr, setNombreErr] = useState<boolean>(false);
 
-    const [valorCaja, setValorCaja] = useState<number>(1);
+    const [valorCaja, setValorCaja] = useState<number>(0);
     const [valorCajaErr, setValorCajaErr] = useState<boolean>(false);
 
-    const [fechaGasto, setFechaGasto] = useState<Date>();
     const [descripcion, setDescripcion] = useState<string>("");
-
     const [descripcionErr, setDescripcionErr] = useState<boolean>(false);
-    const [fechaGastoErr, setFechaGastoErr] = useState<boolean>(false);
 
+    const [fechaGastoErr, setFechaGastoErr] = useState<boolean>(false);
+    const [fechaGasto, setFechaGasto] = useState<Date>(hoy);
 
     const [tipo, setTipo] = useState<string>("");
-
     const queryClient = useQueryClient();
 
-    const [mensajeNombre, setMensajeNombre] = useState<string>("");
-    const [mensajeValorCaja, setMensajeValorCaja] = useState<string>("");
-    const [mensajeDescripcion, setMensajeDescripcion] = useState<string>("");
+    const [boletaUpload, setBoletaUpload] = useState<File | null>(null);
+    const [boletaUploadErr, setBoletaUploadErr] = useState<boolean>(false);
 
-    const handleNombreChange = (e: any) => {
+    const [acceso, setAcceso] = useState<boolean>(false);
+
+
+    const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         const isValid = /^[a-zA-Z0-9._ -]*$/.test(value);
-        if (value === "") {
-            setNombreErr(true);
-            setMensajeNombre("El nombre no puede ser vacío.");
-        } else if (!isValid) {
-            setNombreErr(true);
-            setMensajeNombre("Nombre inválido.");
-        } else {
-            setNombreErr(false);
-            setNombre(e.target.value);
-            setMensajeNombre("");
+        setNombreErr(value === "" || !isValid);
+        if (isValid) {
+            setNombre(value);
         }
-    }
-    
+    };
+
     const handleValorCajaChange = (e: any) => {
         const value = e.target.value;
         const r = value.replace(/\D/g, "");
-        if (/\D/.test(value)) {
+        if (r === "") {
+            setValorCaja(0);
             setValorCajaErr(true);
-            setMensajeValorCaja("Monto ingresado inválido");
-        } else if (parseInt(r) < 999999999) {
-            setValorCaja(r);
+        } else if (parseInt(r) < 99999999) {
+            setValorCaja(parseInt(r));
             setValorCajaErr(false);
-            setMensajeValorCaja("");
         } else {
             setValorCajaErr(true);
-            setMensajeValorCaja("Monto ingresado inválido");
         }
     };
-
 
     const handleFechaGastoChange = (e: any) => {
-        /*  const d = new Date(e.target.value);
-            const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        const d = new Date(e.target.value);
+        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        if (date <= hoy) {
             setFechaGasto(date);
-        }; */
-
-        console.log("AAAAAAAAAAAAAAAAAAAAa")
-        console.log(e.target.value)
-
-        if (!(e.target.value === "")) {        
-            const d = new Date(e.target.value);
-            const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-            setFechaGasto(date);
+            setFechaGastoErr(!!e.target.value);
         }
     };
 
-
-    const handleDescripcionChange = (e: any) => {
+    const handleDescripcionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value;
         const isValid = /^[a-zA-Z0-9,._-]*$/.test(value) && value.length <= 250;
+        setDescripcionErr(!isValid);
         if (isValid) {
             setDescripcion(value);
-            setDescripcionErr(false);
-            setMensajeDescripcion("");
-        } else {
-            setDescripcionErr(true);
-            setMensajeDescripcion("Descripción inválida.");
         }
-    }
+    };
+
+    const handleBoletaChange = async (file: any) => {
+        const archivo = file.target.files?.[0] || null;
+        setBoletaUpload(archivo);
+        setBoletaUploadErr(true);
+    };
 
     const validation = (): boolean => {
         let error: boolean = false;
@@ -158,9 +149,26 @@ function NuevoIngresoTesoreria() {
         },
     });
 
+    const mutation2 = useMutation({
+        mutationFn: async (boletaUpload: any) => {
+            const fecha: Date = new Date();
+            const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+            const formFile = new FormData();
+            formFile.append("boleta", boletaUpload.boletaUpload);
+            const res = await uploadNewFile(formFile, "Boletas", `${fechaStd}-${boletaUpload.name}` /*nombre archivo , boletaUpload.nombre, boletaUpload.acceso)*/);
+            return res;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["AllFiles"] });
+        },
+    });
+
+
+    function formatCLP(value: number) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     return (
         <>
-
             <Button
                 fontSize={"1.6em"}
                 fontWeight={"bold"}
@@ -171,7 +179,6 @@ function NuevoIngresoTesoreria() {
             >
                 Nuevo Item
             </Button>
-
             <IconButton
                 display={{ base: "flex", md: "none" }}
                 isRound
@@ -185,10 +192,7 @@ function NuevoIngresoTesoreria() {
             >
                 Nuevo Item
             </IconButton>
-
             {/* AGREGAR INGRESO */}
-
-
             <AlertDialog
                 isOpen={isOpen}
                 leastDestructiveRef={cancelRef}
@@ -200,7 +204,7 @@ function NuevoIngresoTesoreria() {
                             Agregar Ingreso
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            <FormControl>
+                            <FormControl isInvalid={nombreErr}>
                                 <FormLabel>Nombre</FormLabel>
                                 <Input
                                     placeholder="Nombre"
@@ -208,58 +212,96 @@ function NuevoIngresoTesoreria() {
                                     maxLength={50}
                                 />
                                 {nombreErr ? (
-                                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
+                                    <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
                                         {nombre.length} / 50
                                     </FormHelperText>
                                 )}
                             </FormControl>
-                            <FormControl>
+                            <FormControl isInvalid={!valorCaja}>
                                 <FormLabel>Ingreso</FormLabel>
                                 <Input
                                     placeholder="Monto"
                                     onChange={handleValorCajaChange}
-                                    maxLength={9}
+                                    maxLength={8}
                                 />
                                 {valorCajaErr ? (
-                                    <FormErrorMessage>Ingrese un monto</FormErrorMessage>
+                                    <FormErrorMessage>Ingrese un monto válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {valorCaja} / 9{"99999999"}
+                                        {"$ "}{formatCLP(valorCaja)} / {"$ "}{"99.999.999"}
                                     </FormHelperText>
                                 )}
                             </FormControl>
-                            <FormControl mt={"25px"}>
+                            <FormControl mt={"25px"} isInvalid={!fechaGasto}>
                                 <FormLabel>Fecha de Ingreso</FormLabel>
                                 <Input
                                     type="date"
                                     onChange={handleFechaGastoChange}
-                                    //min={minDate(date)}
-                                    max={maxDate(new Date())}
+                                    max={hoy.toISOString().split('T')[0]}
+                                    value={fechaGasto.toISOString().split('T')[0]}
                                 />
                             </FormControl>
-                            <FormControl mt={"25px"}>
+
+                            <FormControl mt={"25px"} isInvalid={descripcionErr}>
                                 <FormLabel>Descripción</FormLabel>
                                 <Textarea
                                     placeholder="Descripción"
                                     maxH={"300px"}
                                     onChange={handleDescripcionChange}
+                                    maxLength={250}
                                 />
                                 <FormHelperText pl={"5px"} fontStyle={"italic"}>
                                     {descripcion.length} / 250
                                 </FormHelperText>
                             </FormControl>
+
+                            <FormControl>
+                                <HStack
+                                    mt={"25px"}
+                                    justify={"space-between"}
+                                    align={"start"}
+                                >
+                                    <VStack>
+                                        <Button>
+                                            Subir Archivo
+                                            <Input
+                                                type="file"
+                                                height="100%"
+                                                width="100%"
+                                                position="absolute"
+                                                top="0"
+                                                left="0"
+                                                opacity="0"
+                                                aria-hidden="true"
+                                                onChange={handleBoletaChange}
+                                            />
+                                        </Button>
+                                        <Text>
+                                            {boletaUpload
+                                                ? boletaUpload.name
+                                                : "No hay archivos"}
+                                        </Text>
+                                    </VStack>
+                                </HStack>
+                            </FormControl>
+
                         </AlertDialogBody>
                         <AlertDialogFooter>
                             <Button
                                 ref={cancelRef}
                                 mr={3}
                                 onClick={() => {
+                                    setNombre("");
                                     setNombreErr(false);
+                                    setValorCaja(0);
                                     setValorCajaErr(false);
-                                    setDescripcionErr(false);
+                                    setFechaGasto(hoy);
                                     setFechaGastoErr(false);
+                                    setDescripcion("");
+                                    setDescripcionErr(false)
+                                    setTipo("");
                                     onClose();
                                 }}
                             >
@@ -267,44 +309,37 @@ function NuevoIngresoTesoreria() {
                             </Button>
                             <Button
                                 onClick={() => {
+                                    if (validation()) {
+                                        mutation.mutate({
+                                            nombre,
+                                            valorCaja,
+                                            fechaGasto,
+                                            descripcion,
+                                            tipo: "Ingreso",
+                                        });
 
-                                    if (mensajeNombre || mensajeValorCaja || mensajeDescripcion) {
-                                        let mensaje = "";
-                                        if (mensajeNombre) {
-                                            mensaje += mensajeNombre + "\n";
-                                        }
-                                        if (mensajeValorCaja) {
-                                            mensaje += mensajeValorCaja + "\n";
-                                        }
-                                        if (mensajeDescripcion) {
-                                            mensaje += mensajeDescripcion;
-                                        }
-                                        alert(mensaje);
-                                    }
-
-                                    else {
-                                        if (validation()) {
-                                            mutation.mutate({
-                                                nombre,
-                                                valorCaja,
-                                                fechaGasto,
-                                                descripcion,
-                                                tipo: "Ingreso",
+                                        if (boletaUpload) {
+                                            mutation2.mutate({
+                                                boletaUpload, nombre, acceso
                                             });
                                         }
+
                                         setNombre("");
-                                        setNombreErr(false)
-                                        setValorCaja(1);
+                                        setNombreErr(false);
+                                        setValorCaja(0);
                                         setValorCajaErr(false);
-                                        setFechaGasto(undefined);
+                                        setFechaGasto(hoy);
+                                        setFechaGastoErr(false);
                                         setDescripcion("");
-                                        setTipo("")
+                                        setDescripcionErr(false)
+                                        setTipo("");
                                         onClose();
                                     }
                                 }}
                             >
                                 Aceptar
                             </Button>
+
                         </AlertDialogFooter>
 
                     </AlertDialogContent>
