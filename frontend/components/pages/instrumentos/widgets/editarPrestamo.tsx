@@ -226,6 +226,7 @@ function EditarPrestamo(props: {
                                         ¿Devuelto?
                                     </FormLabel>
                                     <Switch
+                                        isDisabled={props.devuelto}
                                         id="date-switch"
                                         isChecked={devuelto}
                                         onChange={() => {
@@ -239,7 +240,7 @@ function EditarPrestamo(props: {
                                         isInvalid={isMenorQueInicio(fechaInicio, fechaDevolucion)}
                                         id="fecha"
                                         type="date"
-                                        isDisabled={!devuelto}
+                                        isDisabled={!devuelto || props.devuelto}
                                         onChange={handleFechaDevolucionChange}
                                         value={fechaToValue(fechaActualOrDevolucion(fechaDevolucion))}
                                         min={minDate(new Date(fechaInicio))}

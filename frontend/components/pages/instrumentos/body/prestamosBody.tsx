@@ -48,7 +48,7 @@ import EliminarPrestamoInstrumento from "@/components/pages/instrumentos/widgets
 import EditarPrestamo from "@/components/pages/instrumentos/widgets/editarPrestamo";
 import {VerInstrumento} from "@/components/pages/instrumentos/widgets/verInstrumento";
 
-const userAccess = true;
+const userAccess: boolean = true;
 
 export default function PrestamoBody() {
     // query todos los items
@@ -65,6 +65,8 @@ export default function PrestamoBody() {
         index: false,
         imgScr: false,
         instrumentoId: false,
+        edit: userAccess,
+        delete: userAccess,
     });
     const [sorting, setSorting] = useState<SortingState>([]);
     const {colorMode} = useColorMode();
