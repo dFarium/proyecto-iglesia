@@ -27,7 +27,7 @@ import {
   MdOutlineSavings,
 } from "react-icons/md";
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function SideBar() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -149,7 +149,7 @@ function SideMenu() {
         <MenuItemSideBar
           icon={MdPerson}
           option="Usuarios"
-          href="/home/usuarios"
+          href="/home/usuarios/getUsuarios"
         />
       </VStack>
     </Box>

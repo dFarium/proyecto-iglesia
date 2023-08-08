@@ -25,8 +25,10 @@ const registerUser = async (req: Request, res: Response) => {
     if (isRutExist) return res.status(400).json({error: true, message: 'RUT ya registrado'})
 
     // Validación de Nro teléfono único
-    const isTelefonoExist = await UsuarioModel.findOne({ telefono: req.body.telefono })
-    if (isTelefonoExist) return res.status(400).json({error: true, message: 'Teléfono ya registrado'})
+    if (req.body.telefono) {
+        const isTelefonoExist = await UsuarioModel.findOne({ telefono: req.body.telefono })
+        if (isTelefonoExist) return res.status(400).json({error: true, message: 'Teléfono ya registrado'})
+    }
 
     // Validación de email único
     const isEmailExist = await UsuarioModel.findOne({ email: req.body.email })
