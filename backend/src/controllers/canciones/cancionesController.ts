@@ -6,7 +6,7 @@ const createCancion = async (req: Request, res: Response)=>{
     let newCancion = new ModeloCancion(req.body);
     await newCancion.save().catch((err: CallbackError)=>{
         console.log(err);
-        return res.status(400).send({message: "Error al crear espacio para cancion"});
+        return res.status(400).send({message: "Error al crear la cancion"});
     });
     return res.status(201).send(newCancion);
 };

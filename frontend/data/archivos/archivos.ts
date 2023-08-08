@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 export interface IArchivos {
   _id?: string;
+  originalName: string;
   fileName: string;
   tagCategoria: string;
   mimetype: string;
@@ -24,10 +25,12 @@ const uploadNewFileData = async (fileData: IArchivos) => {
 const uploadNewFile = async (
   file: FormData,
   folderName: string,
-  fileName: string
+  saveName: string,
+  tag: string,
+  acceso: boolean
 ) => {
   const resFile = await axios.post(
-    `${process.env.API_URL}/file/upload/${folderName}/${fileName}`,
+    `${process.env.API_URL}/file/upload/${folderName}/${saveName}/${tag}/${acceso}`,
     file,
     {
       headers: { "Content-Type": "multipart-formdata" },
@@ -44,4 +47,44 @@ const viewImg = async (folderName: string, imgName: string) => {
   return res;
 };
 
-export { uploadNewFile, viewImg, uploadNewFileData };
+const viewAllFiles = async () => {
+    const res = await axios.get(`${process.env.API_URL}/files/`);
+    return res.data;
+};
+
+const viewOneFile = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/specific/${id}`);
+    return res.data;
+};
+
+const viewFavorite = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/${id}`);
+    return res.data;
+};
+
+const downloadFile = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/download/${id}`);
+    return res.data;
+};
+
+// const subirArchivo = async () => {
+//     const res = await axios.get(`${process.env.API_URL}/file/upload/`);
+//     return res.data;
+// };
+
+const deleteFile = async (id: string) => {
+    const res = await axios.get(`${process.env.API_URL}/file/delete/${id}`);
+    return res.data;
+};
+
+export {
+    viewAllFiles,
+    viewOneFile,
+    viewFavorite,
+    downloadFile,
+   // subirArchivo,
+    deleteFile,
+  uploadNewFile,
+  viewImg,
+  uploadNewFileData
+};
