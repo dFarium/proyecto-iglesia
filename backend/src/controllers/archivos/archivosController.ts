@@ -12,13 +12,12 @@ const uploadNewFile = async(req: Request, res: Response) => {
 
     const file = req.files[0]
     //console.log("FILE", file)
-
     const newFile = new Archivos({
         originalName: file.originalname,
         fileName: file.filename,
         mimetype: file.mimetype,
         url: file.destination ,
-        tagCategoria: "random",
+        tagCategoria: req.params.tag,
     })
     //console.log("newFile:", newFile)
     await newFile
@@ -100,7 +99,6 @@ const sendImg = async (req: Request, res: Response) => {
 
 const uploadNewFileData = async (req: Request, res: Response) => {
     const newFile = new Archivos(req.params.originalName);
-
     Archivos.findOne({ originalName: req.params.originalName }).then(
         async (file: IArchivos) => {
         await newFile
@@ -115,17 +113,17 @@ const uploadNewFileData = async (req: Request, res: Response) => {
     });
 };
 
-// const viewFavorite = async (req: Request, res: Response) => {
-//     await Archivos.findById(req.params.id)
-//         .then((item) => {
-//             return res.status(200).send(item);
-//         })
-//         .catch((err: CallbackError) => {
-//             return res
-//             .status(400)
-//             .send({ message: "Error al encontrar el archivo" });
-//         });
-// };
+const viewFavorite = async (req: Request, res: Response) => {
+    await Archivos.findById(req.params.id)
+        .then((item) => {
+            return res.status(200).send(item);
+        })
+        .catch((err: CallbackError) => {
+            return res
+            .status(400)
+            .send({ message: "Error al encontrar el archivo" });
+        });
+};
 
 // const viewAsambleaFiles = (req, res)=>{
 

@@ -25,10 +25,11 @@ const uploadNewFileData = async (fileData: IArchivos) => {
 const uploadNewFile = async (
   file: FormData,
   folderName: string,
-  saveName: string
+  saveName: string,
+  tag: string
 ) => {
   const resFile = await axios.post(
-    `${process.env.API_URL}/file/upload/${folderName}/${saveName}`,
+    `${process.env.API_URL}/file/upload/${folderName}/${saveName}/${tag}`,
     file,
     {
       headers: { "Content-Type": "multipart-formdata" },

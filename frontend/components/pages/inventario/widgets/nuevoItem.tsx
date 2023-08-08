@@ -128,10 +128,10 @@ function NuevoInstrumento() {
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
+    console.log("file:", formFile)
     formFile.append("archivos", file);
     try {
-      
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName );
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria );
       console.log("file si arriba");
     } catch (error) {
       console.log("file no arriba:", fileData.fileName);
@@ -312,7 +312,7 @@ function NuevoInstrumento() {
                       uploadPicture(imagen, {
                         originalName: `${imagen.name}`,
                         fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Inventario",
+                        tagCategoria: "Fotos Inventario",
                         mimetype: imagen.type,
                         //url: `${fechaStd}-${imagen.name}`,
                         url: "./upload/Imagenes",
@@ -437,7 +437,7 @@ function NuevoEquipoElec() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes",fileData.fileName);
+      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria );
       console.log("file si");
     } catch (error) {
       console.log("file abajo:", error);
@@ -763,7 +763,8 @@ function NuevoItemInventario() {
       const resFile = await uploadNewFile(
         formFile,
         "Imagenes",
-        fileData.fileName
+        fileData.fileName,
+        fileData.tagCategoria
       );
       const resData = await uploadNewFileData(fileData);
     } catch (error) {

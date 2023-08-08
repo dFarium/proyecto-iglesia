@@ -68,7 +68,7 @@ export default function ArchivosPubBody() {
     });
     const filesData = filesQuery.data;
 
-    const userAccess = false;
+    const userAccess = true;
 
     const [columnVisibility] = useState({
         id: false,
@@ -266,12 +266,7 @@ export default function ArchivosPubBody() {
                                 </Circle>
                             </>
                         );
-                    } else {
-                        return (
-                            <>
-                            </>
-                        );
-                    }
+                    } 
                 },
                 cell: ({ row }) => {
                     if (userAccess) {
@@ -288,11 +283,6 @@ export default function ArchivosPubBody() {
                                 fechaSalida={row.getValue("fechaSalida")}
                                 ultMant={row.getValue("ultMant")}
                             />
-                        );
-                    } else {
-                        return (
-                            <>
-                            </>
                         );
                     }
                 },
