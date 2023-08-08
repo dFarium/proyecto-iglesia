@@ -299,12 +299,12 @@ export default function PrestamoBody() {
                                 color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                                 cursor={"default"}
                             >
-                                <MdCreate />
+                                <MdCreate/>
                             </Circle>
                         </>
                     );
                 },
-                cell: ({ row }) => {
+                cell: ({row}) => {
                     return (
                         // <VerDetallesItem itemInventario={row.getValue("id")} />
                         <EditarPrestamo
@@ -316,6 +316,7 @@ export default function PrestamoBody() {
                             fechaInicio={row.getValue("fechaInicio")}
                             fechaDevolucion={row.getValue("fechaDevolucion")}
                             fechaLimite={row.getValue("fechaLimite")}
+                            itemId={row.getValue("instrumento._id")}
                             //comentario={row.getValue("comentario")}
                         />
                     );
@@ -343,12 +344,12 @@ export default function PrestamoBody() {
                                 }
                                 cursor={"default"}
                             >
-                                <MdDelete />
+                                <MdDelete/>
                             </Circle>
                         </>
                     );
                 },
-                cell: ({ row }) => {
+                cell: ({row}) => {
                     return (
                         <EliminarPrestamoInstrumento
                             instrumentoId={row.getValue("instrumento._id")}
@@ -361,7 +362,7 @@ export default function PrestamoBody() {
                 id: "instrumento._id",
                 header: "",
                 accessorKey: "instrumento._id",
-                cell: ({ row }) => {
+                cell: ({row}) => {
                 },
             },
         ],
