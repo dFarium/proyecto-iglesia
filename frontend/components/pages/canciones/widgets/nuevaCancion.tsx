@@ -76,16 +76,10 @@ function NuevaCancion(){
         const formFile = new FormData();
         formFile.append("archivos",file);
         try {
-            await uploadNewFile(formFile, "Letra", fileData.url);
+            await uploadNewFile(formFile, "Letra", fileData.fileName, fileData.tagCategoria);
             console.log("file si");
         } catch (error){
             console.log("file: ",error);
-        }
-        try {
-            await uploadNewFileData(fileData);
-            console.log("data si");
-        } catch(error){
-            console.log("data: ",error);
         }
     };
 
@@ -111,7 +105,7 @@ function NuevaCancion(){
         const formFile = new FormData();
         formFile.append("archivos",file);
         try {
-            await uploadNewFile(formFile, "Audio", fileData.url);
+            await uploadNewFile(formFile, "Audio",  fileData.fileName, fileData.tagCategoria);
             console.log("file si");
         } catch (error){
             console.log("file: ",error);
@@ -303,20 +297,22 @@ function NuevaCancion(){
                             });
                             if (letra) {
                                 uploadDocLetra(letra, {
-                                    fileName: `${letra.name}`,
+                                    originalName: `${letra.name}`,
+                                    fileName:`${fechaStd}-${letra.name}`,
                                     tagCategoria: "Canciones",
                                     mimetype: letra.type,
-                                    url: `${fechaStd}-${letra.name}`,
+                                    url: "./upload/Canciones",
                                     userSubida: "user",
                                     publico: true,
                             });
                             }
                             if (audio) {
                                 uploadSong(audio, {
-                                    fileName: `${audio.name}`,
+                                    originalName: `${audio.name}`,
+                                    fileName:`${fechaStd}-${audio.name}`,
                                     tagCategoria: "Canciones",
                                     mimetype: audio.type,
-                                    url: `${fechaStd}-${audio.name}`,
+                                    url: "./upload/Canciones",
                                     userSubida: "user",
                                     publico: true,
                             });
