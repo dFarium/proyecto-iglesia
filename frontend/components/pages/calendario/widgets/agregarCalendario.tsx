@@ -138,7 +138,7 @@ function AgregarCalendario() {
                 isRound
                 w={{ base: "60px", md: "70px" }}
                 h={{ base: "60px", md: "70px" }}
-                colorScheme={"newCalendarioItemButton"}
+                colorScheme={"newTesoreriaItemButton"}
                 aria-label={"Agregar Item"}
                 fontSize={{ base: "3em", md: "3.3em" }}
                 icon={<MdAdd />}

@@ -8,7 +8,8 @@ import React, { useMemo, useState } from 'react'
 import { MdArrowDropDown, MdArrowDropUp, MdCreate, MdDelete, MdHelp, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
 import AgregarCalendario from '../widgets/agregarCalendario'
 import EliminarCalendario from '../widgets/eliminarCalendario';
-import EditarCalendario from '../widgets/editarCalendario';
+/* import EditarCalendario from '../widgets/editarCalendario';
+ */
 export function CalendarioBody() {
 
   const todoQuery = useQuery({
@@ -122,7 +123,7 @@ export function CalendarioBody() {
           )
         }
       },
-      {
+      /* {
         id: "edit",
         enableSorting: false,
         header: () => {
@@ -146,7 +147,7 @@ export function CalendarioBody() {
           return (
             <EditarCalendario
               id={row.getValue("id")}
-              nombreAct={row.getValue("nombreAct")}
+              nombreAct={row.getValue("nombre")}
               fechaInicio={row.getValue("fechaInicio")}
               fechaTermino={row.getValue("fechaTermino")}
               estadoActividad={row.getValue("estadoActividad")}
@@ -155,7 +156,7 @@ export function CalendarioBody() {
           );
         },
 
-      },
+      }, */
       {
         id: "delete",
         enableSorting: false,
