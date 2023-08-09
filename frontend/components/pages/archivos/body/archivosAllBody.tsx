@@ -57,6 +57,7 @@ import { useQuery } from "@tanstack/react-query";
 import EditarArchivo from "../widgets/editarArchivo";
 import EliminarItemArchivo from "../widgets/eliminarArchivo";
 import DescargarItemArchivo from "../widgets/descarArchivo";
+import getRole from "@/utils/roleUtils";
 //import { VerFotoItem } from "../widgets/verFotoItem";
 
 export default function ArchivosAllBody() {
@@ -71,7 +72,9 @@ export default function ArchivosAllBody() {
     });
     const filesData = filesQuery.data;
 
-    const userAccess = true;
+    //const userAccess = true;
+
+    const userAccess = getRole();
 
     const [columnVisibility] = useState({
         id: false,
@@ -82,7 +85,7 @@ export default function ArchivosAllBody() {
         publico: true,
         url: false,
         download: true,
-        updatedAt: false,
+        updatedAt: true,
         fileName: false,
         originalName: false,
         userName: true,
@@ -328,7 +331,7 @@ export default function ArchivosAllBody() {
                         <Text
                         //  minW={"100%"} textAlign={"center"}
                         >
-                            Fecha
+                            Fecha de Subida
                         </Text>
                     );
                 },
@@ -349,24 +352,28 @@ export default function ArchivosAllBody() {
             {
                 id: "updatedAt",
                 header: () => {
-                    return (
-                        <Text
-                        //  minW={"100%"} textAlign={"center"}
-                        >
-                            Fecha de Actualización
-                        </Text>
-                    );
+                    if (userAccess) {
+                        return (
+                            <Text
+                            //  minW={"100%"} textAlign={"center"}
+                            >
+                                Fecha de Modificación
+                            </Text>
+                        );
+                    }
                 },
                 accessorKey: "updatedAt",
                 cell: ({ row }) => {
-                    const date = textDate(row.getValue<Date>("updatedAt"));
-                    return (
-                        <Text
-                        //  minW={"100%"} textAlign={"center"}
-                        >
-                            {date}
-                        </Text>
-                    );
+                    if (userAccess) {
+                        const date = textDate(row.getValue<Date>("updatedAt"));
+                        return (
+                            <Text
+                            //  minW={"100%"} textAlign={"center"}
+                            >
+                                {date}
+                            </Text>
+                        );
+                    }
                 },
                 sortingFn: "datetime",
             },
@@ -524,7 +531,7 @@ export default function ArchivosAllBody() {
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
                     <Text textStyle={"titulo"}>Biblioteca Libre</Text>
-                    <NuevoArchivo />
+                    {userAccess ? <NuevoArchivo/> : null}
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
                     <Table

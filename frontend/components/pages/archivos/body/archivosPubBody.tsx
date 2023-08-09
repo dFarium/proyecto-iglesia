@@ -58,6 +58,7 @@ import { useQuery } from "@tanstack/react-query";
 import EditarArchivo from "../widgets/editarArchivo";
 import EliminarItemArchivo from "../widgets/eliminarArchivo";
 import DescargarItemArchivo from "../widgets/descarArchivo";
+import getRole from "@/utils/roleUtils";
 //import { VerFotoItem } from "../widgets/verFotoItem";
 
 export default function ArchivosPubBody() {
@@ -72,7 +73,9 @@ export default function ArchivosPubBody() {
     });
     const filesData = filesQuery.data;
 
-    const userAccess = true;
+    //const userAccess = true;
+
+    const userAccess = getRole();
 
     const [columnVisibility] = useState({
         id: false,
@@ -83,7 +86,7 @@ export default function ArchivosPubBody() {
         publico: true,
         url: false,
         download: true,
-        updatedAt: false,
+        updatedAt: true,
         fileName: false,
         originalName: false,
         userName: true,
@@ -325,24 +328,28 @@ export default function ArchivosPubBody() {
             {
                 id: "createdAt",
                 header: () => {
-                    return (
-                        <Text
-                        //  minW={"100%"} textAlign={"center"}
-                        >
-                            Fecha
-                        </Text>
-                    );
+                    if (userAccess) {
+                        return (
+                            <Text
+                            //  minW={"100%"} textAlign={"center"}
+                            >
+                                Fecha de Subida
+                            </Text>
+                        );
+                    }
                 },
                 accessorKey: "createdAt",
                 cell: ({ row }) => {
-                    const date = textDate(row.getValue<Date>("createdAt"));
-                    return (
-                        <Text
-                        //  minW={"100%"} textAlign={"center"}
-                        >
-                            {date}
-                        </Text>
-                    );
+                    if (userAccess) {
+                        const date = textDate(row.getValue<Date>("createdAt"));
+                        return (
+                            <Text
+                            //  minW={"100%"} textAlign={"center"}
+                            >
+                                {date}
+                            </Text>
+                        );
+                    }
                 },
                 sortingFn: "datetime",
             },
@@ -354,7 +361,7 @@ export default function ArchivosPubBody() {
                         <Text
                         //  minW={"100%"} textAlign={"center"}
                         >
-                            Fecha de Actualización
+                            Fecha de Modificación
                         </Text>
                     );
                 },
@@ -525,7 +532,7 @@ export default function ArchivosPubBody() {
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
                     <Text textStyle={"titulo"}>Biblioteca Pública</Text>
-                    <NuevoArchivo />
+                    {userAccess ? <NuevoArchivo/> : null}
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
                     <Table
