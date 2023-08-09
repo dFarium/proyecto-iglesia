@@ -1,5 +1,8 @@
 import { IItemInventario, createItemInventario } from "@/data/inventario/item";
-import {IPrestamoInstrumento,createPrestamoInstrumento} from "@/data/prestamos/prestamos";
+import {
+  IPrestamoInstrumento,
+  createPrestamoInstrumento,
+} from "@/data/prestamos/prestamos";
 import { minDate, textDefaultDate } from "@/utils/dateUtils";
 import {
   AlertDialog,
@@ -47,8 +50,8 @@ function NuevoInstrumento() {
   const [nombre, setNombre] = useState<string>("");
   const [nombreErr, setNombreErr] = useState<boolean>(false);
 
-  const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
+  // const [cantidad, setCantidad] = useState<number>(1);
+  // const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -69,11 +72,11 @@ function NuevoInstrumento() {
     setNombreErr(false);
   };
 
-  const handleCantidadChange = (e: any) => {
-    const r = e.target.value.replace(/\D/g, "");
-    setCantidad(r);
-    setCantidadErr(false);
-  };
+  // const handleCantidadChange = (e: any) => {
+  //   const r = e.target.value.replace(/\D/g, "");
+  //   setCantidad(r);
+  //   setCantidadErr(false);
+  // };
 
   const handleFechaSalidaChange = (e: any) => {
     const d = new Date(e.target.value);
@@ -87,24 +90,24 @@ function NuevoInstrumento() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
+  // const validation = (): boolean => {
+  //   let error: boolean = false;
+  //   if (nombre.trim() == "") {
+  //     setNombreErr(true);
+  //     error = true;
+  //   }
+  //   if (cantidad.toString().trim() == "") {
+  //     setCantidadErr(true);
+  //     error = true;
+  //   }
+  //   if (error) {
+  //     return false;
+  //   } else {
+  //     setCantidadErr(false);
+  //     setNombreErr(false);
+  //   }
+  //   return true;
+  // };
 
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
@@ -112,8 +115,6 @@ function NuevoInstrumento() {
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
-      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
       queryClient.invalidateQueries({
         queryKey: ["itemsInventarioInstrumentos"],
       });
@@ -130,7 +131,13 @@ function NuevoInstrumento() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
       console.log("file si arriba");
     } catch (error) {
       console.log("file no arriba:", fileData.fileName);
@@ -287,51 +294,49 @@ function NuevoInstrumento() {
                 Cancelar
               </Button>
               <Button
+                isDisabled={!nombre}
                 colorScheme="blue"
                 onClick={() => {
-                  // validation();
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Instrumento",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad: 1,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant,
-                      ultMod: "Yo",
-                      prestable,
-                      urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Instrumento",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad: 1,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant,
+                    ultMod: "Yo",
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setImagen(null);
-                    setPrestable(false);
-                    onClose();
                   }
+
+                  setNombre("");
+                  setNombreErr(false);
+                  // setCantidad(1);
+                  // setCantidadErr(false);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setImagen(null);
+                  setPrestable(false);
+                  onClose();
                 }}
               >
                 Aceptar
@@ -394,24 +399,24 @@ function NuevoEquipoElec() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
+  // const validation = (): boolean => {
+  //   let error: boolean = false;
+  //   if (nombre.trim() == "") {
+  //     setNombreErr(true);
+  //     error = true;
+  //   }
+  //   if (cantidad.toString().trim() == "") {
+  //     setCantidadErr(true);
+  //     error = true;
+  //   }
+  //   if (error) {
+  //     return false;
+  //   } else {
+  //     setCantidadErr(false);
+  //     setNombreErr(false);
+  //   }
+  //   return true;
+  // };
 
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
@@ -419,7 +424,7 @@ function NuevoEquipoElec() {
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
     },
   });
 
@@ -436,7 +441,13 @@ function NuevoEquipoElec() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
       console.log("file");
     } catch (error) {
       console.log("file:", fileData.fileName);
@@ -611,42 +622,41 @@ function NuevoEquipoElec() {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Equipo",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Equipo",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: "Yo",
+                    prestable,
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-                    setNombre("");
-                    setFechaSalida(undefined);
-                    setDesc("");
-                    setCicloMant(undefined);
-                    setPrestable(false);
-                    onClose();
                   }
+                  setNombre("");
+                  setFechaSalida(undefined);
+                  setDesc("");
+                  setCicloMant(undefined);
+                  setPrestable(false);
+                  onClose();
                 }}
               >
                 Aceptar
@@ -724,24 +734,24 @@ function NuevoItemInventario() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
+  // const validation = (): boolean => {
+  //   let error: boolean = false;
+  //   if (nombre.trim() == "") {
+  //     setNombreErr(true);
+  //     error = true;
+  //   }
+  //   if (cantidad.toString().trim() == "") {
+  //     setCantidadErr(true);
+  //     error = true;
+  //   }
+  //   if (error) {
+  //     return false;
+  //   } else {
+  //     setCantidadErr(false);
+  //     setNombreErr(false);
+  //   }
+  //   return true;
+  // };
 
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
@@ -749,7 +759,7 @@ function NuevoItemInventario() {
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
     },
   });
 
@@ -766,7 +776,13 @@ function NuevoItemInventario() {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
       console.log("file");
     } catch (error) {
       console.log("file:", fileData.fileName);
@@ -955,48 +971,48 @@ function NuevoItemInventario() {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre}
                 onClick={() => {
                   // validation();
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Instrumento",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad: 1,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
-                      urlPic: "",
+
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Instrumento",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad: 1,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: "Yo",
+                    prestable,
+                    urlPic: "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setPrestable(false);
-                    onCloseInstrumentos();
                   }
+                  setNombre("");
+                  setNombreErr(false);
+                  setCantidad(1);
+                  setCantidadErr(false);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setPrestable(false);
+                  onCloseInstrumentos();
                 }}
               >
                 Aceptar
@@ -1147,42 +1163,41 @@ function NuevoItemInventario() {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Equipo",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Equipo",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: "Yo",
+                    prestable,
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-                    setNombre("");
-                    setFechaSalida(undefined);
-                    setDesc("");
-                    setCicloMant(undefined);
-                    setPrestable(false);
-                    onCloseEquipo();
                   }
+                  setNombre("");
+                  setFechaSalida(undefined);
+                  setDesc("");
+                  setCicloMant(undefined);
+                  setPrestable(false);
+                  onCloseEquipo();
                 }}
               >
                 Aceptar
@@ -1227,7 +1242,11 @@ function NuevoItemInventario() {
                 <Box>
                   <FormControl isInvalid={cantidadErr}>
                     <FormLabel>Cantidad</FormLabel>
-                    <Input type="text" onChange={handleCantidadChange} />
+                    <Input
+                      value={cantidad}
+                      type="text"
+                      onChange={handleCantidadChange}
+                    />
                     <FormErrorMessage>Ingrese la cantidad</FormErrorMessage>
                   </FormControl>
                 </Box>
@@ -1268,28 +1287,27 @@ function NuevoItemInventario() {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Varios",
-                      estado: "Activo",
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      ultMod: "Yo",
-                    });
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setPrestable(false);
-                    onCloseVarios();
-                  }
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Varios",
+                    estado: "Activo",
+                    cantidad,
+                    uploader: "Yo",
+                    desc,
+                    ultMod: "Yo",
+                  });
+                  setNombre("");
+                  setNombreErr(false);
+                  setCantidad(1);
+                  setCantidadErr(false);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setPrestable(false);
+                  onCloseVarios();
                 }}
               >
                 Aceptar

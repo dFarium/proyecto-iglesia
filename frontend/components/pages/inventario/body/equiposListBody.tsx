@@ -66,7 +66,7 @@ export function InventarioEquiposBody() {
   const [columnVisibility] = useState({
     id: false,
     index: false,
-    // cantidad: false,
+    cantidad: false,
     categoria: false,
     desc: false,
     ultMant: false,
