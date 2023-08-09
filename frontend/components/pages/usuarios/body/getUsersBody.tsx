@@ -1,33 +1,60 @@
 "use client";
 
-
-import { Text, FormControl, useColorModeValue, HStack, FormLabel, Input, Table, Button, 
-    IconButton, Container, Tbody, Thead, Th, Tr, Td, Tooltip, Modal, ModalOverlay, ModalContent,
-    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack, InputGroup, InputLeftAddon, useColorMode } from "@chakra-ui/react";
+import {
+  Text,
+  FormControl,
+  useColorModeValue,
+  HStack,
+  FormLabel,
+  Input,
+  Table,
+  Button,
+  IconButton,
+  Container,
+  Tbody,
+  Thead,
+  Th,
+  Tr,
+  Td,
+  Tooltip,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Box,
+  VStack,
+  InputGroup,
+  InputLeftAddon,
+  useColorMode,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import Swal from "sweetalert2";
 import { ArrowUpIcon, ArrowDownIcon } from "@chakra-ui/icons";
 //instalar -> npm install react-icons
 import { FaRegEdit, FaRegTrashAlt, FaUserPlus } from "react-icons/fa";
-import NextLink from "next/link";
 
 function GetUsersBody() {
-    const { colorMode } = useColorMode();
-    interface Usuario {
-        _id: string;
-        name: string;
-        rut: string;
-        email: string;
-        rol: {name: string}[];
-        telefono: string;
-        direccion: string;
-        fecha_nacimiento: Date;
-        num_emergencia: string;
-        RRSS: string;
-    }
-    const [usuarios, setUsers] = useState<Usuario[]>([]);
-    const [admin, setAdmin] = useState(false);
+  const { colorMode } = useColorMode();
+  interface Usuario {
+    _id: string;
+    name: string;
+    rut: string;
+    email: string;
+    rol: { name: string }[];
+    telefono: string;
+    direccion: string;
+    fecha_nacimiento: Date;
+    num_emergencia: string;
+    RRSS: string;
+  }
+  const [usuarios, setUsers] = useState<Usuario[]>([]);
+  const [admin, setAdmin] = useState(false);
+
+  const [directiva, setDirectiva] = useState(false);
 
   const [miembro, setMiembro] = useState(false);
 
@@ -195,99 +222,41 @@ function GetUsersBody() {
     }
   };
 
+  useEffect(() => {
+    getUsers();
 
-        token = localStorage.getItem('auth-token');
-
-
-    let token = null;
-    if (typeof window !== "undefined") {
-      token = localStorage.getItem("auth-token");
-    }
+    token = localStorage.getItem("auth-token");
 
     if (!token) {
       console.log("No hay token guardado.");
       return;
     }
 
+    let decoded = null;
+    try {
+      decoded = jwt.decode(token) as JwtPayload;
+    } catch (e) {
+      console.error("Error al decodificar el token: ", e);
+      return;
+    }
 
-        // Arreglo que contiene el rol, leído para ver si es administrador, directiva u miembro y fijarlos como true o false
-        if (decoded) {
-            if (Array.isArray(decoded.rol)) {
-                decoded.rol.forEach((roleObject) => {
-                    if (roleObject.name === 'admin') {
-                        setAdmin(true);
-                    } else if (roleObject.name === 'directiva'){
-                        setDirectiva(true);
-                    } else if (roleObject.name === 'miembro'){
-                        setMiembro(true);
-                    }
-                });
-            }
-        } else {
-            setAdmin(false);
-            setDirectiva(false);
-            setMiembro(false);
-        }
-    }, []);
-
-    const showUsers = () => {
-        return usuarios.map((usuario, index) => {
-            const roles = usuario.rol.map(rol => rol.name).join(', ');
-            // Para no mostrar el usuario admin por defecto en la base de datos
-            if (usuario.email === 'admin@gmail.com') {
-                return null;
-            }
-            return(
-                <Tr key={usuario._id} bgColor={index % 2 === 0 ? (colorMode === 'light' ? "gray.100" : "#212121") : (colorMode === 'light' ? "white" : "#323232")}>
-                    <Td isTruncated maxWidth="400px">{usuario.name}</Td>
-                    <Td isTruncated maxWidth="200px">{usuario.rut}</Td>
-                    <Td isTruncated maxWidth="350px">{usuario.email}</Td>
-                    <Td isTruncated maxWidth="400px">{roles}</Td>
-                    {miembro && (
-                    <Td isTruncated maxWidth="200px">{usuario.RRSS}</Td>)}
-                    {(admin || directiva) && (
-                        <Td maxW={"70px"}>
-                            <Button colorScheme="twitter" variant='link' fontWeight="thin"
-                            onClick={() => { openDetailModal(); setGetUser(usuario);}}>detalle</Button>
-                        </Td>)}
-                    {admin && (
-                        <Td maxW={"1px"}>
-                            <Tooltip label="Editar">
-                                <IconButton 
-                                aria-label="Editar"
-                                icon={<FaRegEdit />} colorScheme="green" 
-                                variant="ghost" 
-                                _hover={{ bg: editHoverColor }} 
-                                _active={{ bg: editActiveColor }}
-                                onClick={() => { setIsOpen(true); setEditingUser(usuario);}}
-                                mr={3}
-                                isRound
-                                />
-                        </Tooltip>
-                        </Td>)}
-                        
-                    {admin &&(
-                        <Td maxW={"1px"}>
-                            <Tooltip label="Eliminar">
-                                <IconButton 
-                                aria-label="Eliminar" 
-                                icon={<FaRegTrashAlt />} 
-                                colorScheme="red" 
-                                variant="ghost" 
-                                _hover={{ bg: deleteHoverColor }} 
-                                _active={{ bg: deleteActiveColor }} 
-                                onClick={() => deleteUser(usuario)}
-                                isRound
-                                />
-                            </Tooltip>
-                        </Td>)}
-                </Tr>
-            );
+    // Arreglo que contiene el rol, leído para ver si es administrador, directiva u miembro y fijarlos como true o false
+    if (decoded) {
+      if (Array.isArray(decoded.rol)) {
+        decoded.rol.forEach((roleObject) => {
+          if (roleObject.name === "admin") {
+            setAdmin(true);
+          } else if (roleObject.name === "directiva") {
+            setDirectiva(true);
+          } else if (roleObject.name === "miembro") {
+            setMiembro(true);
+          }
         });
       }
     } else {
       setAdmin(false);
       setDirectiva(false);
+      setMiembro(false);
     }
   }, []);
 
@@ -299,7 +268,18 @@ function GetUsersBody() {
         return null;
       }
       return (
-        <Tr key={usuario._id} bgColor={index % 2 === 0 ? "gray.100" : "white"}>
+        <Tr
+          key={usuario._id}
+          bgColor={
+            index % 2 === 0
+              ? colorMode === "light"
+                ? "gray.100"
+                : "#212121"
+              : colorMode === "light"
+              ? "white"
+              : "#323232"
+          }
+        >
           <Td isTruncated maxWidth="400px">
             {usuario.name}
           </Td>
@@ -406,11 +386,13 @@ function GetUsersBody() {
       <HStack justifyContent={"space-between"} h="100px">
         <Text textStyle={"titulo"}>Lista de usuarios</Text>
         {admin && (
-          <Link as={NextLink} href={"/home/usuarios/register"}>
-            <Button leftIcon={<FaUserPlus />} colorScheme="green">
-              Crear Usuario
-            </Button>
-          </Link>
+          <Button
+            leftIcon={<FaUserPlus />}
+            colorScheme="green"
+            onClick={() => (window.location.href = "/home/usuarios/register")}
+          >
+            Crear Usuario
+          </Button>
         )}
       </HStack>
       <Box maxH="520px" overflowY="auto">
