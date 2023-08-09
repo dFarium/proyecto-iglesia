@@ -6,8 +6,6 @@ import { CallbackError } from "mongoose";
 const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
     let newItem = new ItemTesoreria2(req.body);
 
-    console.log(req.body);
-
     ItemTesoreria2.findOne({ nombre: req.body.nombre }).then(
         async (item: ItemTesoreria) => {
             if (item) {
@@ -16,7 +14,7 @@ const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
             await newItem
                 .save()
                 .catch((err: CallbackError) => {
-                    console.log(err);
+
                     return res.status(400).send({ message: "Error al crear" });
                 })
                 .then(() => {
@@ -32,7 +30,6 @@ const ObtenerGastoIngresoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send(item);
         })
         .catch((err: CallbackError) => {
-            console.log(err);
             return res
                 .status(400)
                 .send({ message: "Error al encontrar el gasto de Tesoreria" });
@@ -49,7 +46,7 @@ const editarGastoIngresoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send({ message: "Actualizado" });
         })
         .catch((err: CallbackError) => {
-            console.log(err);
+
             return res.status(400).send({ message: "Error al editar" });
         });
 };
@@ -61,7 +58,7 @@ const eliminarGastoIngresoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send({ message: "Eliminado correctamente" });
         })
         .catch((err: CallbackError) => {
-            console.log(err);
+
             return res.status(400).send({ message: "Error al eliminar" });
         });
 };
@@ -76,7 +73,6 @@ const obtenerTodoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send(items);
         })
         .catch((err: CallbackError) => {
-            console.log(err);
             return res
                 .status(400)
                 .send({ message: "Error al obtener los Items de tesoreria" });
@@ -96,7 +92,6 @@ const obtenerIngresoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send(items);
         })
         .catch((err: CallbackError) => {
-            console.log(err);
             return res
                 .status(400)
                 .send({ message: "Error al obtener los ingresos de tesoreria" });
@@ -115,7 +110,6 @@ const obtenerGastoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send(items);
         })
         .catch((err: CallbackError) => {
-            console.log(err);
             return res
                 .status(400)
                 .send({ message: "Error al obtener los gastos de tesoreria" });
@@ -132,7 +126,6 @@ const obtenerGastosTesoreriaPorFecha = async (req: Request, res: Response, fecha
             return res.status(200).send(items);
         })
         .catch((err: CallbackError) => {
-            console.log(err);
             return res
                 .status(400)
                 .send({ message: "Error al obtener los Items de tesoreria" });
@@ -149,7 +142,7 @@ const obtenerIngresoTesoreriaPorFecha = async (req: Request, res: Response, fech
             return res.status(200).send(items);
         })
         .catch((err: CallbackError) => {
-            console.log(err);
+
             return res
                 .status(400)
                 .send({ message: "Error al obtener los Items de tesoreria" });

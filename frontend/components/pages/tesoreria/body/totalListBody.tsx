@@ -19,6 +19,9 @@ import {
   Flex,
   Container,
   useDisclosure,
+
+  useMediaQuery
+
 } from "@chakra-ui/react";
 
 import {
@@ -36,6 +39,9 @@ import {
   MdArrowDropUp,
   MdCreate,
   MdDelete,
+
+  MdEdit,
+
   MdHelp,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
@@ -55,6 +61,9 @@ import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 
 export function TotalListBody() {
+
+  const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
+
 
   const totalQuery = useQuery({
     queryKey: ["obtenerTodoTesoreria"],
@@ -102,13 +111,14 @@ export function TotalListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          const { isOpen, onOpen, onClose } = useDisclosure();
+
           return (
             <>
-              <Text onClick={onOpen}>
+              <Text >
                 {row.getValue("nombre")}
               </Text>
-              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+              <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+
             </>
           )
         },
@@ -202,7 +212,9 @@ export function TotalListBody() {
                 fontSize={"1.2em"}
                 cursor={"default"}
               >
-                <MdDelete />
+
+                <MdEdit />
+
               </Circle>
             </>
           );
@@ -274,7 +286,9 @@ export function TotalListBody() {
           <VStack w={"100%"} h={"100%"} spacing={"30px"}>
             <HStack justifyContent={"space-between"} w={"100%"}>
               <Text textStyle={"titulo"}>Total</Text>
-              {/* <NuevoGastoIngresoTesoreria /> */} {/* AGREGUA UN IF, si la ventana es pequeña desbloquea esto */}
+
+              {!isSmallScreen ? null : <NuevoGastoIngresoTesoreria />}
+
             </HStack>
             <TableContainer overflowY={"auto"} width={"100%"}>
               <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -395,14 +409,22 @@ export function TotalListBody() {
         <Box w={{ base: "100%", md: "30%" }} h={"100%"} marginTop={{ base: "20px", md: "0" }}>
 
           <HStack alignContent="flex-start" justifyContent="flex-end">
-            <NuevoGastoIngresoTesoreria />
+            {isSmallScreen ? null : <NuevoGastoIngresoTesoreria />}
           </HStack>
-          <GraficosTesoreria />
+          {!isSmallScreen ? (
+            <VStack flexGrow={1} minH={"50px"} w={"100%"} justifyContent={"end"}>
+              <GraficosTesoreria />
+            </VStack>
+          ) : (
+            <Box w={{ base: "100%", md: "30%" }} h={"100%"} marginTop={{ base: "20px", md: "0" }}>
+              <GraficosTesoreria />
+            </Box>
+          )}
         </Box>
       </Flex>
     </>
-
   );
+
 
 }
 function showPages(maxRows: number, currentIndex: number, pageSize: number) {
