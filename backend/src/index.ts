@@ -20,19 +20,26 @@ app.options("*", cors());
 import { inventarioRoutes } from "./routes/inventario/inventarioRoutes";
 import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
 import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
+import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
+import { mailRoutes } from "./routes/correoPrestamo/mailRoutes";
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
-import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
 import { calendarioRoutes } from "./routes/calendario/calendarioRoutes";
+
+const validaToken = require('./controllers/usuario/validate-token')
+const admin = require('./controllers/usuario/admin')
 
 app.use("/api", inventarioRoutes);
 app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
+app.use("/api/admin", validaToken, admin);
+app.use("/api",cancionesRoutes);
+app.use("/api",mailRoutes)
 app.use("/api", cancionesRoutes);
-app.use('/api', calendarioRoutes);
 app.use("/api", inventarioRoutes);
 app.use("/api", prestamoRoutes);
 app.use("/api", archivosRoutes);
+app.use("/api", calendarioRoutes); 
 
 app.use("/api/upload", express.static(path.join(__dirname, "../upload")));
 
