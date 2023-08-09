@@ -73,17 +73,14 @@ function AgregarCalendario() {
         const d = new Date(e.target.value);
         const selectedDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
 
-        // Verificamos que la fecha seleccionada no sea anterior a hoy
         if (selectedDate >= date) {
             setFechaInicio(selectedDate);
 
-            // Si la fecha de término está establecida, verificamos si también es válida
             if (fechaTermino && selectedDate > fechaTermino) {
                 setFechaTermino(selectedDate);
                 setFechaTerminoErr(false);
             }
 
-            // Si la fecha de término no está establecida, simplemente la actualizamos a la fecha de inicio
             if (!fechaTermino) {
                 setFechaTermino(selectedDate);
                 setFechaTerminoErr(false);
@@ -182,7 +179,7 @@ function AgregarCalendario() {
                                 <Input
                                     type="date"
                                     onChange={handleFechaInicioChange}
-                                    min={date.toISOString().split('T')[0]}  // Establecemos el mínimo como hoy
+                                    min={date.toISOString().split('T')[0]}
                                     value={fechaInicio ? fechaInicio.toISOString().split('T')[0] : ''}
                                 />
                             </FormControl>
