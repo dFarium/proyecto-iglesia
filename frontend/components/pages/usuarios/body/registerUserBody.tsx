@@ -172,6 +172,9 @@ function RegisterUserBody() {
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
+        console.log(email);
+        console.log(name)
+        console.log(password);
         event.preventDefault();
         try {
             const token = localStorage.getItem('auth-token'); // Recupera el token
@@ -226,6 +229,16 @@ function RegisterUserBody() {
                 setTimeout(() => {
                     router.push("/home/usuarios/getUsuarios");
                 }, 2500);
+                setName("");
+                setRut("");
+                setEmail("");
+                setPassword("");
+                setTelefono("");
+                setDireccion("");
+                setNumEmergencia("");
+                setRRSS("");
+                setRoles([]);
+                setFechaNacimiento(undefined);
             } else if(res.status === 400){
                 const errorData = await res.json();
                 console.log("ERROR 400", errorData)

@@ -48,10 +48,6 @@ function NuevoInstrumento() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
-
-  // const [cantidad, setCantidad] = useState<number>(1);
-  // const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -62,21 +58,13 @@ function NuevoInstrumento() {
   const [prestable, setPrestable] = useState<boolean>(false);
 
   const [imagen, setImagen] = useState<File | null>(null);
-  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
   };
-
-  // const handleCantidadChange = (e: any) => {
-  //   const r = e.target.value.replace(/\D/g, "");
-  //   setCantidad(r);
-  //   setCantidadErr(false);
-  // };
 
   const handleFechaSalidaChange = (e: any) => {
     const d = new Date(e.target.value);
@@ -89,25 +77,6 @@ function NuevoInstrumento() {
     const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
     setUltMant(date);
   };
-
-  // const validation = (): boolean => {
-  //   let error: boolean = false;
-  //   if (nombre.trim() == "") {
-  //     setNombreErr(true);
-  //     error = true;
-  //   }
-  //   if (cantidad.toString().trim() == "") {
-  //     setCantidadErr(true);
-  //     error = true;
-  //   }
-  //   if (error) {
-  //     return false;
-  //   } else {
-  //     setCantidadErr(false);
-  //     setNombreErr(false);
-  //   }
-  //   return true;
-  // };
 
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
@@ -124,7 +93,6 @@ function NuevoInstrumento() {
   const handlePicChange = async (file: any) => {
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
-    setUploadImg(true);
   };
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
@@ -138,7 +106,6 @@ function NuevoInstrumento() {
         fileData.tagCategoria,
         fileData.publico
       );
-      console.log("file si arriba");
     } catch (error) {
       console.log("file no arriba:", fileData.fileName);
     }
@@ -194,13 +161,10 @@ function NuevoInstrumento() {
                   onChange={handleNombreChange}
                   maxLength={50}
                 />
-                {nombreErr ? (
-                  <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                ) : (
-                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                    {nombre.length} / 50
-                  </FormHelperText>
-                )}
+
+                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                  {nombre.length} / 50
+                </FormHelperText>
               </FormControl>
               <FormControl mt={"25px"}>
                 <FormLabel>Fecha de Salida</FormLabel>
@@ -281,14 +245,13 @@ function NuevoInstrumento() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
+
                   setFechaSalida(undefined);
                   setDesc("");
                   setCicloMant(undefined);
                   setPrestable(false);
                   onClose();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -327,7 +290,7 @@ function NuevoInstrumento() {
                   }
 
                   setNombre("");
-                  setNombreErr(false);
+
                   // setCantidad(1);
                   // setCantidadErr(false);
                   setFechaSalida(undefined);
@@ -357,10 +320,8 @@ function NuevoEquipoElec() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
 
   const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -371,20 +332,17 @@ function NuevoEquipoElec() {
   const [prestable, setPrestable] = useState<boolean>(false);
 
   const [imagen, setImagen] = useState<File | null>(null);
-  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
   };
 
   const handleCantidadChange = (e: any) => {
     const r = e.target.value.replace(/\D/g, "");
     setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -399,25 +357,6 @@ function NuevoEquipoElec() {
     setUltMant(date);
   };
 
-  // const validation = (): boolean => {
-  //   let error: boolean = false;
-  //   if (nombre.trim() == "") {
-  //     setNombreErr(true);
-  //     error = true;
-  //   }
-  //   if (cantidad.toString().trim() == "") {
-  //     setCantidadErr(true);
-  //     error = true;
-  //   }
-  //   if (error) {
-  //     return false;
-  //   } else {
-  //     setCantidadErr(false);
-  //     setNombreErr(false);
-  //   }
-  //   return true;
-  // };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
@@ -429,12 +368,8 @@ function NuevoEquipoElec() {
   });
 
   const handlePicChange = async (file: any) => {
-    // const fecha: Date = new Date();
-    // const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
-
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
-    setUploadImg(true);
   };
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
@@ -498,23 +433,20 @@ function NuevoEquipoElec() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
                     <Input
                       value={cantidad}
@@ -605,9 +537,7 @@ function NuevoEquipoElec() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
@@ -615,7 +545,6 @@ function NuevoEquipoElec() {
                   setPrestable(false);
                   onClose();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -638,6 +567,7 @@ function NuevoEquipoElec() {
                     ultMant: date,
                     ultMod: "Yo",
                     prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                   });
                   if (imagen) {
                     uploadPicture(imagen, {
@@ -657,6 +587,7 @@ function NuevoEquipoElec() {
                   setCicloMant(undefined);
                   setPrestable(false);
                   onClose();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -692,10 +623,8 @@ function NuevoItemInventario() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
 
   const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -706,20 +635,17 @@ function NuevoItemInventario() {
   const [prestable, setPrestable] = useState<boolean>(false);
 
   const [imagen, setImagen] = useState<File | null>(null);
-  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
   };
 
   const handleCantidadChange = (e: any) => {
     const r = e.target.value.replace(/\D/g, "");
     setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -734,25 +660,6 @@ function NuevoItemInventario() {
     setUltMant(date);
   };
 
-  // const validation = (): boolean => {
-  //   let error: boolean = false;
-  //   if (nombre.trim() == "") {
-  //     setNombreErr(true);
-  //     error = true;
-  //   }
-  //   if (cantidad.toString().trim() == "") {
-  //     setCantidadErr(true);
-  //     error = true;
-  //   }
-  //   if (error) {
-  //     return false;
-  //   } else {
-  //     setCantidadErr(false);
-  //     setNombreErr(false);
-  //   }
-  //   return true;
-  // };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
@@ -764,12 +671,8 @@ function NuevoItemInventario() {
   });
 
   const handlePicChange = async (file: any) => {
-    // const fecha: Date = new Date();
-    // const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
-
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
-    setUploadImg(true);
   };
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
@@ -783,7 +686,6 @@ function NuevoItemInventario() {
         fileData.tagCategoria,
         fileData.publico
       );
-      console.log("file");
     } catch (error) {
       console.log("file:", fileData.fileName);
     }
@@ -862,7 +764,7 @@ function NuevoItemInventario() {
               Agregar Instrumento Musical
             </AlertDialogHeader>
             <AlertDialogBody>
-              <FormControl>
+              <FormControl isInvalid={!nombre}>
                 <FormLabel>Nombre</FormLabel>
 
                 <Input
@@ -870,13 +772,10 @@ function NuevoItemInventario() {
                   onChange={handleNombreChange}
                   maxLength={50}
                 />
-                {nombreErr ? (
-                  <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                ) : (
-                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                    {nombre.length} / 50
-                  </FormHelperText>
-                )}
+
+                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                  {nombre.length} / 50
+                </FormHelperText>
               </FormControl>
               <FormControl mt={"25px"}>
                 <FormLabel>Fecha de Salida</FormLabel>
@@ -957,14 +856,12 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setFechaSalida(undefined);
                   setDesc("");
                   setCicloMant(undefined);
                   setPrestable(false);
                   onCloseInstrumentos();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -989,7 +886,7 @@ function NuevoItemInventario() {
                     ultMant: date,
                     ultMod: "Yo",
                     prestable,
-                    urlPic: "",
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                   });
                   if (imagen) {
                     uploadPicture(imagen, {
@@ -1004,15 +901,14 @@ function NuevoItemInventario() {
                     });
                   }
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
                   setDesc("");
                   setPrestable(false);
                   onCloseInstrumentos();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -1039,23 +935,20 @@ function NuevoItemInventario() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
                     <Input
                       value={cantidad}
@@ -1146,9 +1039,7 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
@@ -1156,7 +1047,6 @@ function NuevoItemInventario() {
                   setPrestable(false);
                   onCloseEquipo();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
@@ -1179,6 +1069,7 @@ function NuevoItemInventario() {
                     ultMant: date,
                     ultMod: "Yo",
                     prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                   });
                   if (imagen) {
                     uploadPicture(imagen, {
@@ -1198,6 +1089,7 @@ function NuevoItemInventario() {
                   setCicloMant(undefined);
                   setPrestable(false);
                   onCloseEquipo();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -1224,23 +1116,20 @@ function NuevoItemInventario() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
                     <Input
                       value={cantidad}
@@ -1272,9 +1161,7 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
@@ -1299,9 +1186,7 @@ function NuevoItemInventario() {
                     ultMod: "Yo",
                   });
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
