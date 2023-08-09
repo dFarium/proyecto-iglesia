@@ -105,13 +105,12 @@ export function TotalListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          const { isOpen, onOpen, onClose } = useDisclosure();
           return (
             <>
-              <Text onClick={onOpen}>
+              <Text >
                 {row.getValue("nombre")}
               </Text>
-              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+              <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
             </>
           )
         },

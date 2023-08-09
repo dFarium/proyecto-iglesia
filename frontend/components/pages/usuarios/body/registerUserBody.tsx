@@ -210,7 +210,7 @@ function RegisterUserBody() {
             if (rol.length > 0) {
                 requestBody.rol = rol;
             }
-            const res = await fetch('http://localhost:3001/api/usuario/register', {
+            const res = await fetch(`${process.env.API_URL}/usuario/register`, {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',

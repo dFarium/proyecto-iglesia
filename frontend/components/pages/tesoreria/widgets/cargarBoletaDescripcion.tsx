@@ -3,15 +3,16 @@ import React, { useRef, useState } from 'react'
 import { viewImg } from "@/data/archivos/archivos";
 
 interface CargarBoletaDescripcionProps {
-    isOpen: boolean;
-    onClose: () => void;
     id: string;
     descripcion: string;
     nombre: string;
     boleta: string;
 }
-const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpen, onClose, id, descripcion, nombre, boleta }) => {
+const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ id, descripcion, nombre, boleta }) => {
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { colorMode } = useColorMode();
+
     const cancelRef = useRef(null);
 
     const lightBorderImage = "5px #5c5c5c solid";
@@ -27,7 +28,7 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpe
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"} textAlign={"center"}>
-                            Item "{nombre}"
+                            Item {nombre}
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             <Stack spacing={3}>
