@@ -6,6 +6,7 @@ export interface IPrestamoInstrumento {
     instrumento: {
         _id: string,
         nombre: string
+        urlPic?: string
     },
     prestatario: {
         _id: string,

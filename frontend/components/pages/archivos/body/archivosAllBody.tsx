@@ -50,7 +50,6 @@ import {
     downloadFile,
     uploadNewFile,
     deleteFile,
-    viewAllSpecificFiles,
     IArchivos,
 } from "@/data/archivos/archivos";
 
@@ -61,12 +60,12 @@ import DescargarItemArchivo from "../widgets/descarArchivo";
 import getRole from "@/utils/roleUtils";
 //import { VerFotoItem } from "../widgets/verFotoItem";
 
-export default function ArchivosPrivBody() {
+export default function ArchivosAllBody() {
     // query todos los archivos publicos
     const filesQuery = useQuery({
-        queryKey: ["PrivFiles"],
+        queryKey: ["AllFiles"],
         queryFn: async () => {
-            const data = viewAllSpecificFiles(false);
+            const data = viewAllFiles();
             return data;
         },
         initialData: [],
@@ -74,6 +73,7 @@ export default function ArchivosPrivBody() {
     const filesData = filesQuery.data;
 
     //const userAccess = true;
+
     const userAccess = getRole();
 
     const [columnVisibility] = useState({
@@ -530,7 +530,7 @@ export default function ArchivosPrivBody() {
         <Box w={"100%"} h={"100%"}>
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
-                    <Text textStyle={"titulo"}>Biblioteca Privada</Text>
+                    <Text textStyle={"titulo"}>Biblioteca Libre</Text>
                     {userAccess ? <NuevoArchivo/> : null}
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>

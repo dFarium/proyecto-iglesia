@@ -1,9 +1,28 @@
 "use client";
 
-import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode,} from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  VStack,
+  useColorMode,
+  Text,
+  InputGroup,
+  InputLeftElement,
+  Icon,
+} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
+// Installar --> npm install react-icons
+import {
+  FaEnvelope as EmailIcon,
+  FaLock as LockIcon,
+  FaUser,
+} from "react-icons/fa";
+import { FcConferenceCall } from "react-icons/fc";
 
 export default function Page() {
   const { colorMode } = useColorMode();
@@ -15,37 +34,40 @@ export default function Page() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const res = await fetch('http://localhost:3001/api/usuario/login', {
-        method: 'POST',
+      const res = await fetch("http://localhost:3001/api/usuario/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
-          password
-        })
+          password,
+        }),
       });
       const data = await res.json();
       if (res.status === 200) {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           showConfirmButton: false,
-          timer: 1500
-        })
+          timer: 1500,
+        });
         // Guarda el token en el local storage
-        localStorage.setItem('auth-token', data.data.token);
+        localStorage.setItem("auth-token", data.data.token);
         console.log("Token guardado:", data.data.token);
         // Pide el token del local storage(Prueba)
-        const token = localStorage.getItem('auth-token');
+        const token = localStorage.getItem("auth-token");
         console.log("Token recibido:", token);
+        setEmail("");
+        setPassword("");
         router.push("/home");
-      } else {
-        const errorData = await res.json();
-        console.log(errorData);
+      } else if (res.status === 401) {
+        Swal.fire("", "Correo incorrecto");
+        console.log("Correo inválida");
+      } else if (res.status === 400) {
+        Swal.fire("", "Contraseña incorrecta");
+        console.log("Contraseña inválida");
       }
     } catch (error) {
-      Swal.fire('', 'Contraseña incorrecta');
-      console.log("Contraseña inválida");
       console.log(error);
     }
   };
@@ -69,19 +91,47 @@ export default function Page() {
         spacing={"30px"}
         shadow={"md"}
       >
+        <Text textStyle={"titulo"}>Inicio de sesión</Text>
+        <Icon as={FcConferenceCall} boxSize="8rem" />
         <FormControl>
           <FormLabel>Email</FormLabel>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+          <InputGroup>
+            <InputLeftElement
+              pointerEvents="none"
+              // Icono de correo
+            >
+              <Icon as={EmailIcon} />
+            </InputLeftElement>
+            <Input
+              placeholder="Correo"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </InputGroup>
         </FormControl>
         <FormControl>
           <FormLabel>Contraseña</FormLabel>
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <InputGroup>
+            <InputLeftElement
+              pointerEvents="none"
+              // Icono simbólico de contraseña
+            >
+              <Icon as={LockIcon} />
+            </InputLeftElement>
+            <Input
+              placeholder="*******"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </InputGroup>
         </FormControl>
-        <Button type="submit" style={{backgroundColor: '#005FFF', color: '#FFFFFF'}}>Iniciar sesión</Button>
+        <Button
+          type="submit"
+          style={{ backgroundColor: "#005FFF", color: "#FFFFFF" }}
+        >
+          Iniciar sesión
+        </Button>
       </VStack>
     </Box>
   );

@@ -50,7 +50,9 @@ function ReproducirAudio (props: { nombre: string;}) {
   const handleVolume = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.target;
     const volume = Number(value) / MAX;
-    oceanRef.current.volume = volume;
+    if(oceanRef.current){
+      oceanRef.current.volume = volume;
+    }
   }
   // const ruta = ``;
   // console.log(ruta);

@@ -47,8 +47,13 @@ import { IItemInventario, getAllItemsInventario } from "@/data/inventario/item";
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 import { VerFotoItem } from "../widgets/verFotoItem";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import getRole from "@/utils/roleUtils";
 
 export function InventarioBody() {
+  //obtener rol
+  const userRole = getRole();
+
   // query todos los items
   const allItemsQuery = useQuery({
     queryKey: ["allItemsInventario"],
@@ -63,6 +68,10 @@ export function InventarioBody() {
     ultMant: false,
     cicloMant: false,
     index: false,
+    imgScr: false,
+    edit: userRole,
+    delete: userRole,
+    uploader: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -79,12 +88,20 @@ export function InventarioBody() {
         accessorFn: (_row: any, i: number) => i + 1,
         sortingFn: "basic",
       },
+      { id: "imgScr", accessorKey: "urlPic" },
+      { id: "uploader", accessorKey: "uploader" },
       {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={"560"} />;
+          return (
+            <VerFotoItem
+              nombre={row.getValue("nombre")}
+              imgScr={row.getValue("imgScr")}
+              uploader={row.getValue("uploader")}
+            />
+          );
         },
       },
       {
@@ -263,10 +280,9 @@ export function InventarioBody() {
           return (
             <>
               <Circle
-                bg={"#F6AD55"}
+                border={"2px solid"}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                 cursor={"default"}
               >
                 <MdCreate />
@@ -276,7 +292,6 @@ export function InventarioBody() {
         },
         cell: ({ row }) => {
           return (
-            // <VerDetallesItem itemInventario={row.getValue("id")} />
             <EditarItemInventario
               id={row.getValue("id")}
               nombre={row.getValue("nombre")}
@@ -300,18 +315,8 @@ export function InventarioBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 cursor={"default"}
               >
                 <MdDelete />
@@ -354,7 +359,7 @@ export function InventarioBody() {
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Inventario Total</Text>
-          <NuevoItemInventario />
+          {userRole ? <NuevoItemInventario /> : null}
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -481,4 +486,7 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
   } else {
     return pageSize * currentIndex + pageSize;
   }
+}
+function useEffect(arg0: () => void, arg1: never[]) {
+  throw new Error("Function not implemented.");
 }

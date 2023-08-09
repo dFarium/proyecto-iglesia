@@ -16,7 +16,7 @@ import {use, useRef} from "react";
 import {MdDeleteOutline} from "react-icons/md";
 import {deletePrestamoInstrumento, getPrestamoInstrumento} from "@/data/prestamos/prestamos";
 
-function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string }) {
+function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string, devuelto: boolean }) {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const cancelRef = useRef(null);
     const {colorMode} = useColorMode();
@@ -43,15 +43,14 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string 
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            console.log("status ", devueltoStatus);
-            if (!devueltoStatus) {
-                itemMutationToPrestableTrue.mutate({prestable: true})
+            if (!props.devuelto) {
+                itemMutationToEstadoActivo.mutate({estado: "Activo"})
             }
         },
     });
 
     //Si el objeto prestado está en prestable = false, se convierte a true
-    const itemMutationToPrestableTrue = useMutation({
+    const itemMutationToEstadoActivo = useMutation({
         mutationFn: async (newItem: any) => {
             const res = await editItemInventario(props.instrumentoId, newItem);
             return res;

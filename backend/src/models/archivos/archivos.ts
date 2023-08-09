@@ -3,6 +3,7 @@ import { Schema, model } from "mongoose";
 export interface IArchivos {
   originalName:string;
   fileName: string;
+  userName: string;
   tagCategoria: string;
   mimetype: string;
   url: string;
@@ -16,11 +17,12 @@ const ArchivoSchema = new Schema<IArchivos>(
   {
     originalName: { type: String, required: false }, //cambio
     fileName: { type: String, required: false }, //cambio
+    userName: { type: String, required: false}, //cambio
     tagCategoria: { type: String, required: false }, //cambio
     mimetype: { type: String, required: false }, //cambio
     url: { type: String, required: false }, //cambio
     userSubida: { type: String, default: "" }, //cambio
-    userModifica: { type: Schema.Types.ObjectId, default: null },
+    userModifica: { type: String, default: "" },
     publico: { type: Boolean, default: false },
   },
   { timestamps: true }

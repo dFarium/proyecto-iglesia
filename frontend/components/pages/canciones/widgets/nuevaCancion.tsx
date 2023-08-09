@@ -77,7 +77,7 @@ function NuevaCancion(){
         const formFile = new FormData();
         formFile.append("archivos",file);
         try {
-            await uploadNewFile(formFile, "Letra", fileData.fileName, fileData.tagCategoria, fileData.publico);
+            await uploadNewFile(formFile, "Letra", fileData.fileName, fileData.tagCategoria, false);
             console.log("file si");
         } catch (error){
             console.log("file: ",error);
@@ -107,7 +107,7 @@ function NuevaCancion(){
         const formFile = new FormData();
         formFile.append("archivos",file);
         try {
-            await uploadNewFile(formFile, "Audio",  fileData.fileName, fileData.tagCategoria, fileData.publico );
+            await uploadNewFile(formFile, "Audio",  fileData.fileName, fileData.tagCategoria, false);
             console.log("file si");
         } catch (error){
             console.log("file: ",error);

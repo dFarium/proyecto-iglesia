@@ -1,4 +1,4 @@
-import { deleteItemInventario } from "@/data/inventario/item";
+import { deleteFile } from "@/data/archivos/archivos";
 import {
     useDisclosure,
     useColorMode,
@@ -24,15 +24,13 @@ function EliminarItemArchivo(props: { name: string; id: string }) {
 
     const mutation = useMutation({
         mutationFn: async () => {
-            const res = await deleteItemInventario(props.id);
+            const res = await deleteFile(props.id)
             return res;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
-            queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
-            queryClient.invalidateQueries({
-                queryKey: ["itemsInventarioInstrumentos"],
-            });
+            queryClient.invalidateQueries({ queryKey: ["AllFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PubFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PrivFiles"] });
         },
     });
 
@@ -63,7 +61,7 @@ function EliminarItemArchivo(props: { name: string; id: string }) {
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            Eliminar item &quot;{props.name}&quot;
+                            Eliminar archivo &quot;{props.name}&quot;
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             Esta acción es irreversible, ¿continuar?
