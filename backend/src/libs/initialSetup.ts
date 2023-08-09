@@ -20,7 +20,6 @@ export const createRoles = async () => {
 
 export const createAdminUserIfNotExist = async () => {
     const userFound = await UsuarioModel.findOne({ email: "admin@gmail.com" });
-
     // Si no existe el usuario, lo creamos
     if (!userFound) {
         const salt = await bcrypt.genSalt(10);
