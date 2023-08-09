@@ -29,7 +29,7 @@ import {
 import { useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { IArchivos, uploadNewFile } from "@/data/archivos/archivos";
+import { IArchivos, subirNewFile } from "@/data/archivos/archivos";
 import { arch } from "os";
 
 function NuevoArchivo() {
@@ -41,6 +41,8 @@ function NuevoArchivo() {
     // variables
     const [nombre, setNombre] = useState<string>("");
     const [nombreErr, setNombreErr] = useState<boolean>(false);
+
+    const [categoria, setCategoria] = useState<string>("");
 
     // const [desc, setDesc] = useState<string>("");
     const [acceso, setAcceso] = useState<boolean>(false);
@@ -54,6 +56,10 @@ function NuevoArchivo() {
     const handleNombreChange = (e: any) => {
         setNombre(e.target.value);
         setNombreErr(false);
+    };
+
+    const handleCategoriaChange = (e: any) => {
+        setCategoria(e.target.value);
     };
 
     const validation = (): boolean => {
@@ -76,11 +82,22 @@ function NuevoArchivo() {
             const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
             const formFile = new FormData();
             formFile.append("archivos", archivoFile.archivoFile);
-            const res = await uploadNewFile( formFile, "Archivos", `${fechaStd}-${archivoFile.archivoFile.name}` /*nombre archivo*/, archivoFile.nombre /*tag*/, archivoFile.acceso );
+
+            console.log("Nombre",archivoFile.nombre)
+            const res = await subirNewFile(
+                formFile,
+                "Archivos",
+                `${fechaStd}-${archivoFile.archivoFile.name}` /*nombre archivo*/,
+                archivoFile.categoria /*tag*/,
+                archivoFile.acceso,
+                archivoFile.nombre
+            );
             return res;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["AllFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PubFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PrivFiles"] });
         },
     });
 
@@ -90,9 +107,7 @@ function NuevoArchivo() {
         setUploadFile(true);
     };
 
-    const uploadPicture = async (file: any, fileData: IArchivos) => {
-
-    };
+    const uploadPicture = async (file: any, fileData: IArchivos) => {};
 
     return (
         <>
@@ -135,25 +150,32 @@ function NuevoArchivo() {
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             <FormControl>
+                                <FormLabel>Nombre del archivo</FormLabel>
+
+                                <Input
+                                    placeholder="Nombre del archivo."
+                                    onChange={handleNombreChange}
+                                    isInvalid={!nombre}
+                                    maxLength={15}
+                                />
+
+                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                    {nombre.length} / 15
+                                </FormHelperText>
+                            </FormControl>
+                            <FormControl>
                                 <FormLabel>Define una categoria</FormLabel>
 
                                 <Input
-                                    placeholder="Nombre"
-                                    onChange={handleNombreChange}
-                                    maxLength={50}
+                                    placeholder="Por ejemplo: Estudio, Informe, etc."
+                                    onChange={handleCategoriaChange}
+                                    isInvalid={!categoria}
+                                    maxLength={10}
                                 />
-                                {nombreErr ? (
-                                    <FormErrorMessage>
-                                        Define una categoria
-                                    </FormErrorMessage>
-                                ) : (
-                                    <FormHelperText
-                                        pl={"5px"}
-                                        fontStyle={"italic"}
-                                    >
-                                        {nombre.length} / 50
-                                    </FormHelperText>
-                                )}
+
+                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                    {categoria.length} / 10
+                                </FormHelperText>
                             </FormControl>
                             <HStack
                                 mt={"25px"}
@@ -206,7 +228,7 @@ function NuevoArchivo() {
                                 mr={3}
                                 onClick={() => {
                                     setNombre("");
-                                    setNombreErr(false);
+                                    setCategoria("");
                                     setAcceso(false);
                                     onClose();
                                     setFile(null);
@@ -216,15 +238,19 @@ function NuevoArchivo() {
                                 Cancelar
                             </Button>
                             <Button
+                                isDisabled={!archivoFile || !categoria || !nombre}
                                 colorScheme="blue"
                                 onClick={() => {
-                                    if (archivoFile) {
+                                    if (archivoFile && nombre && categoria) {
                                         mutation.mutate({
-                                            archivoFile, nombre, acceso
+                                            archivoFile,
+                                            categoria,
+                                            acceso,
+                                            nombre
                                         });
                                     }
                                     setNombre("");
-                                    setNombreErr(false);
+                                    setCategoria("");
                                     setFile(null);
                                     setAcceso(false);
                                     onClose();

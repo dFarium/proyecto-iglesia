@@ -46,10 +46,16 @@ import {useQuery} from "@tanstack/react-query";
 import {NuevoPrestamoInstrumento} from "@/components/pages/instrumentos/widgets/nuevoPrestamo";
 import EliminarPrestamoInstrumento from "@/components/pages/instrumentos/widgets/eliminarPrestamo";
 import EditarPrestamo from "@/components/pages/instrumentos/widgets/editarPrestamo";
+import {VerInstrumento} from "@/components/pages/instrumentos/widgets/verInstrumento";
+import getRole from "@/utils/roleUtils";
 
-const userAccess = true;
+
+
 
 export default function PrestamoBody() {
+
+    const userAccess = getRole();
+
     // query todos los items
     const allPrestamosQuery = useQuery({
         queryKey: ["allPrestamos"],
@@ -62,6 +68,10 @@ export default function PrestamoBody() {
         id: false,
         desc: false,
         index: false,
+        imgScr: false,
+        instrumentoId: false,
+        edit: userAccess,
+        delete: userAccess,
     });
     const [sorting, setSorting] = useState<SortingState>([]);
     const {colorMode} = useColorMode();
@@ -72,6 +82,8 @@ export default function PrestamoBody() {
     >(
         () => [
             {id: "id", accessorKey: "_id"},
+            {id: "imgScr", accessorKey: "instrumento.urlPic"},
+            {id: "instrumentoId", accessorKey: "instrumento._id"},
             {
                 id: "index",
                 header: "#",
@@ -84,11 +96,10 @@ export default function PrestamoBody() {
                 accessorKey: "instrumento.nombre",
                 cell: ({row}) => {
                     return (
-                        <Text
-                            //  minW={"100%"} textAlign={"center"}
-                        >
-                            {row.getValue("instrumento.nombre")}
-                        </Text>
+                        <VerInstrumento
+                            nombre={row.getValue("instrumento.nombre")}
+                            imgScr={row.getValue("imgScr")}
+                        />
                     );
                 },
             },
@@ -99,7 +110,7 @@ export default function PrestamoBody() {
                         <Text
                             //  minW={"100%"} textAlign={"center"}
                         >
-                            Prestatario
+                            Solicitante
                         </Text>
                     );
                 },
@@ -287,7 +298,8 @@ export default function PrestamoBody() {
                         return (
                             <>
                                 <Circle
-                                    bg={"#F6AD55"}
+                                    // bg={"#F6AD55"}
+                                    border={"2px solid"}
                                     size={"1.5em"}
                                     fontSize={"1.2em"}
                                     color={colorMode == "light" ? "#4A5568" : "#2D3748"}
@@ -312,7 +324,7 @@ export default function PrestamoBody() {
                                 fechaInicio={row.getValue("fechaInicio")}
                                 fechaDevolucion={row.getValue("fechaDevolucion")}
                                 fechaLimite={row.getValue("fechaLimite")}
-                                itemId={row.getValue("instrumento._id")}
+                                itemId={row.getValue("instrumentoId")}
                                 //comentario={row.getValue("comentario")}
                             />
                         );
@@ -328,18 +340,18 @@ export default function PrestamoBody() {
                             <>
                                 <Circle
                                     border={"2px solid"}
-                                    borderColor={
-                                        colorMode == "light"
-                                            ? "inventarioDeleteItem.light"
-                                            : "inventarioDeleteItem.dark"
-                                    }
+                                    // borderColor={
+                                    //     colorMode == "light"
+                                    //         ? "inventarioDeleteItem.light"
+                                    //         : "inventarioDeleteItem.dark"
+                                    // }
                                     size={"1.5em"}
                                     fontSize={"1.2em"}
-                                    color={
-                                        colorMode == "light"
-                                            ? "inventarioDeleteItem.light"
-                                            : "inventarioDeleteItem.dark"
-                                    }
+                                    // color={
+                                    //     colorMode == "light"
+                                    //         ? "inventarioDeleteItem.light"
+                                    //         : "inventarioDeleteItem.dark"
+                                    // }
                                     cursor={"default"}
                                 >
                                     <MdDelete/>
@@ -352,18 +364,12 @@ export default function PrestamoBody() {
                     if (userAccess) {
                         return (
                             <EliminarPrestamoInstrumento
-                                instrumentoId={row.getValue("instrumento._id")}
+                                instrumentoId={row.getValue("instrumentoId")}
                                 id={row.getValue("id")}
+                                devuelto={row.getValue("devuelto")}
                             />
                         );
                     }
-                },
-            },
-            {
-                id: "instrumento._id",
-                header: "",
-                accessorKey: "instrumento._id",
-                cell: ({row}) => {
                 },
             },
         ],
@@ -500,12 +506,12 @@ export default function PrestamoBody() {
                                 />
                             </HStack>
                         </HStack>
-                        {/*<HStack display={{base: "none", lg: "flex"}}>
+                        <HStack display={{base: "none", lg: "flex"}}>
                             <MdHelp size={"20px"}/>
                             <Text minW={"400px"}>
                                 Puede ver las fotos dando click en el nombre del Item
                             </Text>
-                        </HStack>*/}
+                        </HStack>
                     </HStack>
                 </VStack>
             </VStack>

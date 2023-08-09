@@ -57,10 +57,12 @@ const deleteIPrestamoInventario = async (req: Request, res: Response) => {
 };
 
 const getAllPrestamosInstrumento = async (req: Request, res: Response) => {
+    var populateQuery = [{path: "instrumento", select: "nombre urlPic"}, {
+        path: "prestatario",
+        select: "name"
+    }, {path: "prestamista", select: "name"}]
     await PrestamoInstrumento.find({})
-        .populate("instrumento", "nombre")
-        .populate("prestatario", "name")
-        .populate("prestamista", "name")
+        .populate(populateQuery)
         .sort({createdAt: "desc"})
         .then((items: IPrestamoInstrumento[]) => {
             if (items.length === 0) {
@@ -133,7 +135,7 @@ const notificarPrestamosPendientes = async () => {
 };
 
 const getInstrumentosPrestables = async (req: Request, res: Response) => {
-    await ItemInventario.find({categoria: "Instrumento", prestable: true})
+    await ItemInventario.find({categoria: "Instrumento", prestable: true, estado: "Activo"})
         .sort({createdAt: "desc"})
         .then((items: IItemInventario[]) => {
             if (items.length === 0) {

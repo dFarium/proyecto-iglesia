@@ -17,7 +17,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
-function VerFotoItem(props: { nombre: string; imgScr: string }) {
+function VerFotoItem(props: {
+  nombre: string;
+  imgScr: string;
+  uploader: string;
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const cancelRef = useRef(null);
@@ -48,17 +52,18 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
               display={"flex"}
               justifyContent={"center"}
             >
-              {/* {imagenUrl && ( */}
-              <Image
-                src={`${process.env.API_URL}/upload/Imagenes/${props.imgScr}`}
-                fallback={LoadingImage(imagenUrl)}
-                objectFit={"contain"}
-                borderRadius={"15px"}
-                border={
-                  colorMode == "light" ? lightBorderImage : darkBorderImage
-                }
-              />
-              {/* )} */}
+              <VStack>
+                <Image
+                  src={`${process.env.API_URL}/upload/Imagenes/${props.imgScr}`}
+                  fallback={LoadingImage(imagenUrl)}
+                  objectFit={"contain"}
+                  borderRadius={"15px"}
+                  border={
+                    colorMode == "light" ? lightBorderImage : darkBorderImage
+                  }
+                />
+                <Text>Item creado por: {props.uploader}</Text>
+              </VStack>
             </AlertDialogBody>
           </AlertDialogContent>
         </AlertDialogOverlay>

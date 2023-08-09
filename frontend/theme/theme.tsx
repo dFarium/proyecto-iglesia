@@ -212,6 +212,12 @@ const colors = {
   },
 
 
+  descargaButton: {
+    light: "#4fa324",
+    dark: "#7df042",
+  },
+
+  //prestamo instrumentos
   newPrestamoInstrumentoButton: {
     500: "#F07B3F", // light mode
     600: "#dc6529", // light mode _hover
@@ -236,6 +242,12 @@ const colors = {
     dark: "#EDF2F7",
   },
   prestamoInstrumentoDelete: {
+    light: "#C53030",
+    dark: "#FC8181",
+  },
+
+  //Color Canciones
+  CancionDelete: {
     light: "#C53030",
     dark: "#FC8181",
   },

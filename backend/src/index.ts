@@ -22,10 +22,13 @@ import { tesoreriaRoutes } from "./routes/tesoreria/tesoreriaRoutes";
 import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
+import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
 
 app.use("/api", inventarioRoutes);
 app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
+app.use("/api", cancionesRoutes);
+
 app.use("/api", inventarioRoutes);
 app.use("/api", prestamoRoutes);
 app.use("/api", archivosRoutes);

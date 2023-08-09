@@ -40,7 +40,7 @@ import {
 } from "react-icons/md";
 import EditarItemInventario from "../widgets/editarItem";
 import { NuevoEquipoElec } from "../widgets/nuevoItem";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { textDate } from "@/utils/dateUtils";
 import {
   IItemInventario,
@@ -50,8 +50,13 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 import { VerFotoItem } from "../widgets/verFotoItem";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import getRole, { getUserName } from "@/utils/roleUtils";
 
 export function InventarioEquiposBody() {
+  // obtener rol
+  const userRole = getRole();
+
   // query todos los equipos electrónicos
   const equiposQuery = useQuery({
     queryKey: ["itemsInventarioEquipos"],
@@ -66,12 +71,15 @@ export function InventarioEquiposBody() {
   const [columnVisibility] = useState({
     id: false,
     index: false,
-    // cantidad: false,
+    cantidad: false,
     categoria: false,
     desc: false,
     ultMant: false,
     cicloMant: false,
     imgScr: false,
+    edit: userRole,
+    delete: userRole,
+    uploader: false,
   });
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -90,12 +98,19 @@ export function InventarioEquiposBody() {
         sortingFn: "basic",
       },
       { id: "imgScr", accessorKey: "urlPic" },
+      { id: "uploader", accessorKey: "uploader" },
       {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={row.getValue("imgScr")} />;
+          return (
+            <VerFotoItem
+              nombre={row.getValue("nombre")}
+              imgScr={row.getValue("imgScr")}
+              uploader={row.getValue("uploader")}
+            />
+          );
         },
       },
       {
@@ -274,10 +289,9 @@ export function InventarioEquiposBody() {
           return (
             <>
               <Circle
-                bg={"#F6AD55"}
+                border={"2px solid"}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                 cursor={"default"}
               >
                 <MdCreate />
@@ -310,18 +324,8 @@ export function InventarioEquiposBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 cursor={"default"}
               >
                 <MdDelete />
@@ -364,7 +368,7 @@ export function InventarioEquiposBody() {
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Equipos Electrónicos</Text>
-          <NuevoEquipoElec />
+          {userRole ? <NuevoEquipoElec /> : null}
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
