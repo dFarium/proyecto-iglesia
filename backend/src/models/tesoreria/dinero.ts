@@ -5,6 +5,7 @@ export interface ItemTesoreria {
     valorCaja: number;
     fechaGasto: Date;
     descripcion: string;
+    tipo: string;
     boleta: string;
 }
 
@@ -14,6 +15,10 @@ const dineroSchema = new Schema<ItemTesoreria>(
         valorCaja: { type: Number, required: true },
         fechaGasto: { type: Date },
         descripcion: { type: String, maxlength: 250 },
+        tipo: {
+            type: String,
+        },
+
         boleta: { type: String, minlength: 1, maxlength: 50 },
     },
     { timestamps: true, collection: "tesoreria" }
