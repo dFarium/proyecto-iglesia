@@ -65,7 +65,7 @@ function NuevoIngresoTesoreria() {
 
     const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        const isValid = /^(?!.*[ ]{2,})[a-zA-Z0-9._-]*$/.test(value);
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value);
         setNombreErr(value === "" || !isValid);
         if (isValid) {
             setNombre(value);
@@ -103,7 +103,7 @@ function NuevoIngresoTesoreria() {
 
     const handleDescripcionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value;
-        const isValid = /^[a-zA-Z0-9,._-]*$/.test(value) && value.length <= 250;
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value) && value.length <= 250;
         setDescripcionErr(!isValid);
         if (isValid) {
             setDescripcion(value);
@@ -214,13 +214,13 @@ function NuevoIngresoTesoreria() {
                                 <Input
                                     placeholder="Nombre"
                                     onChange={handleNombreChange}
-                                    maxLength={50}
+                                    maxLength={25}
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombre.length} / 25
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -228,7 +228,6 @@ function NuevoIngresoTesoreria() {
                                 <FormLabel>Monto</FormLabel>
                                 <Input
                                     placeholder="Monto"
-                                    //value={valorCaja}
                                     onChange={handleValorCajaChange}
                                     maxLength={8}
                                 />
@@ -257,12 +256,17 @@ function NuevoIngresoTesoreria() {
                                     onChange={handleDescripcionChange}
                                     maxLength={250}
                                 />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
+                                {descripcionErr ? (
+                                    <FormErrorMessage>Ingrese una descripción válida.</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {descripcion.length} / 250
+                                    </FormHelperText>
+                                )}
+
                             </FormControl>
 
-                            <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                            <HStack mt={"25px"} justify={"space-between"} align={"center"}>
                                 <VStack>
                                     <Button>
                                         Subir Archivo
@@ -305,6 +309,7 @@ function NuevoIngresoTesoreria() {
                                 Cancelar
                             </Button>
                             <Button
+                                colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
                                         const fecha = new Date();
@@ -318,8 +323,6 @@ function NuevoIngresoTesoreria() {
                                                 tipo: "Ingreso",
                                                 boleta: imagen ? `${fechaStd}-${imagen.name}` : "",
                                             };
-                                            console.log("AAAAAAAAAAAAAAAAAAAAaa")
-                                            console.log(formData);
                                             mutation.mutate(formData);
                                             const uploadData = {
                                                 originalName: imagen.name,
@@ -398,7 +401,7 @@ function NuevoGastoTesoreria() {
 
     const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        const isValid = /^(?!.*[ ]{2,})[a-zA-Z0-9._-]*$/.test(value);
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value);
         setNombreErr(value === "" || !isValid);
         if (isValid) {
             setNombre(value);
@@ -436,12 +439,13 @@ function NuevoGastoTesoreria() {
 
     const handleDescripcionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value;
-        const isValid = /^[a-zA-Z0-9,._-]*$/.test(value) && value.length <= 250;
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value) && value.length <= 250;
         setDescripcionErr(!isValid);
         if (isValid) {
             setDescripcion(value);
         }
     };
+
 
     const validation = (): boolean => {
 
@@ -547,13 +551,13 @@ function NuevoGastoTesoreria() {
                                 <Input
                                     placeholder="Nombre"
                                     onChange={handleNombreChange}
-                                    maxLength={50}
+                                    maxLength={25}
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombre.length} / 25
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -590,31 +594,33 @@ function NuevoGastoTesoreria() {
                                     onChange={handleDescripcionChange}
                                     maxLength={250}
                                 />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
+                                {descripcionErr ? (
+                                    <FormErrorMessage>Ingrese una descripción válida.</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {descripcion.length} / 250
+                                    </FormHelperText>
+                                )}
                             </FormControl>
 
-                            <HStack mt={"25px"} justify={"space-between"} align={"start"}>
-                                <VStack>
-                                    <Button>
-                                        Subir Archivo
-                                        <Input
-                                            type="file"
-                                            height="100%"
-                                            width="100%"
-                                            position="absolute"
-                                            top="0"
-                                            left="0"
-                                            opacity="0"
-                                            aria-hidden="true"
-                                            accept="image/*"
-                                            onChange={handlePicChange}
-                                        />
-                                    </Button>
-                                    <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
-                                </VStack>
-                            </HStack>
+                            <FormControl mt="25px" display="flex" flexDirection="column" alignItems="center">
+                                <Button>
+                                    Subir Archivo
+                                    <Input
+                                        type="file"
+                                        height="100%"
+                                        width="100%"
+                                        position="absolute"
+                                        top="0"
+                                        left="0"
+                                        opacity="0"
+                                        aria-hidden="true"
+                                        accept="image/*"
+                                        onChange={handlePicChange}
+                                    />
+                                </Button>
+                                <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                            </FormControl>
                         </AlertDialogBody>
                         <AlertDialogFooter>
                             <Button
@@ -638,6 +644,7 @@ function NuevoGastoTesoreria() {
                                 Cancelar
                             </Button>
                             <Button
+                                colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
                                         const fecha = new Date();
@@ -733,7 +740,7 @@ function NuevoGastoIngresoTesoreria() {
 
     const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        const isValid = /^(?!.*[ ]{2,})[a-zA-Z0-9._-]*$/.test(value);
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value);
         setNombreErr(value === "" || !isValid);
         if (isValid) {
             setNombre(value);
@@ -771,12 +778,13 @@ function NuevoGastoIngresoTesoreria() {
 
     const handleDescripcionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value;
-        const isValid = /^[a-zA-Z0-9,._-]*$/.test(value) && value.length <= 250;
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value) && value.length <= 250;
         setDescripcionErr(!isValid);
         if (isValid) {
             setDescripcion(value);
         }
     };
+
 
     const validation = (): boolean => {
 
@@ -892,13 +900,13 @@ function NuevoGastoIngresoTesoreria() {
                                 <Input
                                     placeholder="Nombre"
                                     onChange={handleNombreChange}
-                                    maxLength={50}
+                                    maxLength={25}
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombre.length} / 25
                                     </FormHelperText>
                                 )}
 
@@ -947,9 +955,13 @@ function NuevoGastoIngresoTesoreria() {
                                     onChange={handleDescripcionChange}
                                     maxLength={250}
                                 />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
+                                {descripcionErr ? (
+                                    <FormErrorMessage>Ingrese una descripción válida.</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                                        {descripcion.length} / 250
+                                    </FormHelperText>
+                                )}
                             </FormControl>
 
                             <HStack mt={"25px"} justify={"space-between"} align={"start"}>
@@ -995,6 +1007,7 @@ function NuevoGastoIngresoTesoreria() {
                                 Cancelar
                             </Button>
                             <Button
+                                colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
                                         const fecha = new Date();
