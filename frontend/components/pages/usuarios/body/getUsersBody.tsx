@@ -29,6 +29,7 @@ import {
   InputGroup,
   InputLeftAddon,
   useColorMode,
+  Link,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -36,6 +37,7 @@ import Swal from "sweetalert2";
 import { ArrowUpIcon, ArrowDownIcon } from "@chakra-ui/icons";
 //instalar -> npm install react-icons
 import { FaRegEdit, FaRegTrashAlt, FaUserPlus } from "react-icons/fa";
+import NextLink from "next/link";
 
 function GetUsersBody() {
   const { colorMode } = useColorMode();
@@ -386,13 +388,11 @@ function GetUsersBody() {
       <HStack justifyContent={"space-between"} h="100px">
         <Text textStyle={"titulo"}>Lista de usuarios</Text>
         {admin && (
-          <Button
-            leftIcon={<FaUserPlus />}
-            colorScheme="green"
-            onClick={() => (window.location.href = "/home/usuarios/register")}
-          >
-            Crear Usuario
-          </Button>
+          <Link as={NextLink} href="/home/usuarios/register">
+            <Button leftIcon={<FaUserPlus />} colorScheme="green">
+              Crear Usuario
+            </Button>
+          </Link>
         )}
       </HStack>
       <Box maxH="520px" overflowY="auto">

@@ -79,6 +79,7 @@ export function InventarioInstrumentosBody() {
     imgScr: false,
     edit: userRole,
     delete: userRole,
+    uploader: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -96,6 +97,7 @@ export function InventarioInstrumentosBody() {
         sortingFn: "basic",
       },
       { id: "imgScr", accessorKey: "urlPic" },
+      { id: "uploader", accessorKey: "uploader" },
       {
         id: "nombre",
         header: "Nombre",
@@ -105,6 +107,7 @@ export function InventarioInstrumentosBody() {
             <VerFotoItem
               nombre={row.getValue("nombre")}
               imgScr={row.getValue("imgScr")}
+              uploader={row.getValue("uploader")}
             />
           );
         },

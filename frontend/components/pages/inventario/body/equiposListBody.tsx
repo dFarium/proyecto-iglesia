@@ -51,11 +51,11 @@ import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 import { VerFotoItem } from "../widgets/verFotoItem";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import getRole from "@/utils/roleUtils";
+import getRole, { getUserName } from "@/utils/roleUtils";
 
 export function InventarioEquiposBody() {
   // obtener rol
- const userRole = getRole();
+  const userRole = getRole();
 
   // query todos los equipos electrónicos
   const equiposQuery = useQuery({
@@ -79,6 +79,7 @@ export function InventarioEquiposBody() {
     imgScr: false,
     edit: userRole,
     delete: userRole,
+    uploader: false,
   });
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -97,6 +98,7 @@ export function InventarioEquiposBody() {
         sortingFn: "basic",
       },
       { id: "imgScr", accessorKey: "urlPic" },
+      { id: "uploader", accessorKey: "uploader" },
       {
         id: "nombre",
         header: "Nombre",
@@ -106,6 +108,7 @@ export function InventarioEquiposBody() {
             <VerFotoItem
               nombre={row.getValue("nombre")}
               imgScr={row.getValue("imgScr")}
+              uploader={row.getValue("uploader")}
             />
           );
         },
