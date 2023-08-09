@@ -1,9 +1,12 @@
 "use client";
 
-import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode,} from "@chakra-ui/react";
+import {Box, Button, FormControl, FormLabel, Input, VStack, useColorMode, Text, InputGroup, InputLeftElement, Icon} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
+// Installar --> npm install react-icons
+import { FaEnvelope as EmailIcon, FaLock as LockIcon, FaUser } from "react-icons/fa";
+import { FcConferenceCall } from "react-icons/fc";
 
 export default function Page() {
   const { colorMode } = useColorMode();
@@ -39,13 +42,14 @@ export default function Page() {
         const token = localStorage.getItem('auth-token');
         console.log("Token recibido:", token);
         router.push("/home");
-      } else {
-        const errorData = await res.json();
-        console.log(errorData);
+      } else if (res.status === 401) {
+        Swal.fire('', 'Correo incorrecto');
+        console.log("Correo inválida");
+      } else if (res.status === 400) {
+        Swal.fire('', 'Contraseña incorrecta');
+        console.log("Contraseña inválida");
       }
     } catch (error) {
-      Swal.fire('', 'Contraseña incorrecta');
-      console.log("Contraseña inválida");
       console.log(error);
     }
   };
@@ -69,17 +73,27 @@ export default function Page() {
         spacing={"30px"}
         shadow={"md"}
       >
+        <Text textStyle={"titulo"}>Inicio de sesión</Text>
+        <Icon as={FcConferenceCall} boxSize="8rem"/>
         <FormControl>
-          <FormLabel>Email</FormLabel>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+        <FormLabel>Email</FormLabel>
+        <InputGroup>
+          <InputLeftElement
+            pointerEvents="none"
+            children={<Icon as={EmailIcon} />} // Icono de correo
+          />
+          <Input placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </InputGroup>
         </FormControl>
         <FormControl>
           <FormLabel>Contraseña</FormLabel>
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <InputGroup>
+            <InputLeftElement
+              pointerEvents="none"
+              children={<Icon as={LockIcon} />} // Icono simbólico de contraseña
+            />
+            <Input placeholder="*******" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </InputGroup>
         </FormControl>
         <Button type="submit" style={{backgroundColor: '#005FFF', color: '#FFFFFF'}}>Iniciar sesión</Button>
       </VStack>

@@ -1,9 +1,18 @@
 "use client";
 
-import {Box, Button, Text, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox, CheckboxGroup, FormErrorMessage } from "@chakra-ui/react";
+import {Box, Button, Text, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox,
+    CheckboxGroup, FormErrorMessage, InputGroup, InputLeftAddon, Image } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import Swal from 'sweetalert2'
+import { useState } from "react";
+import Swal from 'sweetalert2';
+
+function formatRUT(rut: string): string {
+    const cleanRut = rut.replace(/[^0-9kK]/g, '');  
+    let body = cleanRut.slice(0, -1);  
+    const dv = cleanRut.slice(-1);  
+    body = body.replace(/^(\d{0,2})(\d{0,3})(\d{0,3})$/, '$1.$2.$3');
+    return `${body}-${dv}`;
+}
 
 function RegisterUserBody() {
 
@@ -35,11 +44,12 @@ function RegisterUserBody() {
     const [direccion, setDireccion] = useState("");
 
     const [num_emergencia, setNumEmergencia] = useState("");
+    const [isValidNumEmer, setIsValidNumEmer] = useState(true);
+    const [numEmerTouched, setNumEmerTouched] = useState(false);
 
     const [RRSS, setRRSS] = useState("");
 
     const [rol, setRoles] = useState<string[]>([]);
-
 
     // Estados para menejo de errores
     const [nameError, setNameError] = useState("");
@@ -47,6 +57,7 @@ function RegisterUserBody() {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [telefonoError, setTelefonoError ] = useState("");
+    const [numEmerError, setNumEmerError ] = useState("");
 
     // Manejadores de eventos de 'onBlur'
     const handleNameBlur = () => setNameTouched(true);
@@ -62,6 +73,7 @@ function RegisterUserBody() {
     const handleEmailBlur = () => setEmailTouched(true);
     const handlePasswordBlur = () => setPasswordTouched(true);
     const handleTelefonoBlur = () => setTelefonoTouched(true);
+    const handleNumEmerBlur = () => setNumEmerTouched(true);
 
     // Funciones de manejo de cambio actualizadas para incluir la validación
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,13 +82,11 @@ function RegisterUserBody() {
         if (!re.test(e.target.value)) {
             return;
         }
-
         setName(e.target.value);
         if(e.target.value.length < 4){
             setIsValidName(false);
             setNameError("Debe tener 4 o más caracteres");
-        }
-        else if(e.target.value.length > 255){
+        } else if(e.target.value.length > 255){
             setIsValidName(false);
             setNameError("Debe tener 255 o menos caracteres");
         }
@@ -87,16 +97,12 @@ function RegisterUserBody() {
     };
 
     const handleRutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setRut(e.target.value);
-        if(e.target.value.length < 9){
+        const formattedRUT = formatRUT(e.target.value);
+        setRut(formattedRUT);
+        if(e.target.value.length < 12){
             setIsValidRut(false);
-            setRutError("Debe tener más de 8 caracteres");
-        }
-        else if(e.target.value.length > 12){
-            setIsValidRut(false);
-            setRutError("Debe tener menos de 13 caracteres");
-        }
-        else{
+            setRutError("Debe tener 9 digitos");
+        } else{
             setIsValidRut(true);
             setRutError("");
         }
@@ -113,7 +119,7 @@ function RegisterUserBody() {
         const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value);
         setIsValidEmail(isValid);
         if(!isValid){
-            setEmailError("Correo electrónico no válido");
+            setEmailError("Debe tener el formato email@email.com");
         }
         else{
             setEmailError("");
@@ -123,11 +129,11 @@ function RegisterUserBody() {
         setPassword(e.target.value);
         if(e.target.value.length < 5){
             setIsValidPassword(false);
-            setPasswordError("La contraseña debe tener más de 4 caracteres");
+            setPasswordError("Debe tener más de 4 caracteres");
         }
         else if(e.target.value.length > 1024){
             setIsValidPassword(false);
-            setPasswordError("La contraseña no puede tener más de 1024 caracteres");
+            setPasswordError("No puede tener más de 1024 caracteres");
         }
         else{
             setIsValidPassword(true);
@@ -137,15 +143,10 @@ function RegisterUserBody() {
     
     const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTelefono(e.target.value);
-        if(e.target.value.length < 11){
+        if(e.target.value.length < 9){
             setIsValidTelefono(false);
-            setTelefonoError("El Nro de Teléfono debe tener más de 10 números");
-        }
-        else if(e.target.value.length > 15){
-            setIsValidTelefono(false);
-            setTelefonoError("El Nro de Teléfono debe tener menos de 16 números");
-        }
-        else{
+            setTelefonoError("Debe tener 9 números");
+        } else{
             setIsValidTelefono(true);
             setTelefonoError("");
         }
@@ -157,6 +158,13 @@ function RegisterUserBody() {
 
     const handleNumEmergenciaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNumEmergencia(e.target.value);
+        if(e.target.value.length < 9){
+            setIsValidNumEmer(false);
+            setNumEmerError("Debe tener 9 números");
+        } else{
+            setIsValidNumEmer(true);
+            setNumEmerError("");
+        }
     };
 
     const handleRRSSChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,6 +188,9 @@ function RegisterUserBody() {
                 email,
                 password,
             };
+
+            // startsWith('+56') verifica si el número ya comienza con el prefijo +56.
+            // Si ya tiene el prefijo, no se modifica, pero si no lo tiene, se concatena.
             if (telefono) { requestBody.telefono = telefono }
 
             if (direccion) { requestBody.direccion = direccion }
@@ -268,14 +279,14 @@ function RegisterUserBody() {
                 >
                     <FormControl isInvalid={!isValidName && nameTouched}>
                         <FormLabel>Nombre</FormLabel>
-                        <Input placeholder='Nombre' value={name} onChange={handleNameChange} onBlur={handleNameBlur} required/>
+                        <Input placeholder='Nombre y Apellido' value={name} onChange={handleNameChange} onBlur={handleNameBlur} required minLength={4} maxLength={255}/>
                         {!isValidName && nameTouched && (
                             <FormErrorMessage>{nameError}</FormErrorMessage>
                         )}
                     </FormControl>
                     <FormControl isInvalid={!isValidRut && rutTouched}>
                         <FormLabel>Rut</FormLabel>
-                        <Input placeholder='xx.xxx.xxx-x' value={rut} onChange={handleRutChange} onBlur={handleRutBlur} required/>
+                        <Input placeholder='xx.xxx.xxx-x' value={rut} onChange={handleRutChange} onBlur={handleRutBlur} required minLength={9} maxLength={12}/>
                         {!isValidRut && rutTouched && (
                             <FormErrorMessage>{rutError}</FormErrorMessage>
                         )}
@@ -298,9 +309,22 @@ function RegisterUserBody() {
                             <FormErrorMessage>{passwordError}</FormErrorMessage>
                         )}
                     </FormControl>
-                    <FormControl>
+                    <FormControl isInvalid={!isValidTelefono && telefonoTouched}>
                         <FormLabel>Teléfono</FormLabel>
-                        <Input placeholder="+569xxxxxxxx" value={telefono} onChange={handleTelefonoChange} onBlur={handleTelefonoBlur} />
+                        <InputGroup>
+                            <InputLeftAddon p={2}>
+                                +56
+                            </InputLeftAddon>
+                            <Input
+                            onChange={handleTelefonoChange}
+                            onBlur={handleTelefonoBlur}
+                            minLength={9}
+                            maxLength={9}
+                            pl={"10px"}  // Un padding izquierdo para que no se superponga con el prefijo.
+                            placeholder="9xxxxxxxx"
+                            value={telefono}
+                            />
+                        </InputGroup>
                         {!isValidTelefono && telefonoTouched && (
                             <FormErrorMessage>{telefonoError}</FormErrorMessage>
                         )}
@@ -309,13 +333,29 @@ function RegisterUserBody() {
                         <FormLabel>Dirección</FormLabel>
                         <Input placeholder="Calle N°" value={direccion} onChange={handleDireccionChange} />
                     </FormControl>
-                    <FormControl>
+                    <FormControl isInvalid={!isValidNumEmer && numEmerTouched}>
                         <FormLabel>Numero de emergencia</FormLabel>
-                        <Input placeholder="+569xxxxxxxx" value={num_emergencia} onChange={handleNumEmergenciaChange} />
+                        <InputGroup
+                        onChange={handleNumEmergenciaChange}
+                        onBlur={handleNumEmerBlur}>
+                            <InputLeftAddon p={2}>
+                                +56
+                            </InputLeftAddon>
+                            <Input
+                                pl={"10px"}  // Un padding izquierdo para que no se superponga con el prefijo.
+                                placeholder="9xxxxxxxx"
+                                minLength={9}
+                                maxLength={9}
+                                value={num_emergencia}
+                            />
+                        </InputGroup>
+                        {!isValidNumEmer && numEmerTouched && (
+                            <FormErrorMessage>{numEmerError}</FormErrorMessage>
+                        )}
                     </FormControl>
                     <FormControl>
-                        <FormLabel>RRSS</FormLabel>
-                        <Input placeholder="@instagram" value={RRSS} onChange={handleRRSSChange}/>
+                        <FormLabel>Facebook</FormLabel>
+                        <Input placeholder="Nombre en Facebook" value={RRSS} onChange={handleRRSSChange}/>
                     </FormControl>
                     <FormControl>
                     <FormLabel>Roles</FormLabel>
