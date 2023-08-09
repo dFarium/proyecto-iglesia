@@ -660,12 +660,6 @@ export default function ArchivosPubBody() {
                                 />
                             </HStack>
                         </HStack>
-                        <HStack display={{ base: "none", lg: "flex" }}>
-                            <MdHelp size={"20px"} />
-                            {/* <Text minW={"400px"}>
-                                Puede ver las fotos dando click en el nombre del Item
-                            </Text> */}
-                        </HStack>
                     </HStack>
                 </VStack>
             </VStack>
