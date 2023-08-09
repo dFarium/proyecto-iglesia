@@ -360,6 +360,7 @@ export default function PrestamoBody() {
                             <EliminarPrestamoInstrumento
                                 instrumentoId={row.getValue("instrumentoId")}
                                 id={row.getValue("id")}
+                                devuelto={row.getValue("devuelto")}
                             />
                         );
                     }

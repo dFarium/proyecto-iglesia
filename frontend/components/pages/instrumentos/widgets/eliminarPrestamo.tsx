@@ -16,7 +16,7 @@ import {use, useRef} from "react";
 import {MdDeleteOutline} from "react-icons/md";
 import {deletePrestamoInstrumento, getPrestamoInstrumento} from "@/data/prestamos/prestamos";
 
-function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string }) {
+function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string, devuelto:boolean }) {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const cancelRef = useRef(null);
     const {colorMode} = useColorMode();
@@ -43,9 +43,8 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string 
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            //Si no ha sido devuelto, vuelve prestable a true
-            if (!devueltoStatus) {
-                itemMutationToEstadoActivo.mutate({estado: "Prestado"})
+            if (!props.devuelto) {
+                itemMutationToEstadoActivo.mutate({estado: "Activo"})
             }
         },
     });
