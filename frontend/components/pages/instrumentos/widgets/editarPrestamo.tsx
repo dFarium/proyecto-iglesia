@@ -5,13 +5,15 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
-    Button, Flex,
+    Button,
+    Flex,
     FormControl,
     FormErrorMessage,
     FormLabel,
     IconButton,
     Input,
-    Select, Switch,
+    Select,
+    Switch,
     useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
@@ -21,6 +23,7 @@ import {MdCreate} from "react-icons/md";
 import {minDate, textDate} from "@/utils/dateUtils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {editPrestamoInstrumento} from "@/data/prestamos/prestamos";
+import {editPrestable} from "@/data/inventario/item";
 
 
 function EditarPrestamo(props: {
@@ -33,6 +36,7 @@ function EditarPrestamo(props: {
     fechaDevolucion: Date;
     fechaLimite: Date;
     comentario?: string;
+    itemId: string;
 }) {
     // use disclosures
 
@@ -64,7 +68,7 @@ function EditarPrestamo(props: {
         setDevuelto(props.devuelto);
         setFechaInicio(props.fechaInicio);
         setFechaLimite(props.fechaLimite);
-        setFechaDevolucion(props.fechaDevolucion);
+        setFechaDevolucion(fechaInicioOrDevolucion(props.fechaDevolucion));
         //setComentario(props.comentario);
     };
 
@@ -88,11 +92,10 @@ function EditarPrestamo(props: {
         const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
         setFechaInicio(date);
         setIsFechaInicioValid(!!e.target.value);
-        console.log("FECHA INICIO: ",fechaInicio);
     };
 
     const handleDevueltoChange = (e: any) => {
-        setDevuelto(e.target.value);
+        setDevuelto(e.target.checked);
     }
 
     const handleFechaLimiteChange = (e: any) => {
@@ -100,7 +103,6 @@ function EditarPrestamo(props: {
         const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
         setFechaLimite(date);
         setIsFechaLimiteValid(!isMenorQueInicio(fechaInicio, fechaLimite));
-        console.log("FECHA LIMITE: ",fechaLimite)
     };
 
     const handleFechaDevolucionChange = (e: any) => {
@@ -113,8 +115,12 @@ function EditarPrestamo(props: {
 
     const mutation = useMutation({
         mutationFn: async (newItem: any) => {
-            console.log("ID", props.id);
-            console.log("body ",newItem);
+            if (!newItem.devuelto) {
+                const itemRes = await editPrestable(props.itemId, {estado: "Prestado"});
+                newItem.fechaDevolucion = null;
+            } else {
+                const itemRes = await editPrestable(props.itemId, {estado: "Activo"});
+            }
             const res = await editPrestamoInstrumento(props.id, newItem);
             return res;
         },
@@ -133,6 +139,22 @@ function EditarPrestamo(props: {
     const isMenorQueInicio = (inicio: Date, limite: Date) => {
         return limite && limite < inicio;
     }
+
+    const isDevolucionMenorQueInicio = (inicio: Date, devolucion: Date) => {
+        if (!devolucion && !devuelto) {
+            return false
+        }
+        return devolucion && devolucion < inicio;
+    }
+
+    const fechaInicioOrDevolucion = (date: Date) => {
+        if (date) {
+            return date;
+        } else {
+            return new Date(fechaInicio);
+        }
+    }
+
 
     return (
         <>
@@ -187,7 +209,7 @@ function EditarPrestamo(props: {
                                 <FormErrorMessage>Debe escoger un prestatario</FormErrorMessage>
                             </FormControl>
 
-                            <FormControl isInvalid={isFechaMenorAActual(fechaInicio)}>
+                            <FormControl isDisabled={true}>
                                 <FormLabel>Fecha de Inicio</FormLabel>
                                 <Input
                                     defaultValue={fechaToValue(props.fechaInicio)}
@@ -204,31 +226,36 @@ function EditarPrestamo(props: {
                                         ¿Devuelto?
                                     </FormLabel>
                                     <Switch
+                                        isDisabled={props.devuelto}
                                         id="date-switch"
                                         isChecked={devuelto}
-                                        onChange={() => setDevuelto(!devuelto)}
+                                        onChange={() => {
+                                            setDevuelto(!devuelto);
+                                        }}
                                     />
                                 </FormControl>
                                 <FormControl mt={4}>
                                     <Input
-                                        defaultValue={fechaToValue(props.fechaDevolucion)}
+                                        // defaultValue={fechaToValue(props.fechaDevolucion)}
+                                        isInvalid={isMenorQueInicio(fechaInicio, fechaDevolucion)}
                                         id="fecha"
                                         type="date"
-                                        isDisabled={!devuelto}
+                                        isDisabled={!devuelto || props.devuelto}
                                         onChange={handleFechaDevolucionChange}
-                                        isInvalid={isMenorQueInicio(fechaInicio, fechaDevolucion)}
+                                        value={fechaToValue(fechaInicioOrDevolucion(fechaDevolucion))}
+                                        min={minDate(new Date(fechaInicio))}
                                     />
                                     <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
                                 </FormControl>
                             </Flex>
 
-                            <FormControl isInvalid={isMenorQueInicio(fechaInicio, fechaLimite)}>
+                            <FormControl isInvalid={isDevolucionMenorQueInicio(fechaInicio, fechaLimite)}>
                                 <FormLabel>Fecha Límite</FormLabel>
                                 <Input
                                     defaultValue={fechaToValue(props.fechaLimite)}
                                     type={"date"}
                                     onChange={handleFechaLimiteChange}
-                                    min={minDate(date)}
+                                    min={minDate(new Date(fechaInicio))}
                                 />
                                 <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
                             </FormControl>
@@ -265,7 +292,6 @@ function EditarPrestamo(props: {
                                             fechaInicio,
                                             fechaLimite,
                                             fechaDevolucion,
-                                            comentario,
                                             devuelto
                                         })
                                         setIsFechaInicioValid(false);
@@ -274,7 +300,6 @@ function EditarPrestamo(props: {
                                     }
                                 }}
                                 isDisabled={
-                                    !isFechaInicioValid ||
                                     isFechaLimiteValid ||
                                     !isFechaDevolucionValid
                                 }

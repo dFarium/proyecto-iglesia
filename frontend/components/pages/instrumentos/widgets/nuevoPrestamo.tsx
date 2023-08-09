@@ -8,7 +8,6 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
     Button,
-    Center,
     FormControl,
     FormErrorMessage,
     FormHelperText,
@@ -16,8 +15,6 @@ import {
     IconButton,
     Input,
     Select,
-    Text,
-    Textarea,
     useDisclosure,
 } from "@chakra-ui/react";
 
@@ -90,12 +87,13 @@ function NuevoPrestamoInstrumento() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            itemMutationToPrestableFalse.mutate({prestable:false});
+            queryClient.invalidateQueries({queryKey: ["instrumentosPrestables"]});
+            itemMutationToEstadoPrestado.mutate({estado: "Prestado"});
         },
     });
 
-    const itemMutationToPrestableFalse = useMutation({
-        mutationFn: async (newItem: any) =>{
+    const itemMutationToEstadoPrestado = useMutation({
+        mutationFn: async (newItem: any) => {
             const res = await editItemInventario(instrumento, newItem);
 
             return res;
@@ -195,20 +193,20 @@ function NuevoPrestamoInstrumento() {
                                 <FormErrorMessage>Debe escoger un instrumento</FormErrorMessage>
                             </FormControl>
 
+                            <FormControl isInvalid={!prestatario}>
+                                <FormLabel>Solicitante</FormLabel>
+                                <Select placeholder={"Escoja Solicitante"} onChange={handlePrestatarioChange}>
+                                    {showUsuarios()}
+                                </Select>
+                                <FormErrorMessage>Debe escoger un solicitante</FormErrorMessage>
+                            </FormControl>
+
                             <FormControl isInvalid={!prestamista}>
                                 <FormLabel>Prestamista</FormLabel>
                                 <Select placeholder={"Escoja Prestamista"} onChange={handlePrestamistaChange}>
                                     {showUsuarios()}
                                 </Select>
                                 <FormErrorMessage>Debe escoger un prestamista</FormErrorMessage>
-                            </FormControl>
-
-                            <FormControl isInvalid={!prestatario}>
-                                <FormLabel>Prestatario</FormLabel>
-                                <Select placeholder={"Escoja Prestatario"} onChange={handlePrestatarioChange}>
-                                    {showUsuarios()}
-                                </Select>
-                                <FormErrorMessage>Debe escoger un prestatario</FormErrorMessage>
                             </FormControl>
 
                             <FormControl isInvalid={isFechaMenorAActual(fechaInicio)}>
@@ -226,7 +224,7 @@ function NuevoPrestamoInstrumento() {
                                 <Input
                                     type={"date"}
                                     onChange={handleFechaDevolucionChange}
-                                    min={minDate(date)}
+                                    min={minDate(fechaInicio)}
                                 />
                                 <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
                             </FormControl>

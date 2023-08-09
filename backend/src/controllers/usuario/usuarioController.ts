@@ -55,10 +55,10 @@ const registerUser = async (req: Request, res: Response) => {
 
     try {
         const userDB = await newUser.save();
-        console.log(userDB)
+        // console.log(userDB)
         res.json({ error: null, data: userDB})
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(400).json({error: error.message})
     }
 }

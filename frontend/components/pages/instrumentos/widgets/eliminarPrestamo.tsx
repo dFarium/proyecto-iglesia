@@ -16,7 +16,7 @@ import {use, useRef} from "react";
 import {MdDeleteOutline} from "react-icons/md";
 import {deletePrestamoInstrumento, getPrestamoInstrumento} from "@/data/prestamos/prestamos";
 
-function EliminarPrestamoInstrumento(props: { instrumentoId: string,id: string }) {
+function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string, devuelto: boolean }) {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const cancelRef = useRef(null);
     const {colorMode} = useColorMode();
@@ -25,12 +25,12 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string,id: string }
 
     //Se obtiene si el objeto ha sido devuelto
     const getDevueltoStatus = useMutation({
-        mutationFn: async () =>{
+        mutationFn: async () => {
             const res = await getPrestamoInstrumento(props.id);
             devueltoStatus = res.devuelto;
             return res
         },
-        onSuccess:() =>{
+        onSuccess: () => {
             prestamoMutation.mutate();
         }
     })
@@ -43,25 +43,24 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string,id: string }
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            console.log("status ",devueltoStatus);
-            if (!devueltoStatus){
-                itemMutationToPrestableTrue.mutate({prestable:true})
+            if (!props.devuelto) {
+                itemMutationToEstadoActivo.mutate({estado: "Activo"})
             }
         },
     });
 
     //Si el objeto prestado está en prestable = false, se convierte a true
-    const itemMutationToPrestableTrue = useMutation({
-        mutationFn: async (newItem: any) =>{
+    const itemMutationToEstadoActivo = useMutation({
+        mutationFn: async (newItem: any) => {
             const res = await editItemInventario(props.instrumentoId, newItem);
             return res;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey:["instrumentosPrestables"]})
+            queryClient.invalidateQueries({queryKey: ["instrumentosPrestables"]})
         }
     })
 
-    return(
+    return (
         <>
             <IconButton
                 borderColor={
@@ -72,7 +71,7 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string,id: string }
                 isRound
                 fontSize={"1.4em"}
                 aria-label={"Editar"}
-                icon={<MdDeleteOutline />}
+                icon={<MdDeleteOutline/>}
                 onClick={onOpen}
                 color={
                     colorMode == "light"
