@@ -1,40 +1,42 @@
 import {Box,Flex,Grid,Link,useColorMode,Text,VStack,} from "@chakra-ui/react";
 import NextLink from "next/link";
+import { ListCancionesBody } from "./listCanciones";
 
 export default function CancionesBody() {
-  return (
-  <VStack w={"full"} h={"full"}>
-    <Text textStyle={"titulo"}>Seleccionar Opción</Text>
-    <VStack
-      w={"full"}
-      h={"full"}
-      justify={"space-between"}
-      overflow={"auto"}
-      p={"20px"}
-      >
-      <Grid
-        templateColumns={{
-          base:"repeat(1,1fr)",
-          lg:"repeat(2,1fr)",
-          xl:"repeat(3,1fr)",
-        }}
-        gap={"40px"}
-        m={"auto"}
-        >
-          <Seleccionar
-          titulo="Lista de Canciones"
-          href="/home/canciones/ListaCanciones"
-          image="Partituras.png"
-          />
-          <Seleccionar
-          titulo="Subir Canciones"
-          href="/home/canciones/SubirCanciones"
-          image="Notas_Musicales.png"
-          />
-      </Grid>
-    </VStack>
-  </VStack>
-  );
+  return <ListCancionesBody/>
+  // return (
+  // <VStack w={"full"} h={"full"}>
+  //   <Text textStyle={"titulo"}>Seleccionar Opción</Text>
+  //   <VStack
+  //     w={"full"}
+  //     h={"full"}
+  //     justify={"space-between"}
+  //     overflow={"auto"}
+  //     p={"20px"}
+  //     >
+  //     <Grid
+  //       templateColumns={{
+  //         base:"repeat(1,1fr)",
+  //         lg:"repeat(2,1fr)",
+  //         xl:"repeat(3,1fr)",
+  //       }}
+  //       gap={"40px"}
+  //       m={"auto"}
+  //       >
+  //         <Seleccionar
+  //         titulo="Lista de Canciones"
+  //         href="/home/canciones/ListaCanciones"
+  //         image="Partituras.png"
+  //         />
+  //         {/* <Seleccionar
+  //         titulo="Subir Canciones"
+  //         href="/home/canciones/SubirCanciones"
+  //         image="Notas_Musicales.png"
+  //         /> */}
+  //     </Grid>
+  //   </VStack>
+  // </VStack>
+  // );
 }
 
 function Seleccionar(props: { titulo: string; href: string; image: string }) {

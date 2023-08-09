@@ -82,7 +82,7 @@ function GetUsersBody() {
   const onClose = () => setIsOpen(false);
 
   const getUsers = async () => {
-    const response = await fetch(`http://localhost:3001/api/usuarios`);
+    const response = await fetch(`${process.env.API_URL}/usuarios`);
     const data = await response.json();
     setUsers(data);
   };
@@ -100,7 +100,7 @@ function GetUsersBody() {
     event.preventDefault();
     if (editingUser && token) {
       const res = await fetch(
-        `http://localhost:3001/api/usuario/update/${editingUser._id}`,
+        `${process.env.API_URL}/usuario/update/${editingUser._id}`,
         {
           method: "PUT",
           headers: {
@@ -156,7 +156,7 @@ function GetUsersBody() {
         if (result.isConfirmed) {
           if (token !== null) {
             fetch(
-              `http://localhost:3001/api/usuario/delete/${userToDelete._id}`,
+              `${process.env.API_URL}/usuario/delete/${userToDelete._id}`,
               {
                 method: "DELETE",
                 headers: {

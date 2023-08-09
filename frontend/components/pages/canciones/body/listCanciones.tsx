@@ -48,6 +48,7 @@ import { NuevaCancion } from "@/components/pages/canciones/widgets/nuevaCancion"
 import EliminarCancion from "../widgets/eliminarCancion";
 import Editarcancion from "../widgets/editarCancion";
 import ReproducirAudio from "../widgets/audioCanciones";
+import VerLetraCancion  from "../widgets/verLetraCanciones";
 
 export function ListCancionesBody() {
     //query todas las canciones
@@ -133,9 +134,7 @@ export function ListCancionesBody() {
                 accessorKey: "letra",
                 cell: ({row}) => {
                     return (
-                        <Text>
-                            {row.getValue("letra")}
-                        </Text>
+                        <VerLetraCancion nombre={row.getValue("letra")} />
                     )
                 }
             },
@@ -209,7 +208,7 @@ export function ListCancionesBody() {
                 accessorKey: "id_song",
                 cell: ({row}) => {
                     return (
-                        <ReproducirAudio/>
+                        <ReproducirAudio nombre={row.getValue("id_song")}/>
                     )
                 }
             },
@@ -220,10 +219,11 @@ export function ListCancionesBody() {
                 return (
                     <>
                     <Circle
-                        bg={"#F6AD55"}
+                        // bg={"#F6AD55"}
+                        border={"2px solid"}
                         size={"1.5em"}
                         fontSize={"1.2em"}
-                        color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                        // color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                         cursor={"default"}
                     >
                         <MdCreate />
@@ -252,18 +252,18 @@ export function ListCancionesBody() {
                     <>
                     <Circle
                         border={"2px solid"}
-                        borderColor={
-                        colorMode == "light"
-                            ? "inventarioDeleteItem.light"
-                            : "inventarioDeleteItem.dark"
-                        }
+                        // borderColor={
+                        // colorMode == "light"
+                        //     ? "inventarioDeleteItem.light"
+                        //     : "inventarioDeleteItem.dark"
+                        // }
                         size={"1.5em"}
                         fontSize={"1.2em"}
-                        color={
-                        colorMode == "light"
-                            ? "inventarioDeleteItem.light"
-                            : "inventarioDeleteItem.dark"
-                        }
+                        // color={
+                        // colorMode == "light"
+                        //     ? "inventarioDeleteItem.light"
+                        //     : "inventarioDeleteItem.dark"
+                        // }
                         cursor={"default"}
                     >
                         <MdDelete />
@@ -399,7 +399,7 @@ export function ListCancionesBody() {
                         <HStack display={{ base: "none", lg: "flex" }}>
                             <MdHelp size={"20px"} />
                             <Text minW={"400px"}>
-                                Puede ver la letra y reproducir el audio dando click en la letra y el audio de la cancion
+                                Puede ver la letra y reproducir el audio dando click en la letra y el audio de la canción
                             </Text>
                         </HStack>
                     </HStack>

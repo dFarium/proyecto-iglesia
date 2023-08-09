@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
-function VerFotoItem(props: { nombre: string; imgScr: string }) {
+function VerLetraCancion(props: { nombre: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const cancelRef = useRef(null);
@@ -49,7 +49,7 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
               justifyContent={"center"}
             >
               {/* {imagenUrl && ( */}
-              <Image
+              {/* <Image
                 src={`${process.env.API_URL}/upload/Imagenes/${props.imgScr}`}
                 fallback={LoadingImage(imagenUrl)}
                 objectFit={"contain"}
@@ -57,7 +57,7 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
                 border={
                   colorMode == "light" ? lightBorderImage : darkBorderImage
                 }
-              />
+              /> */}
               {/* )} */}
             </AlertDialogBody>
           </AlertDialogContent>
@@ -82,4 +82,4 @@ function LoadingImage(src: string) {
   );
 }
 
-export { VerFotoItem };
+export default VerLetraCancion ;
