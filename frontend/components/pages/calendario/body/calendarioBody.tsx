@@ -7,6 +7,7 @@ import { ColumnDef, SortingState, flexRender, getCoreRowModel, getPaginationRowM
 import React, { useMemo, useState } from 'react'
 import { MdArrowDropDown, MdArrowDropUp, MdDelete, MdHelp, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
 import AgregarCalendario from '../widgets/agregarCalendario'
+import EliminarCalendario from '../widgets/eliminarCalendario';
 
 export function CalendarioBody() {
 
@@ -120,6 +121,42 @@ export function CalendarioBody() {
             </Text>
           )
         }
+      },
+      {
+        id: "delete",
+        enableSorting: false,
+        header: () => {
+          return (
+            <>
+              <Circle
+                border={"2px solid"}
+                borderColor={
+                  colorMode == "light"
+                    ? "tesoreriaDeleteItem.light"
+                    : "tesoreriaDeleteItem.dark"
+                }
+                size={"1.5em"}
+                fontSize={"1.2em"}
+                color={
+                  colorMode == "light"
+                    ? "tesoreriaDeleteItem.light"
+                    : "tesoreriaDeleteItem.dark"
+                }
+                cursor={"default"}
+              >
+                <MdDelete />
+              </Circle>
+            </>
+          );
+        },
+        cell: ({ row }) => {
+          return (
+            <EliminarCalendario
+              name={row.getValue("nombreAct")}
+              id={row.getValue("id")}
+            />
+          );
+        },
       },
     ],
     [colorMode]
