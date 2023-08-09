@@ -50,7 +50,6 @@ import {
     downloadFile,
     uploadNewFile,
     deleteFile,
-    viewAllSpecificFiles,
     IArchivos,
 } from "@/data/archivos/archivos";
 
@@ -60,12 +59,12 @@ import EliminarItemArchivo from "../widgets/eliminarArchivo";
 import DescargarItemArchivo from "../widgets/descarArchivo";
 //import { VerFotoItem } from "../widgets/verFotoItem";
 
-export default function ArchivosPubBody() {
+export default function ArchivosAllBody() {
     // query todos los archivos publicos
     const filesQuery = useQuery({
-        queryKey: ["PubFiles"],
+        queryKey: ["AllFiles"],
         queryFn: async () => {
-            const data = viewAllSpecificFiles(false);
+            const data = viewAllFiles();
             return data;
         },
         initialData: [],

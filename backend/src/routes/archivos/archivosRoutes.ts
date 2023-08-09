@@ -10,6 +10,8 @@ import {
   sendImg,
   uploadNewFileData,
   updateArchivo,
+  subirNewFile,
+  getSpecificFiles
 } from "../../controllers/archivos/archivosController";
 
 export const archivosRoutes = Router();
@@ -22,8 +24,14 @@ archivosRoutes.post(
   upload.array('archivos'), fileSizeError, uploadNewFile
 );
 
+archivosRoutes.post(
+  "/file/uploadFile/:folderName/:saveName/:tag/:acceso/:usuarioName",
+  upload.array('archivos'), fileSizeError, subirNewFile
+);
+
+
 //put
- archivosRoutes.put("/files/update/:id", updateArchivo);
+archivosRoutes.put("/files/update/:id", updateArchivo);
 
 //delete
 archivosRoutes.delete("/file/delete/:id", deleteFile);
@@ -33,3 +41,5 @@ archivosRoutes.get("/files/", getFiles);
 archivosRoutes.get("/file/download/:id", downloadFile);
 archivosRoutes.get("/file/specific/:id", viewFile);
 archivosRoutes.get("/file/:folderName/:name", sendImg);
+archivosRoutes.get("/files/specific/:access", getSpecificFiles);
+

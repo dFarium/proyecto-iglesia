@@ -28,139 +28,99 @@ import { useRef, useState } from "react";
 import { MdCreate, MdExpandMore } from "react-icons/md";
 import { minDate, textDate, textDefaultDate } from "@/utils/dateUtils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { IItemInventario, editItemInventario } from "@/data/inventario/item";
+import { IArchivos, updateFile } from "@/data/archivos/archivos";
 
 function EditarArchivo(props: {
     id: string;
     originalName: string;
     fileName: string;
+    userName: string;
     tagCategoria: string;
     mimetype: string;
     url: string;
     userSubida: string;
-    userModifica?: string;
+    userModifica: string;
     publico: boolean;
     createdAt: Date;
     updatedAt: Date;
 }) {
     // use disclosures
-    const {
-        isOpen: isOpenInstrumentos,
-        onOpen: onOpenInstrumentos,
-        onClose: onCloseInstrumentos,
-    } = useDisclosure();
-
-    const {
-        isOpen: isOpenEquipo,
-        onOpen: onOpenEquipo,
-        onClose: onCloseEquipo,
-    } = useDisclosure();
-
-    const {
-        isOpen: isOpenVarios,
-        onOpen: onOpenVarios,
-        onClose: onCloseVarios,
-    } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const cancelRef = useRef(null);
     const { colorMode } = useColorMode();
     const date = new Date();
 
     // variables
+
+    //Nombre archivo
     const [nombre, setNombre] = useState<string>("");
-    const [nombreErr, setNombreErr] = useState<boolean>(false);
 
-    const [estado, setEstado] = useState<string>("");
-    const [ultMant, setUltMant] = useState<Date>(date);
+    const [nombreOrig, setNombreOrig] = useState<string>(props.originalName);
 
-    const [cantidad, setCantidad] = useState<number>(1);
-    const [cantidadErr, setCantidadErr] = useState<boolean>(false);
+    const [nombreSave, setNombreSave] = useState<string>(props.fileName);
 
-    const [fechaSalida, setFechaSalida] = useState<Date>(date);
-    const [cicloMant, setCicloMant] = useState<number>();
+    //Categoria
+    const [categoria, setCategoria] = useState<string>("");
 
-    const [desc, setDesc] = useState<string>("");
-    const [prestable, setPrestable] = useState<boolean>(false);
+    //Usuario que lo modifica
+    const [userModifica, setUserModifica] = useState<string>("");
 
-    const [oldDate, setOldDate] = useState<Date>(date);
-    const [oldMant, setOldMant] = useState<Date>(date);
+    //Fecha de update
+    const [fechaUpdate, setFechaUpdate] = useState<Date>(date);
+
+    //Publico
+    const [publico, setPublico] = useState<boolean>(false);
 
     const setTodoInicio = () => {
-        // setNombre(props.nombre);
-        // setNombreErr(false);
-        // setEstado(props.estado);
-        // setUltMant(props.ultMant);
-        // setCantidad(props.cantidad);
-        // setCantidadErr(false);
-        // setFechaSalida(props.fechaSalida);
-        // setCicloMant(props.cicloMant);
-        // setDesc(props.desc);
-        // setPrestable(props.prestable);
-        // setOldDate(props.fechaSalida);
-        // setOldMant(props.ultMant);
+        setNombre(props.userName);
+        setCategoria(props.tagCategoria);
+        setUserModifica(props.userModifica);
+        setFechaUpdate(props.updatedAt);
+        setPublico(props.publico);
     };
 
-    const showDate = (date: Date): string => {
-        if (date) {
-            return "Actual: " + textDate(date);
-        }
-        return "Sin fecha";
-    };
+    // const showDate = (date: Date): string => {
+    //     if (date) {
+    //         return "Actual: " + textDate(date);
+    //     }
+    //     return "Sin fecha";
+    // };
 
     const queryClient = useQueryClient();
 
     const handleNombreChange = (e: any) => {
         setNombre(e.target.value);
-        setNombreErr(false);
     };
 
-    const handleCantidadChange = (e: any) => {
-        const r = e.target.value.replace(/\D/g, "");
-        setCantidad(r);
-        setCantidadErr(false);
+    const handleCategoriaChange = (e: any) => {
+        setCategoria(e.target.value);
     };
 
-    const handleFechaSalidaChange = (e: any) => {
+    const handleUserChange = (e: any) => {
+        setUserModifica(e.target.value);
+    };
+
+    const handleFechaUpdateChange = (e: any) => {
         const d = new Date(e.target.value);
-        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        setFechaSalida(date);
+        const date = new Date(
+            d.getUTCFullYear(),
+            d.getUTCMonth(),
+            d.getUTCDate()
+        );
+        setFechaUpdate(date);
     };
 
-    const handleUltMantChange = (e: any) => {
-        const d = new Date(e.target.value);
-        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        setUltMant(date);
-    };
-
-    const validation = (): boolean => {
-        let error: boolean = false;
-        if (nombre.trim() == "") {
-            setNombreErr(true);
-            error = true;
-        }
-        if (cantidad.toString().trim() == "") {
-            setCantidadErr(true);
-            error = true;
-        }
-        if (error) {
-            return false;
-        } else {
-            setCantidadErr(false);
-            setNombreErr(false);
-        }
-        return true;
-    };
     const mutation = useMutation({
-        mutationFn: async (newItem: IItemInventario) => {
-            const res = await editItemInventario(props.id, newItem);
+        mutationFn: async (newItem: IArchivos) => {
+            const res = await updateFile(props.id, newItem);
             return res;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
-            queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
-            queryClient.invalidateQueries({
-                queryKey: ["itemsInventarioInstrumentos"],
-            });
+            queryClient.invalidateQueries({ queryKey: ["AllFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PubFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PrivFiles"] });
+
         },
     });
 
@@ -178,82 +138,42 @@ function EditarArchivo(props: {
                 aria-label={"Editar"}
                 icon={<MdCreate />}
                 onClick={() => {
-                    // if (props.categoria == "Instrumento") {
-                    //     setTodoInicio();
-                    //     onOpenInstrumentos();
-                    // } else if (props.categoria == "Equipo") {
-                    //     setTodoInicio();
-                    //     onOpenEquipo();
-                    // } else {
-                    //     setTodoInicio();
-                    //     onOpenVarios();
-                    // }
+                    setTodoInicio();
+                    onOpen();
                 }}
                 color={colorMode == "light" ? "#4A5568" : "#2D3748"}
             />
-            {/* Alerta de Instrumento */}
 
             <AlertDialog
-                isOpen={isOpenInstrumentos}
+                isOpen = {isOpen}
                 leastDestructiveRef={cancelRef}
-                onClose={onCloseInstrumentos}
+                onClose={onClose}
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Editar Instrumento Musical
+                            Editar Archivo
                         </AlertDialogHeader>
                         <AlertDialogBody>
-                            <HStack align={"start"}>
-                                <FormControl>
-                                    <FormLabel>Nombre</FormLabel>
-                                    <Input
-                                        placeholder="Nombre"
-                                        value={nombre}
-                                        onChange={handleNombreChange}
-                                        maxLength={50}
-                                    />
-                                    {nombreErr ? (
-                                        <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {nombre.length} / 50
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                <Box>
-                                    <FormLabel>Estado</FormLabel>
-                                    <Menu autoSelect={false}>
-                                        <MenuButton as={Button} rightIcon={<MdExpandMore />}>
-                                            {estado}
-                                        </MenuButton>
-                                        <MenuList>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setEstado("Activo");
-                                                }}
-                                            >
-                                                Activo
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setEstado("Inactivo");
-                                                }}
-                                            >
-                                                Inactivo
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setEstado("Prestado");
-                                                }}
-                                            >
-                                                En préstamo
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Box>
-                            </HStack>
-                            <FormControl mt={"25px"}>
+                            <FormControl>
+                                <FormLabel>Nombre</FormLabel>
+                                <Input
+                                    placeholder="Nombre"
+                                    value={nombre}
+                                    onChange={handleNombreChange}
+                                    maxLength={20}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Categoria</FormLabel>
+                                <Input
+                                    placeholder="Por ejemplo: Estudio, Informe, etc."
+                                    value={categoria}
+                                    onChange={handleCategoriaChange}
+                                    maxLength={10}
+                                />
+                            </FormControl>
+                            {/* <FormControl mt={"25px"}>
                                 <FormLabel>Fecha de Salida</FormLabel>
                                 <Input
                                     type="date"
@@ -264,57 +184,21 @@ function EditarArchivo(props: {
                                 <FormHelperText fontStyle={"italic"} pl={"5px"}>
                                     {showDate(oldDate)}
                                 </FormHelperText>
-                            </FormControl>
+                            </FormControl> */}
 
-                            <HStack align={"start"} mt={"25px"}>
-                                <FormControl>
-                                    <FormLabel>Ciclo de Mantemiento</FormLabel>
-                                    <Input />
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel>Última Mantención</FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={textDefaultDate(ultMant)}
-                                        onChange={handleUltMantChange}
-                                    />
-                                    <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                        {showDate(oldMant)}
-                                    </FormHelperText>
-                                </FormControl>
-                            </HStack>
-
-                            <HStack mt={"25px"} justify={"space-between"}>
-                                <Button>Cambiar Foto</Button>
-                                <Box>
-                                    <FormControl
-                                        display={"flex"}
-                                        flexDir={"column"}
-                                        alignItems={"end"}
-                                    >
-                                        <FormLabel>¿Disponible para préstamo?</FormLabel>
-                                        <Switch
-                                            id="prest"
-                                            isChecked={prestable}
-                                            onChange={(e) => {
-                                                setPrestable(e.target.checked);
-                                            }}
-                                        />
-                                    </FormControl>
-                                </Box>
-                            </HStack>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
+                            <FormControl
+                                display={"flex"}
+                                flexDir={"column"}
+                                alignItems={"center"}
+                            >
+                                <FormLabel>¿Disponible para todos?</FormLabel>
+                                <Switch
+                                    isChecked = {publico}
+                                    id="prest"
                                     onChange={(e) => {
-                                        setDesc(e.target.value);
+                                        setPublico(e.target.checked);
                                     }}
                                 />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {desc.length} / 200
-                                </FormHelperText>
                             </FormControl>
                         </AlertDialogBody>
                         <AlertDialogFooter>
@@ -322,9 +206,7 @@ function EditarArchivo(props: {
                                 ref={cancelRef}
                                 mr={3}
                                 onClick={() => {
-                                    setNombreErr(false);
-                                    setPrestable(false);
-                                    onCloseInstrumentos();
+                                    onClose();
                                 }}
                             >
                                 Cancelar
@@ -333,20 +215,20 @@ function EditarArchivo(props: {
                                 colorScheme="blue"
                                 onClick={() => {
                                     // validation();
-                                    if (validation()) {
-                                        mutation.mutate({
-                                            nombre,
-                                            estado,
-                                            fechaSalida,
-                                            cantidad: cantidad,
-                                            desc,
-                                            cicloMant,
-                                            ultMant,
-                                            ultMod: "Yo",
-                                            prestable,
-                                        });
-                                        onCloseInstrumentos();
-                                    }
+                                    const fecha: Date = new Date();
+                                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                                    mutation.mutate({
+                                        
+                                        //  fileName: `${fechaStd}-${nombre}`
+                                        originalName: nombreOrig,
+                                        fileName: nombreSave,
+                                        userName: nombre,
+                                        tagCategoria: categoria,
+                                        userModifica: "Modificado",
+                                        updatedAt: fechaUpdate,
+                                        publico,
+                                    });
+                                    onClose();
                                 }}
                             >
                                 Aceptar

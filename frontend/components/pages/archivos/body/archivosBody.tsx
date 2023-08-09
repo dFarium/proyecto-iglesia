@@ -23,9 +23,9 @@ export default function ArchivosBody() {
                     m={"auto"}
                 >
                     <OpcionArchivos
-                        titulo="Favoritos"
-                        href="/home/archivos/favorito"
-                        image="star.png"
+                        titulo="Biblioteca Libre"
+                        href="/home/archivos/libre"
+                        image="buscador.png"
                     />
                     <OpcionArchivos
                         titulo="Biblioteca Pública"
