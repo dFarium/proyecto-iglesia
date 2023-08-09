@@ -99,13 +99,12 @@ export function GastoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          const { isOpen, onOpen, onClose } = useDisclosure();
           return (
             <>
-              <Text onClick={onOpen}>
+              <Text >
                 {row.getValue("nombre")}
               </Text>
-              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+              <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
             </>
           )
         },
@@ -230,16 +229,16 @@ export function GastoListBody() {
               <Circle
                 border={"2px solid"}
                 //borderColor={
-                  //colorMode == "light"
-                    //? "tesoreriaDeleteItem.light"
-                    //: "tesoreriaDeleteItem.dark"
+                //colorMode == "light"
+                //? "tesoreriaDeleteItem.light"
+                //: "tesoreriaDeleteItem.dark"
                 //}
                 size={"1.5em"}
                 fontSize={"1.2em"}
                 //color={
-                  //colorMode == "light"
-                    //? "tesoreriaDeleteItem.light"
-                    //: "tesoreriaDeleteItem.dark"
+                //colorMode == "light"
+                //? "tesoreriaDeleteItem.light"
+                //: "tesoreriaDeleteItem.dark"
                 //}
                 cursor={"default"}
               >
