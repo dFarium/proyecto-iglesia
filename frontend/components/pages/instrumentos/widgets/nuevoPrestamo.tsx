@@ -87,11 +87,12 @@ function NuevoPrestamoInstrumento() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            itemMutationToPrestableFalse.mutate({prestable: false});
+            queryClient.invalidateQueries({queryKey: ["instrumentosPrestables"]});
+            itemMutationToEstadoPrestado.mutate({estado: "Prestado"});
         },
     });
 
-    const itemMutationToPrestableFalse = useMutation({
+    const itemMutationToEstadoPrestado = useMutation({
         mutationFn: async (newItem: any) => {
             const res = await editItemInventario(instrumento, newItem);
 

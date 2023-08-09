@@ -45,13 +45,13 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string 
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
             //Si no ha sido devuelto, vuelve prestable a true
             if (!devueltoStatus) {
-                itemMutationToPrestableTrue.mutate({prestable: true})
+                itemMutationToEstadoActivo.mutate({estado: "Prestado"})
             }
         },
     });
 
     //Si el objeto prestado está en prestable = false, se convierte a true
-    const itemMutationToPrestableTrue = useMutation({
+    const itemMutationToEstadoActivo = useMutation({
         mutationFn: async (newItem: any) => {
             const res = await editItemInventario(props.instrumentoId, newItem);
             return res;

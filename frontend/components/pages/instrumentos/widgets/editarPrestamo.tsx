@@ -114,10 +114,10 @@ function EditarPrestamo(props: {
     const mutation = useMutation({
         mutationFn: async (newItem: any) => {
             if (!newItem.devuelto) {
-                const itemRes = await editPrestable(props.itemId, {prestable: false});
+                const itemRes = await editPrestable(props.itemId, {estado: "Prestado"});
                 newItem.fechaDevolucion = null;
             } else {
-                const itemRes = await editPrestable(props.itemId, {prestable: true});
+                const itemRes = await editPrestable(props.itemId, {estado: "Activo"});
             }
             const res = await editPrestamoInstrumento(props.id, newItem);
             return res;
