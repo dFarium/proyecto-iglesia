@@ -207,7 +207,7 @@ function NuevoInstrumento() {
                       left="0"
                       opacity="0"
                       aria-hidden="true"
-                      accept="image/*"
+                      // accept="image/*"
                       onChange={handlePicChange}
                     />
                   </Button>

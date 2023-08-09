@@ -51,7 +51,7 @@ function NuevaCancion(){
 
     const [instrumentos, setInstrumentos] = useState<string>("");
 
-    const [audio, setAudio] = useState<File | null>(null);
+    const [id_song, setAudio] = useState<File | null>(null);
     const [uploadAudio, setUploadAudio] = useState<boolean>(false);
 
     const queryClient = useQueryClient();
@@ -68,6 +68,7 @@ function NuevaCancion(){
 
     const handleLetraChange = async (file: any) => {
         const letra = file.target.files?.[0] || null;
+        console.log("Letra: ", letra);
         setLetra(letra);
         setUploadLetra(true);
     };
@@ -96,7 +97,8 @@ function NuevaCancion(){
     };
 
     const handleAudioChange = async (file:any) =>{
-        const audio = file.target.file?.[0] || null;
+        const audio = file.target.files?.[0] || null;
+        console.log("Audio: ", audio);
         setAudio(audio);
         setUploadAudio(true);
     };
@@ -109,12 +111,6 @@ function NuevaCancion(){
             console.log("file si");
         } catch (error){
             console.log("file: ",error);
-        }
-        try {
-            await uploadNewFileData(fileData);
-            console.log("data si");
-        } catch(error){
-            console.log("data: ",error);
         }
     };
 
@@ -225,25 +221,7 @@ function NuevaCancion(){
                     </FormControl>
 
                     <HStack mt={"25px"} justify={"space-between"} align={"start"}>
-                        <VStack>
-                            <Button>
-                                Subir Letra
-                                <Input
-                                type="file"
-                                height="100%"
-                                width="100%"
-                                position="absolute"
-                                top="0"
-                                left="0"
-                                opacity="0"
-                                aria-hidden="true"
-                                accept="application/*"
-                                onChange={handleLetraChange}
-                                />
-                            </Button>
-                            <Text>{letra ? letra.name: "No hay letra"}</Text>
-                        </VStack>
-                        <VStack>
+                    <VStack>
                             <Button>
                                 Subir Audio
                                 <Input
@@ -259,8 +237,28 @@ function NuevaCancion(){
                                 onChange={handleAudioChange}
                                 />
                             </Button>
-                            <Text>{audio ? audio.name: "No hay audio"}</Text>
+                            <Text>{id_song ? id_song.name: "No hay audio"}</Text>
                         </VStack>
+                        
+                        <VStack>
+                            <Button>
+                                Subir Letra
+                                <Input
+                                type="file"
+                                height="100%"
+                                width="100%"
+                                position="absolute"
+                                top="0"
+                                left="0"
+                                opacity="0"
+                                aria-hidden="true"
+                                accept=".doc, .docx, .pdf"
+                                onChange={handleLetraChange}
+                                />
+                            </Button>
+                            <Text>{letra ? letra.name: "No hay letra"}</Text>
+                        </VStack>
+                        
                     </HStack>
                 </AlertDialogBody>
                 <AlertDialogFooter>
@@ -285,7 +283,7 @@ function NuevaCancion(){
                     onClick={()=> {
                         if (validation()){
                             const fecha: Date = new Date();
-                            const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+                            const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
                             mutation.mutate({
                                 nombre,
                                 clave,
@@ -293,7 +291,7 @@ function NuevaCancion(){
                                 genero,
                                 autor,
                                 instrumentos,
-                                id_song: audio ? `${fechaStd}-${audio.name}`:"" ,
+                                id_song: id_song ? `${fechaStd}-${id_song.name}`:"" ,
                             });
                             if (letra) {
                                 uploadDocLetra(letra, {
@@ -306,12 +304,12 @@ function NuevaCancion(){
                                     publico: true,
                             });
                             }
-                            if (audio) {
-                                uploadSong(audio, {
-                                    originalName: `${audio.name}`,
-                                    fileName:`${fechaStd}-${audio.name}`,
+                            if (id_song) {
+                                uploadSong(id_song, {
+                                    originalName: `${id_song.name}`,
+                                    fileName:`${fechaStd}-${id_song.name}`,
                                     tagCategoria: "Canciones",
-                                    mimetype: audio.type,
+                                    mimetype: id_song.type,
                                     url: "./upload/Canciones",
                                     userSubida: "user",
                                     publico: true,
