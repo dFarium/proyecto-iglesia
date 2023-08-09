@@ -16,7 +16,7 @@ import {use, useRef} from "react";
 import {MdDeleteOutline} from "react-icons/md";
 import {deletePrestamoInstrumento, getPrestamoInstrumento} from "@/data/prestamos/prestamos";
 
-function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string, devuelto:boolean }) {
+function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string, devuelto: boolean }) {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const cancelRef = useRef(null);
     const {colorMode} = useColorMode();
