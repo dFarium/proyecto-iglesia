@@ -71,6 +71,7 @@ export function InventarioBody() {
     imgScr: false,
     edit: userRole,
     delete: userRole,
+    uploader: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -88,6 +89,7 @@ export function InventarioBody() {
         sortingFn: "basic",
       },
       { id: "imgScr", accessorKey: "urlPic" },
+      { id: "uploader", accessorKey: "uploader" },
       {
         id: "nombre",
         header: "Nombre",
@@ -97,6 +99,7 @@ export function InventarioBody() {
             <VerFotoItem
               nombre={row.getValue("nombre")}
               imgScr={row.getValue("imgScr")}
+              uploader={row.getValue("uploader")}
             />
           );
         },
@@ -356,7 +359,7 @@ export function InventarioBody() {
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Inventario Total</Text>
-          <NuevoItemInventario />
+          {userRole ? <NuevoItemInventario /> : null}
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">

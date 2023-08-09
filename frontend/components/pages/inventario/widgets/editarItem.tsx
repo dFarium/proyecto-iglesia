@@ -29,6 +29,7 @@ import { MdCreate, MdExpandMore } from "react-icons/md";
 import { minDate, textDate, textDefaultDate } from "@/utils/dateUtils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IItemInventario, editItemInventario } from "@/data/inventario/item";
+import { getUserName } from "@/utils/roleUtils";
 
 function EditarItemInventario(props: {
   id: string;
@@ -64,6 +65,9 @@ function EditarItemInventario(props: {
   const cancelRef = useRef(null);
   const { colorMode } = useColorMode();
   const date = new Date();
+  
+  //get username
+  const userName = getUserName();
 
   // variables
   const [nombre, setNombre] = useState<string>("");
@@ -315,7 +319,7 @@ function EditarItemInventario(props: {
                     desc,
                     cicloMant,
                     ultMant,
-                    ultMod: "Yo",
+                    ultMod: userName,
                     prestable,
                   });
                   onCloseInstrumentos();
@@ -487,11 +491,10 @@ function EditarItemInventario(props: {
                     estado,
                     fechaSalida,
                     cantidad,
-                    uploader: "Yo",
                     desc,
                     cicloMant,
                     ultMant,
-                    ultMod: "Yo",
+                    ultMod: userName,
                     prestable,
                   });
                   onCloseEquipo();
@@ -584,7 +587,7 @@ function EditarItemInventario(props: {
                     estado,
                     cantidad,
                     desc,
-                    ultMod: "Yo",
+                    ultMod: userName,
                   });
                   setNombreErr(false);
                   setCantidadErr(false);
