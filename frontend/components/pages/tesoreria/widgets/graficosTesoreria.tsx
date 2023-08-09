@@ -1,5 +1,7 @@
 import { obtenerGastoTesoreria, obtenerIngresoTesoreria } from '@/data/tesoreria/item';
+
 import { Box, useColorMode, useDisclosure, Text, Grid, GridItem, Flex, useMediaQuery, Center } from '@chakra-ui/react';
+
 import React, { useEffect, useRef, useState } from 'react'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryGroup, VictoryLegend, VictoryLine, VictoryPie, VictoryTheme } from 'victory';
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -24,7 +26,9 @@ const GraficosTesoreria = () => {
         },
         initialData: [],
     });
+
     const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
+
 
     const [ingresoData, setIngresoData] = useState<IngresoDataItem[]>([]);
 
@@ -56,11 +60,14 @@ const GraficosTesoreria = () => {
     }, 0);
 
     const totalTotal = totalIngreso - totalGasto;
+
     const totalPorce = totalIngreso + totalGasto;
+
 
     function formatCLP(value: number) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
+
 
     const porcentajeGasto = Math.round((totalGasto * 100) / totalPorce);
 
@@ -101,12 +108,14 @@ const GraficosTesoreria = () => {
                 Balance general
             </Text>
             <Grid marginTop={5} w={"100%"} marginEnd={2}>
+
                 <GridItem w='100%' h='10'>
                     <Text marginLeft={5}>Ingreso total: ${formatCLP(totalIngreso)}</Text>
                     <Text marginLeft={5}>Gasto total: ${formatCLP(totalGasto)}</Text>
                     <Text marginLeft={5}>Total: ${formatCLP(totalTotal)}</Text>
                 </GridItem>
             </Grid>
+
             {isSmallScreen ? (
                 <Grid marginTop={5} w={"100%"} marginEnd={2}>
                     <Center marginTop={5}>
@@ -156,6 +165,7 @@ const GraficosTesoreria = () => {
                             <Text>Ingresos</Text>
                         </Flex>
                     </Grid> */}
+
 
 
 export default GraficosTesoreria;

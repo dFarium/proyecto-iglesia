@@ -3,11 +3,13 @@ import React, { useRef, useState } from 'react'
 import { viewImg } from "@/data/archivos/archivos";
 
 interface CargarBoletaDescripcionProps {
+
     id: string;
     descripcion: string;
     nombre: string;
     boleta: string;
 }
+
 const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ id, descripcion, nombre, boleta }) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,7 +30,9 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ id, d
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"} textAlign={"center"}>
+
                             Item {nombre}
+
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             <Stack spacing={3}>

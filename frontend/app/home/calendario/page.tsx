@@ -1,4 +1,5 @@
-import CalendarioBody from "@/components/pages/calendario/body/calendarioBody";
+"use client"
+import { CalendarioBody } from "@/components/pages/calendario/body/calendarioBody";
 
 export default function Page() {
     return <CalendarioBody />

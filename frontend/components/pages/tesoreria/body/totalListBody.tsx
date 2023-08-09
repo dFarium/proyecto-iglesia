@@ -19,7 +19,9 @@ import {
   Flex,
   Container,
   useDisclosure,
+
   useMediaQuery
+
 } from "@chakra-ui/react";
 
 import {
@@ -37,7 +39,9 @@ import {
   MdArrowDropUp,
   MdCreate,
   MdDelete,
+
   MdEdit,
+
   MdHelp,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
@@ -57,7 +61,9 @@ import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 
 export function TotalListBody() {
+
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
+
 
   const totalQuery = useQuery({
     queryKey: ["obtenerTodoTesoreria"],
@@ -105,12 +111,14 @@ export function TotalListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+
           return (
             <>
               <Text >
                 {row.getValue("nombre")}
               </Text>
               <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+
             </>
           )
         },
@@ -204,7 +212,9 @@ export function TotalListBody() {
                 fontSize={"1.2em"}
                 cursor={"default"}
               >
+
                 <MdEdit />
+
               </Circle>
             </>
           );
@@ -269,13 +279,16 @@ export function TotalListBody() {
   });
 
   return (
+
     <>
       <Flex w={"100%"} h={"100%"} direction={{ base: "column", md: "row" }}>
         <Box w={{ base: "100%", md: "70%" }} h={"100%"}>
           <VStack w={"100%"} h={"100%"} spacing={"30px"}>
             <HStack justifyContent={"space-between"} w={"100%"}>
               <Text textStyle={"titulo"}>Total</Text>
+
               {!isSmallScreen ? null : <NuevoGastoIngresoTesoreria />}
+
             </HStack>
             <TableContainer overflowY={"auto"} width={"100%"}>
               <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -394,6 +407,7 @@ export function TotalListBody() {
           </VStack>
         </Box>
         <Box w={{ base: "100%", md: "30%" }} h={"100%"} marginTop={{ base: "20px", md: "0" }}>
+
           <HStack alignContent="flex-start" justifyContent="flex-end">
             {isSmallScreen ? null : <NuevoGastoIngresoTesoreria />}
           </HStack>

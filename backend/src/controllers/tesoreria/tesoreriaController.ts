@@ -14,6 +14,7 @@ const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
             await newItem
                 .save()
                 .catch((err: CallbackError) => {
+
                     return res.status(400).send({ message: "Error al crear" });
                 })
                 .then(() => {
@@ -45,6 +46,7 @@ const editarGastoIngresoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send({ message: "Actualizado" });
         })
         .catch((err: CallbackError) => {
+
             return res.status(400).send({ message: "Error al editar" });
         });
 };
@@ -56,6 +58,7 @@ const eliminarGastoIngresoTesoreria = async (req: Request, res: Response) => {
             return res.status(200).send({ message: "Eliminado correctamente" });
         })
         .catch((err: CallbackError) => {
+
             return res.status(400).send({ message: "Error al eliminar" });
         });
 };
@@ -139,6 +142,7 @@ const obtenerIngresoTesoreriaPorFecha = async (req: Request, res: Response, fech
             return res.status(200).send(items);
         })
         .catch((err: CallbackError) => {
+
             return res
                 .status(400)
                 .send({ message: "Error al obtener los Items de tesoreria" });
