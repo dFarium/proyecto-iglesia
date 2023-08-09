@@ -81,7 +81,6 @@ export function IngresoListBody() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
 
-
   const columns: ColumnDef<ItemTesoreria>[] = useMemo<
     ColumnDef<ItemTesoreria>[]
   >(
@@ -105,7 +104,7 @@ export function IngresoListBody() {
               <Text onClick={onOpen}>
                 {row.getValue("nombre")}
               </Text>
-              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} />
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
             </>
           )
         },
@@ -159,6 +158,18 @@ export function IngresoListBody() {
           return (
             <Text>
               {row.getValue("descripcion")}
+            </Text>
+          )
+        }
+      },
+      {
+        id: 'boleta',
+        header: 'Boleta',
+        accessorKey: "boleta",
+        cell: ({ row }) => {
+          return (
+            <Text>
+              {row.getValue("boleta")}
             </Text>
           )
         }

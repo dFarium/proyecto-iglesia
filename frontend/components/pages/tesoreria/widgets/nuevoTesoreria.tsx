@@ -65,11 +65,10 @@ function NuevoIngresoTesoreria() {
     const [tipo, setTipo] = useState<string>("");
     const queryClient = useQueryClient();
 
-    const [boletaUpload, setBoletaUpload] = useState<File | null>(null);
-    const [boletaUploadErr, setBoletaUploadErr] = useState<boolean>(false);
+    const [imagen, setImagen] = useState<File | null>(null);
+    const [uploadImg, setUploadImg] = useState<boolean>(false);
 
     const [acceso, setAcceso] = useState<boolean>(false);
-
 
     const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -112,12 +111,6 @@ function NuevoIngresoTesoreria() {
         }
     };
 
-    const handleBoletaChange = async (file: any) => {
-        const archivo = file.target.files?.[0] || null;
-        setBoletaUpload(archivo);
-        setBoletaUploadErr(true);
-    };
-
     const validation = (): boolean => {
         let error: boolean = false;
         if (nombre.trim() == "") {
@@ -149,24 +142,29 @@ function NuevoIngresoTesoreria() {
         },
     });
 
-    const mutation2 = useMutation({
-        mutationFn: async (boletaUpload: any) => {
-            const fecha: Date = new Date();
-            const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-            const formFile = new FormData();
-            formFile.append("boleta", boletaUpload.boletaUpload);
-            const res = await uploadNewFile(formFile, "Boletas", `${fechaStd}-${boletaUpload.name}` /*nombre archivo , boletaUpload.nombre, boletaUpload.acceso)*/);
-            return res;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["AllFiles"] });
-        },
-    });
-
 
     function formatCLP(value: number) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
+
+    const handlePicChange = async (file: any) => {
+        const imagen = file.target.files?.[0] || null;
+        setImagen(imagen);
+        setUploadImg(true);
+    };
+
+    const uploadPicture = async (file: any, fileData: IArchivos) => {
+        const formFile = new FormData();
+        formFile.append("archivos", file);
+        try {
+            await uploadNewFile(formFile, "Boletas", fileData.fileName, fileData.tagCategoria, fileData.publico);
+            console.log("file si arriba");
+        } catch (error) {
+            console.log("file no arriba:", fileData.fileName);
+        }
+    };
+
+
     return (
         <>
             <Button
@@ -257,36 +255,26 @@ function NuevoIngresoTesoreria() {
                                 </FormHelperText>
                             </FormControl>
 
-                            <FormControl>
-                                <HStack
-                                    mt={"25px"}
-                                    justify={"space-between"}
-                                    align={"start"}
-                                >
-                                    <VStack>
-                                        <Button>
-                                            Subir Archivo
-                                            <Input
-                                                type="file"
-                                                height="100%"
-                                                width="100%"
-                                                position="absolute"
-                                                top="0"
-                                                left="0"
-                                                opacity="0"
-                                                aria-hidden="true"
-                                                onChange={handleBoletaChange}
-                                            />
-                                        </Button>
-                                        <Text>
-                                            {boletaUpload
-                                                ? boletaUpload.name
-                                                : "No hay archivos"}
-                                        </Text>
-                                    </VStack>
-                                </HStack>
-                            </FormControl>
-
+                            <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                                <VStack>
+                                    <Button>
+                                        Subir Archivo
+                                        <Input
+                                            type="file"
+                                            height="100%"
+                                            width="100%"
+                                            position="absolute"
+                                            top="0"
+                                            left="0"
+                                            opacity="0"
+                                            aria-hidden="true"
+                                            //accept="image/*"
+                                            onChange={handlePicChange}
+                                        />
+                                    </Button>
+                                    <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                                </VStack>
+                            </HStack>
                         </AlertDialogBody>
                         <AlertDialogFooter>
                             <Button
@@ -302,6 +290,8 @@ function NuevoIngresoTesoreria() {
                                     setDescripcion("");
                                     setDescripcionErr(false)
                                     setTipo("");
+                                    setImagen(null);
+                                    setUploadImg(false);
                                     onClose();
                                 }}
                             >
@@ -310,17 +300,27 @@ function NuevoIngresoTesoreria() {
                             <Button
                                 onClick={() => {
                                     if (validation()) {
+                                        const fecha: Date = new Date();
+                                        const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
                                         mutation.mutate({
                                             nombre,
                                             valorCaja,
                                             fechaGasto,
                                             descripcion,
                                             tipo: "Ingreso",
+                                            boleta: imagen ? `${fechaStd}-${imagen.name}` : "",
                                         });
 
-                                        if (boletaUpload) {
-                                            mutation2.mutate({
-                                                boletaUpload, nombre, acceso
+                                        if (imagen) {
+                                            uploadPicture(imagen, {
+                                                originalName: `${imagen.name}`,
+                                                fileName: `${fechaStd}-${imagen.name}`,
+                                                tagCategoria: "Boletas",
+                                                mimetype: imagen.type,
+                                                //url: `${fechaStd}-${imagen.name}`,
+                                                url: "./upload/Boletas",
+                                                userSubida: "user",
+                                                publico: true,
                                             });
                                         }
 
@@ -333,6 +333,8 @@ function NuevoIngresoTesoreria() {
                                         setDescripcion("");
                                         setDescripcionErr(false)
                                         setTipo("");
+                                        setImagen(null);
+                                        setUploadImg(false);
                                         onClose();
                                     }
                                 }}
