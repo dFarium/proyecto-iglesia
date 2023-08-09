@@ -34,6 +34,7 @@ import {
   MdArrowDropUp,
   MdCreate,
   MdDelete,
+  MdEdit,
   MdHelp,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
@@ -47,11 +48,14 @@ import { useQuery } from "@tanstack/react-query";
 import { ItemTesoreria, obtenerGastoTesoreria } from '@/data/tesoreria/item';
 import EditarTesoreria from '../widgets/editarTesoreria';
 import EliminarTesoreria from '../widgets/eliminarTesoreria';
-import { NuevoGastoTesoreria } from '../widgets/nuevoTesoreria';
+import { NuevoGastoTesoreria, NuevoIngresoTesoreria } from '../widgets/nuevoTesoreria';
 import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
-export function GastoListBody() {
+function showPages(maxRows: number, currentIndex: number, pageSize: number) {
+  return Math.min(maxRows, pageSize * currentIndex + pageSize);
+}
 
+export function GastoListBody() {
 
   const gastoQuery = useQuery({
     queryKey: ["obtenerGastoTesoreria"],
@@ -99,16 +103,12 @@ export function GastoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-
-          return (
-            <>
-              <Text >
-                {row.getValue("nombre")}
-              </Text>
-              <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
-
-            </>
-          )
+          return <CargarBoletaDescripcion
+            id={row.getValue("id")}
+            descripcion={row.getValue("descripcion")}
+            nombre={row.getValue("nombre")}
+            boleta={row.getValue("boleta")}
+          />;
         },
       },
       {
@@ -137,9 +137,7 @@ export function GastoListBody() {
           return (
             <Text
             >
-
-              Fecha de Gasto
-
+              Fecha de gasto
             </Text>
           );
         },
@@ -196,18 +194,14 @@ export function GastoListBody() {
         header: () => {
           return (
             <>
-              <>
-                <Circle
-                  //bg={"#F6AD55"}
-                  border={"2px solid"}
-                  size={"1.5em"}
-                  fontSize={"1.2em"}
-                  //color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-                  cursor={"default"}
-                >
-                  <MdCreate />
-                </Circle>
-              </>
+              <Circle
+                border={"2px solid"}
+                size={"1.5em"}
+                fontSize={"1.2em"}
+                cursor={"default"}
+              >
+                <MdEdit />
+              </Circle>
             </>
           );
         }, cell: ({ row }) => {
@@ -232,22 +226,8 @@ export function GastoListBody() {
             <>
               <Circle
                 border={"2px solid"}
-                //borderColor={
-
-                //colorMode == "light"
-                //? "tesoreriaDeleteItem.light"
-                //: "tesoreriaDeleteItem.dark"
-
-                //}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                //color={
-
-                //colorMode == "light"
-                //? "tesoreriaDeleteItem.light"
-                //: "tesoreriaDeleteItem.dark"
-
-                //}
                 cursor={"default"}
               >
                 <MdDelete />
@@ -414,69 +394,5 @@ export function GastoListBody() {
       </VStack>
     </Box>
 
-
-
   );
 }
-function showPages(maxRows: number, currentIndex: number, pageSize: number) {
-  if (maxRows < pageSize * currentIndex + pageSize) {
-    return maxRows;
-  } else {
-    return pageSize * currentIndex + pageSize;
-  }
-}
-
-
-/* {
-  id: "nombre",
-  header: "Nombre",
-  accessorKey: "nombre",
-  cell: ({ row }) => {
-    return (
-      <Text>
-        {row.getValue("nombre")}
-      </Text>
-    )
-  },
-}, */
-
-
-/*
-
-       {
-        id: "edit",
-        enableSorting: false,
-        header: () => {
-          return (
-            <>
-              <>
-                <Circle
-                  bg={"#F6AD55"}
-                  size={"1.5em"}
-                  fontSize={"1.2em"}
-                  color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-                  cursor={"default"}
-                >
-                  <MdCreate />
-                </Circle>
-              </>
-            </>
-          );
-        },
-        cell: ({ row }) => {
-          return (
-            <EditarTesoreria
-              id={row.getValue("id")}
-              nombre={row.getValue("nombre")}
-              valorCaja={row.getValue("valorCaja")}
-              tipo={row.getValue("tipo")}
-              descripcion={row.getValue("descripcion")}
-              fechaGasto={row.getValue("fechaGasto")}
-
-            />
-          );
-        },
-      },     
-
-
-*/
