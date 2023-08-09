@@ -50,7 +50,6 @@ import {
     downloadFile,
     uploadNewFile,
     deleteFile,
-    viewAllSpecificFiles,
     IArchivos,
 } from "@/data/archivos/archivos";
 
@@ -61,12 +60,12 @@ import DescargarItemArchivo from "../widgets/descarArchivo";
 import getRole from "@/utils/roleUtils";
 //import { VerFotoItem } from "../widgets/verFotoItem";
 
-export default function ArchivosPubBody() {
+export default function ArchivosAllBody() {
     // query todos los archivos publicos
     const filesQuery = useQuery({
-        queryKey: ["PubFiles"],
+        queryKey: ["AllFiles"],
         queryFn: async () => {
-            const data = viewAllSpecificFiles(true);
+            const data = viewAllFiles();
             return data;
         },
         initialData: [],
@@ -328,20 +327,45 @@ export default function ArchivosPubBody() {
             {
                 id: "createdAt",
                 header: () => {
+                    return (
+                        <Text
+                        //  minW={"100%"} textAlign={"center"}
+                        >
+                            Fecha de Subida
+                        </Text>
+                    );
+                },
+                accessorKey: "createdAt",
+                cell: ({ row }) => {
+                    const date = textDate(row.getValue<Date>("createdAt"));
+                    return (
+                        <Text
+                        //  minW={"100%"} textAlign={"center"}
+                        >
+                            {date}
+                        </Text>
+                    );
+                },
+                sortingFn: "datetime",
+            },
+            //updatedAt - fecha
+            {
+                id: "updatedAt",
+                header: () => {
                     if (userAccess) {
                         return (
                             <Text
                             //  minW={"100%"} textAlign={"center"}
                             >
-                                Fecha de Subida
+                                Fecha de Modificación
                             </Text>
                         );
                     }
                 },
-                accessorKey: "createdAt",
+                accessorKey: "updatedAt",
                 cell: ({ row }) => {
                     if (userAccess) {
-                        const date = textDate(row.getValue<Date>("createdAt"));
+                        const date = textDate(row.getValue<Date>("updatedAt"));
                         return (
                             <Text
                             //  minW={"100%"} textAlign={"center"}
@@ -350,31 +374,6 @@ export default function ArchivosPubBody() {
                             </Text>
                         );
                     }
-                },
-                sortingFn: "datetime",
-            },
-            //updatedAt - fecha
-            {
-                id: "updatedAt",
-                header: () => {
-                    return (
-                        <Text
-                        //  minW={"100%"} textAlign={"center"}
-                        >
-                            Fecha de Modificación
-                        </Text>
-                    );
-                },
-                accessorKey: "updatedAt",
-                cell: ({ row }) => {
-                    const date = textDate(row.getValue<Date>("updatedAt"));
-                    return (
-                        <Text
-                        //  minW={"100%"} textAlign={"center"}
-                        >
-                            {date}
-                        </Text>
-                    );
                 },
                 sortingFn: "datetime",
             },
@@ -531,7 +530,7 @@ export default function ArchivosPubBody() {
         <Box w={"100%"} h={"100%"}>
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
-                    <Text textStyle={"titulo"}>Biblioteca Pública</Text>
+                    <Text textStyle={"titulo"}>Biblioteca Libre</Text>
                     {userAccess ? <NuevoArchivo/> : null}
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>

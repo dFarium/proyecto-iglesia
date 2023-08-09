@@ -29,6 +29,8 @@ function EliminarItemArchivo(props: { name: string; id: string }) {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["AllFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PubFiles"] });
+            queryClient.invalidateQueries({ queryKey: ["PrivFiles"] });
         },
     });
 
