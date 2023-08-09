@@ -220,33 +220,6 @@ const colors = {
   //prestamo instrumentos
   /* ------------------ */
 
-  newTesoreriaItemButton: {
-    500: "#F07B3F", // light mode
-    600: "#dc6529", // light mode _hover
-    200: "#ff9655", // dark mode
-    300: "#ff7520", // dark mode _hover
-  },
-
-  editTesoreriaItemButton: {
-    500: "#06b6d4", // light mode
-    600: "#0891b2", // light mode _hover
-    200: "#a5f3fc", // dark mode
-    300: "#67e8f9", // dark mode _hover
-  },
-
-  tesoreriaItemEditHeaderBg: {
-    light: "#4A5568",
-    dark: "#2D3748",
-  },
-  tesoreriaItemEditBg: {
-    light: "#cce6ff",
-    dark: "#EDF2F7",
-  },
-  tesoreriaDeleteItem: {
-    light: "#C53030",
-    dark: "#FC8181",
-  },
-
 
   newPrestamoInstrumentoButton: {
     500: "#F07B3F", // light mode
