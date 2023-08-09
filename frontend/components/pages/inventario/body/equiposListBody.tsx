@@ -51,10 +51,11 @@ import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 import { VerFotoItem } from "../widgets/verFotoItem";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import getRole from "@/utils/roleUtils";
 
 export function InventarioEquiposBody() {
   // obtener rol
- const userRole = true;
+ const userRole = getRole();
 
   // query todos los equipos electrónicos
   const equiposQuery = useQuery({
