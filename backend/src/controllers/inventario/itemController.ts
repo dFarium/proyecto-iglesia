@@ -1,9 +1,11 @@
 import { ItemInventario, IItemInventario } from "../../models/inventario/item";
 import { Request, Response } from "express";
 import { CallbackError } from "mongoose";
+import { Archivos } from "../../models/archivos/archivos";
 
 const createItemInventario = async (req: Request, res: Response) => {
   let newItem = new ItemInventario(req.body);
+  console.log(newItem.ultMant);
 
   ItemInventario.findOne({ nombre: req.body.nombre }).then(
     async (item: IItemInventario) => {
@@ -53,8 +55,12 @@ const editItemInventario = async (req: Request, res: Response) => {
 const deleteItemInventario = async (req: Request, res: Response) => {
   const { id } = req.body;
   await ItemInventario.findByIdAndDelete(id)
-    .then(() => {
-      return res.status(200).send({ message: "Item eliminado correctamente" });
+    .then((item) => {
+      Archivos.findOneAndDelete({ url: item.urlPic }).then(() => {
+        return res
+          .status(200)
+          .send({ message: "Item eliminado correctamente" });
+      });
     })
     .catch((err: CallbackError) => {
       console.log(err);
@@ -94,6 +100,8 @@ const getItemsInventarioCategoria = async (req: Request, res: Response) => {
       return res.status(400).send({ message: "Error al encontrar los items" });
     });
 };
+
+
 
 export {
   createItemInventario,

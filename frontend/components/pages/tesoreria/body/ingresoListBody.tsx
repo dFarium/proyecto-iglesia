@@ -16,6 +16,7 @@ import {
   Circle,
   IconButton,
   useColorMode,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -47,6 +48,7 @@ import { ItemTesoreria, obtenerIngresoTesoreria } from '@/data/tesoreria/item';
 import EditarTesoreria from '../widgets/editarTesoreria';
 import EliminarTesoreria from '../widgets/eliminarTesoreria';
 import { NuevoIngresoTesoreria } from '../widgets/nuevoTesoreria';
+import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 export function IngresoListBody() {
 
@@ -64,12 +66,17 @@ export function IngresoListBody() {
   const [columnVisibility] = useState({
     id: false,
     nombre: true,
+    index: false,
     valorCaja: true,
     fechaGasto: true,
-    descripcion: true,
+    descripcion: false,
     tipo: false,
     boleta: false
   });
+
+  function formatCLP(value: number) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -91,10 +98,14 @@ export function IngresoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+          const { isOpen, onOpen, onClose } = useDisclosure();
           return (
-            <Text>
-              {row.getValue("nombre")}
-            </Text>
+            <>
+              <Text onClick={onOpen}>
+                {row.getValue("nombre")}
+              </Text>
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+            </>
           )
         },
       },
@@ -103,7 +114,6 @@ export function IngresoListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               Monto
             </Text>
@@ -113,9 +123,8 @@ export function IngresoListBody() {
         cell: ({ row }) => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
-              {row.getValue("valorCaja")}
+              ${formatCLP(row.getValue("valorCaja"))}
             </Text>
           );
         },
@@ -125,7 +134,6 @@ export function IngresoListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               Fecha de Ingreso
             </Text>
@@ -136,7 +144,6 @@ export function IngresoListBody() {
           const date = textDate(row.getValue<Date>("fechaGasto"));
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               {date}
             </Text>
@@ -151,6 +158,18 @@ export function IngresoListBody() {
           return (
             <Text>
               {row.getValue("descripcion")}
+            </Text>
+          )
+        }
+      },
+      {
+        id: 'boleta',
+        header: 'Boleta',
+        accessorKey: "boleta",
+        cell: ({ row }) => {
+          return (
+            <Text>
+              {row.getValue("boleta")}
             </Text>
           )
         }
@@ -186,8 +205,7 @@ export function IngresoListBody() {
               </>
             </>
           );
-        },
-        cell: ({ row }) => {
+        }, cell: ({ row }) => {
           return (
             <EditarTesoreria
               id={row.getValue("id")}
@@ -196,12 +214,11 @@ export function IngresoListBody() {
               tipo={row.getValue("tipo")}
               descripcion={row.getValue("descripcion")}
               fechaGasto={row.getValue("fechaGasto")}
-
             />
           );
         },
-      },
 
+      },
       {
         id: "delete",
         enableSorting: false,
@@ -258,13 +275,14 @@ export function IngresoListBody() {
     debugTable: true,
   });
 
-
   return (
     <Box w={"100%"} h={"100%"}>
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Ingresos</Text>
-          < NuevoIngresoTesoreria />
+          <HStack>
+            <NuevoIngresoTesoreria />
+          </HStack>
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -372,17 +390,24 @@ export function IngresoListBody() {
                 />
               </HStack>
             </HStack>
-            {/* <HStack display={{ base: "none", lg: "flex" }}>
+            <HStack display={{ base: "none", lg: "flex" }}>
               <MdHelp size={"20px"} />
               <Text minW={"400px"}>
-                Puede ver las fotos dando click en el nombre del Item
+                Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
               </Text>
-            </HStack> */}
+            </HStack>
           </HStack>
         </VStack>
       </VStack>
+
+      <VStack>
+
+      </VStack>
     </Box>
-  ); //
+
+
+
+  );
 }
 function showPages(maxRows: number, currentIndex: number, pageSize: number) {
   if (maxRows < pageSize * currentIndex + pageSize) {
@@ -393,42 +418,15 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
 }
 
 
-/*
-
-       {
-        id: "edit",
-        enableSorting: false,
-        header: () => {
-          return (
-            <>
-              <>
-                <Circle
-                  bg={"#F6AD55"}
-                  size={"1.5em"}
-                  fontSize={"1.2em"}
-                  color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-                  cursor={"default"}
-                >
-                  <MdCreate />
-                </Circle>
-              </>
-            </>
-          );
-        },
-        cell: ({ row }) => {
-          return (
-            <EditarTesoreria
-              id={row.getValue("id")}
-              nombre={row.getValue("nombre")}
-              valorCaja={row.getValue("valorCaja")}
-              tipo={row.getValue("tipo")}
-              descripcion={row.getValue("descripcion")}
-              fechaGasto={row.getValue("fechaGasto")}
-
-            />
-          );
-        },
-      },     
-
-
-*/
+/* {
+  id: "nombre",
+  header: "Nombre",
+  accessorKey: "nombre",
+  cell: ({ row }) => {
+    return (
+      <Text>
+        {row.getValue("nombre")}
+      </Text>
+    )
+  },
+}, */

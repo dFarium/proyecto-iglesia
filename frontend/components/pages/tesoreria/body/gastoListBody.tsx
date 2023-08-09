@@ -1,3 +1,4 @@
+"use client";
 import React from 'react'
 
 import {
@@ -15,6 +16,7 @@ import {
   Circle,
   IconButton,
   useColorMode,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -46,6 +48,7 @@ import { ItemTesoreria, obtenerGastoTesoreria } from '@/data/tesoreria/item';
 import EditarTesoreria from '../widgets/editarTesoreria';
 import EliminarTesoreria from '../widgets/eliminarTesoreria';
 import { NuevoGastoTesoreria } from '../widgets/nuevoTesoreria';
+import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 export function GastoListBody() {
 
@@ -65,7 +68,7 @@ export function GastoListBody() {
     nombre: true,
     valorCaja: true,
     fechaGasto: true,
-    descripcion: true,
+    descripcion: false,
     tipo: false,
     boleta: false
   });
@@ -90,10 +93,14 @@ export function GastoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+          const { isOpen, onOpen, onClose } = useDisclosure();
           return (
-            <Text>
-              {row.getValue("nombre")}
-            </Text>
+            <>
+              <Text onClick={onOpen}>
+                {row.getValue("nombre")}
+              </Text>
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} />
+            </>
           )
         },
       },
@@ -102,7 +109,6 @@ export function GastoListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               Monto
             </Text>
@@ -112,9 +118,8 @@ export function GastoListBody() {
         cell: ({ row }) => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
-              {row.getValue("valorCaja")}
+              ${formatCLP(row.getValue("valorCaja"))}
             </Text>
           );
         },
@@ -124,9 +129,8 @@ export function GastoListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
-              Fecha de Gasto
+              Fecha de Ingreso
             </Text>
           );
         },
@@ -135,7 +139,6 @@ export function GastoListBody() {
           const date = textDate(row.getValue<Date>("fechaGasto"));
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               {date}
             </Text>
@@ -165,6 +168,39 @@ export function GastoListBody() {
             </Text>
           )
         },
+      },
+      {
+        id: "edit",
+        enableSorting: false,
+        header: () => {
+          return (
+            <>
+              <>
+                <Circle
+                  bg={"#F6AD55"}
+                  size={"1.5em"}
+                  fontSize={"1.2em"}
+                  color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                  cursor={"default"}
+                >
+                  <MdCreate />
+                </Circle>
+              </>
+            </>
+          );
+        }, cell: ({ row }) => {
+          return (
+            <EditarTesoreria
+              id={row.getValue("id")}
+              nombre={row.getValue("nombre")}
+              valorCaja={row.getValue("valorCaja")}
+              tipo={row.getValue("tipo")}
+              descripcion={row.getValue("descripcion")}
+              fechaGasto={row.getValue("fechaGasto")}
+            />
+          );
+        },
+
       },
       {
         id: "delete",
@@ -222,13 +258,18 @@ export function GastoListBody() {
     debugTable: true,
   });
 
+  function formatCLP(value: number) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
 
   return (
     <Box w={"100%"} h={"100%"}>
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Gastos</Text>
-          < NuevoGastoTesoreria />
+          <HStack>
+            <NuevoGastoTesoreria />
+          </HStack>
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -336,12 +377,12 @@ export function GastoListBody() {
                 />
               </HStack>
             </HStack>
-            {/* <HStack display={{ base: "none", lg: "flex" }}>
+            <HStack display={{ base: "none", lg: "flex" }}>
               <MdHelp size={"20px"} />
               <Text minW={"400px"}>
-                Puede ver las fotos dando click en el nombre del Item
+                Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
               </Text>
-            </HStack> */}
+            </HStack>
           </HStack>
         </VStack>
       </VStack>
@@ -358,6 +399,7 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
 
 
 /*
+
        {
         id: "edit",
         enableSorting: false,

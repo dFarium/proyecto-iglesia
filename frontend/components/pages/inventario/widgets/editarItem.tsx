@@ -157,7 +157,9 @@ function EditarItemInventario(props: {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
       queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
-      queryClient.invalidateQueries({ queryKey: ["itemsInventarioInstrumentos"] });
+      queryClient.invalidateQueries({
+        queryKey: ["itemsInventarioInstrumentos"],
+      });
     },
   });
 
@@ -176,7 +178,6 @@ function EditarItemInventario(props: {
         icon={<MdCreate />}
         onClick={() => {
           if (props.categoria == "Instrumento") {
-            console.log(prestable);
             setTodoInicio();
             onOpenInstrumentos();
           } else if (props.categoria == "Equipo") {
@@ -273,7 +274,7 @@ function EditarItemInventario(props: {
                   <FormLabel>Última Mantención</FormLabel>
                   <Input
                     type="date"
-                    value={textDefaultDate(oldMant)}
+                    value={textDefaultDate(ultMant)}
                     onChange={handleUltMantChange}
                   />
                   <FormHelperText fontStyle={"italic"} pl={"5px"}>
