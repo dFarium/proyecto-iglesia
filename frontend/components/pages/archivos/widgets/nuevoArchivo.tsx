@@ -138,9 +138,10 @@ function NuevoArchivo() {
                                 <FormLabel>Define una categoria</FormLabel>
 
                                 <Input
-                                    placeholder="Nombre"
+                                    placeholder="Por ejemplo: Estudio, Informe, etc."
                                     onChange={handleNombreChange}
-                                    maxLength={50}
+                                    isInvalid= {!nombre}
+                                    maxLength={10}
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>
@@ -151,7 +152,7 @@ function NuevoArchivo() {
                                         pl={"5px"}
                                         fontStyle={"italic"}
                                     >
-                                        {nombre.length} / 50
+                                        {nombre.length} / 10
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -216,9 +217,10 @@ function NuevoArchivo() {
                                 Cancelar
                             </Button>
                             <Button
+                                isDisabled = {!archivoFile || !nombre}
                                 colorScheme="blue"
                                 onClick={() => {
-                                    if (archivoFile) {
+                                    if (archivoFile && nombre) {
                                         mutation.mutate({
                                             archivoFile, nombre, acceso
                                         });
@@ -230,7 +232,7 @@ function NuevoArchivo() {
                                     onClose();
                                 }}
                             >
-                                Aceptar
+                            Aceptar
                             </Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>

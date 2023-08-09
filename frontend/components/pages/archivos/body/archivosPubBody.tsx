@@ -32,11 +32,13 @@ import {
     MdArrowDropUp,
     MdCreate,
     MdDelete,
+    MdDownload,
     MdHelp,
     MdKeyboardDoubleArrowLeft,
     MdKeyboardDoubleArrowRight,
     MdNavigateBefore,
     MdNavigateNext,
+    MdUpload,
 } from "react-icons/md";
 import { NuevoArchivo } from "../widgets/nuevoArchivo";
 import { useMemo, useState } from "react";
@@ -48,12 +50,13 @@ import {
     downloadFile,
     uploadNewFile,
     deleteFile,
-    IArchivos
+    IArchivos,
 } from "@/data/archivos/archivos";
 
 import { useQuery } from "@tanstack/react-query";
 import EditarArchivo from "../widgets/editarArchivo";
 import EliminarItemArchivo from "../widgets/eliminarArchivo";
+import DescargarItemArchivo from "../widgets/descarArchivo";
 //import { VerFotoItem } from "../widgets/verFotoItem";
 
 export default function ArchivosPubBody() {
@@ -76,14 +79,13 @@ export default function ArchivosPubBody() {
         mimetype: false,
         publico: true,
         url: false,
+        download: true,
     });
     const [sorting, setSorting] = useState<SortingState>([]);
     const { colorMode } = useColorMode();
 
     // definicion de las columnas de la tabla
-    const columns: ColumnDef<IArchivos>[] = useMemo<
-        ColumnDef<IArchivos>[]
-    >(
+    const columns: ColumnDef<IArchivos>[] = useMemo<ColumnDef<IArchivos>[]>(
         () => [
             { id: "id", accessorKey: "_id" },
             {
@@ -96,9 +98,9 @@ export default function ArchivosPubBody() {
             {
                 id: "originalName",
                 header: () => {
-                        return (
+                    return (
                         <Text
-                            //minW={"100%"} textAlign={"center"}
+                        //minW={"100%"} textAlign={"center"}
                         >
                             Nombre
                         </Text>
@@ -107,9 +109,7 @@ export default function ArchivosPubBody() {
                 accessorKey: "originalName",
                 cell: ({ row }) => {
                     return (
-                        <Text
-                            minW={"100%"} textAlign={"center"}
-                        >
+                        <Text minW={"100%"} textAlign={"center"}>
                             {row.getValue("originalName")}
                         </Text>
                     );
@@ -184,43 +184,47 @@ export default function ArchivosPubBody() {
             {
                 id: "publico",
                 header: () => {
-                    return (
-                        <Text
-                        //  minW={"100%"} textAlign={"center"}
-                        >
-                            Acceso
-                        </Text>
-                    );
-                },
-                accessorKey: "publico",
-                cell({ row }) {
-                    const publico: boolean = row.getValue("publico");
-
-                    if (publico) {
+                    if (userAccess) {
                         return (
                             <Text
                             //  minW={"100%"} textAlign={"center"}
                             >
-                                Publico
+                                Acceso
                             </Text>
                         );
-                    } else {
-                        if (!publico) {
+                    }
+                },
+                accessorKey: "publico",
+                cell({ row }) {
+                    if (userAccess) {
+                        const publico: boolean = row.getValue("publico");
+
+                        if (publico) {
                             return (
                                 <Text
                                 //  minW={"100%"} textAlign={"center"}
                                 >
-                                    Privado
+                                    Publico
+                                </Text>
+                            );
+                        } else {
+                            if (!publico) {
+                                return (
+                                    <Text
+                                    //  minW={"100%"} textAlign={"center"}
+                                    >
+                                        Privado
+                                    </Text>
+                                );
+                            }
+                            return (
+                                <Text
+                                //  minW={"100%"} textAlign={"center"}
+                                >
+                                    -
                                 </Text>
                             );
                         }
-                        return (
-                            <Text
-                            //  minW={"100%"} textAlign={"center"}
-                            >
-                                -
-                            </Text>
-                        );
                     }
                 },
             },
@@ -248,45 +252,54 @@ export default function ArchivosPubBody() {
                 },
                 sortingFn: "datetime",
             },
-            {
-                id: "edit",
-                enableSorting: false,
-                header: () => {
-                    if (userAccess) {  // CAMBIO USERS
-                        return (
-                            <>
-                                <Circle
-                                    bg={"#F6AD55"}
-                                    size={"1.5em"}
-                                    fontSize={"1.2em"}
-                                    color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-                                    cursor={"default"}
-                                >
-                                    <MdCreate />
-                                </Circle>
-                            </>
-                        );
-                    } 
-                },
-                cell: ({ row }) => {
-                    if (userAccess) {
-                        return (
-                            <EditarArchivo
-                                id={row.getValue("id")}
-                                nombre={row.getValue("nombre")}
-                                estado={row.getValue("estado")}
-                                prestable={row.getValue("prestable")}
-                                cantidad={row.getValue("cantidad")}
-                                categoria={row.getValue("categoria")}
-                                cicloMant={row.getValue("cicloMant")}
-                                desc={row.getValue("desc")}
-                                fechaSalida={row.getValue("fechaSalida")}
-                                ultMant={row.getValue("ultMant")}
-                            />
-                        );
-                    }
-                },
-            },
+            // {
+            //     id: "edit",
+            //     enableSorting: false,
+            //     header: () => {
+            //         if (userAccess) {
+            //             return (
+            //                 <>
+            //                     <Circle
+            //                         border={"2px solid"}
+            //                         borderColor={
+            //                             colorMode == "light"
+            //                                 ? "archivoDeleteItem.light"
+            //                                 : "archivoDeleteItem.dark"
+            //                         }
+            //                         size={"1.5em"}
+            //                         fontSize={"1.2em"}
+            //                         color={
+            //                             colorMode == "light"
+            //                                 ? "archivoDeleteItem.light"
+            //                                 : "archivoDeleteItem.dark"
+            //                         }
+            //                         cursor={"default"}
+            //                     >
+            //                         <MdCreate />
+            //                     </Circle>
+            //                 </>
+            //             );
+            //         }
+            //     },
+            //     cell: ({ row }) => {
+            //         if (userAccess) {
+            //             return (
+            //                 <EditarArchivo
+            //                     id={row.getValue("id")}
+            //                     nombre={row.getValue("nombre")}
+            //                     estado={row.getValue("estado")}
+            //                     prestable={row.getValue("prestable")}
+            //                     cantidad={row.getValue("cantidad")}
+            //                     categoria={row.getValue("categoria")}
+            //                     cicloMant={row.getValue("cicloMant")}
+            //                     desc={row.getValue("desc")}
+            //                     fechaSalida={row.getValue("fechaSalida")}
+            //                     ultMant={row.getValue("ultMant")}
+            //                 />
+            //             );
+            //         }
+            //     },
+            // },
             {
                 id: "delete",
                 enableSorting: false,
@@ -315,27 +328,51 @@ export default function ArchivosPubBody() {
                             </>
                         );
                     } else {
-                        return (
-                            <>
-                            </>
-                        );
+                        return <></>;
                     }
                 },
                 cell: ({ row }) => {
                     if (userAccess) {
                         return (
                             <EliminarItemArchivo
-                                name={row.getValue("fileName")}
+                                name={row.getValue("originalName")}
                                 id={row.getValue("id")}
                             />
                         );
                     } else {
-                        return (
-                            <>
-                            </>
-                        );
+                        return <></>;
                     }
-
+                },
+            },
+            {
+                id: "download",
+                enableSorting: false,
+                header: () => {
+                    return (
+                        <>
+                            <Circle
+                                border={"2px solid"}
+                                borderColor={
+                                    colorMode == "light"
+                                        ? "archivoDeleteItem.light"
+                                        : "archivoDeleteItem.dark"
+                                }
+                                size={"1.5em"}
+                                fontSize={"1.2em"}
+                                color={
+                                    colorMode == "light"
+                                        ? "archivoDeleteItem.light"
+                                        : "archivoDeleteItem.dark"
+                                }
+                                cursor={"default"}
+                            >
+                                <MdDownload />
+                            </Circle>
+                        </>
+                    );
+                },
+                cell: ({ row }) => {
+                    return <DescargarItemArchivo id={row.getValue("id")} />;
                 },
             },
         ],
@@ -367,7 +404,11 @@ export default function ArchivosPubBody() {
                     <NuevoArchivo />
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
-                    <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
+                    <Table
+                        variant={"striped"}
+                        size={"sm"}
+                        colorScheme="stripTable"
+                    >
                         <Thead>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <Tr key={headerGroup.id}>
@@ -385,12 +426,14 @@ export default function ArchivosPubBody() {
                                                     cursor={"pointer"}
                                                 >
                                                     {flexRender(
-                                                        header.column.columnDef.header,
+                                                        header.column.columnDef
+                                                            .header,
                                                         header.getContext()
                                                     )}
                                                     <Box fontSize={"1.5em"}>
                                                         {header.column.getIsSorted() ? (
-                                                            header.column.getIsSorted() === "desc" ? (
+                                                            header.column.getIsSorted() ===
+                                                            "desc" ? (
                                                                 <MdArrowDropDown />
                                                             ) : (
                                                                 <MdArrowDropUp />
@@ -428,8 +471,17 @@ export default function ArchivosPubBody() {
                         </Tbody>
                     </Table>
                 </TableContainer>
-                <VStack flexGrow={1} minH={"50px"} w={"100%"} justifyContent={"end"}>
-                    <HStack w={"100%"} overflowX={"auto"} justify={"space-between"}>
+                <VStack
+                    flexGrow={1}
+                    minH={"50px"}
+                    w={"100%"}
+                    justifyContent={"end"}
+                >
+                    <HStack
+                        w={"100%"}
+                        overflowX={"auto"}
+                        justify={"space-between"}
+                    >
                         <HStack>
                             <Text minW={"220px"} overflowX={"auto"}>
                                 Mostrando{" "}
@@ -438,7 +490,8 @@ export default function ArchivosPubBody() {
                                     1}
                                 {"-"}
                                 {showPages(
-                                    table.getPrePaginationRowModel().rows.length,
+                                    table.getPrePaginationRowModel().rows
+                                        .length,
                                     table.getState().pagination.pageIndex,
                                     table.getState().pagination.pageSize
                                 )}
@@ -467,7 +520,11 @@ export default function ArchivosPubBody() {
                                 <IconButton
                                     icon={<MdKeyboardDoubleArrowRight />}
                                     aria-label="Última página"
-                                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                                    onClick={() =>
+                                        table.setPageIndex(
+                                            table.getPageCount() - 1
+                                        )
+                                    }
                                     isDisabled={!table.getCanNextPage()}
                                 />
                             </HStack>

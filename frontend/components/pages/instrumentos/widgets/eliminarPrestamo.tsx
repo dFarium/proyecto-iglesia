@@ -43,7 +43,7 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string 
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["allPrestamos"]});
-            console.log("status ", devueltoStatus);
+            //Si no ha sido devuelto, vuelve prestable a true
             if (!devueltoStatus) {
                 itemMutationToPrestableTrue.mutate({prestable: true})
             }
