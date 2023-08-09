@@ -41,7 +41,11 @@ function EditarCalendario(props: {
     descripcion: string;
 }) {
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        isOpen: isOpen,
+        onOpen: onOpen,
+        onClose: onClose,
+    } = useDisclosure()
     const cancelRef = useRef(null);
     const { colorMode } = useColorMode();
 
@@ -164,28 +168,27 @@ function EditarCalendario(props: {
                 aria-label={"Editar"}
                 _hover={{ bg: "#66b4ff" }}
                 isRound
-                onClick={() => { onOpen }}
+                onClick={onOpen}
                 color={colorMode == "light" ? "#4A5568" : "#2D3748"}
 
             />
 
-            {/* INGRESO */}
             <AlertDialog
-                isOpen={isOpenIngreso}
+                isOpen={isOpen}
                 leastDestructiveRef={cancelRef}
-                onClose={onCloseIngreso}
+                onClose={onClose}
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Editar Ingreso
+                            Editar Evento
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             <FormControl isInvalid={nombreErr}>
                                 <FormLabel>Nombre</FormLabel>
                                 <Input
                                     placeholder="Nombre"
-                                    value={nombre}
+                                    value={nombreAct}
                                     onChange={handleNombreChange}
                                     maxLength={50}
                                 />
@@ -193,47 +196,33 @@ function EditarCalendario(props: {
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombreAct.length} / 50
                                     </FormHelperText>
                                 )}
                             </FormControl>
 
-                            <Box>
-                                <FormLabel>Tipo</FormLabel>
-                                <Select value={tipo} onChange={handleTipoChange}>
-                                    <option value="Ingreso">Ingreso</option>
-                                    <option value="Gasto">Gasto</option>
-                                </Select>
-                            </Box>
-
-                            <FormControl isInvalid={valorCajaErr}>
-                                <FormLabel>Monto</FormLabel>
-                                <Input
-                                    placeholder="Monto"
-                                    value={valorCaja}
-                                    onChange={handleValorCajaChange}
-                                    maxLength={8}
-                                />
-                                {valorCajaErr ? (
-                                    <FormErrorMessage>Ingrese un monto válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {"$ "}{formatCLP(valorCaja)} / {"$ "}{"99.999.999"}
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Fecha</FormLabel>
+                            <FormControl mt={"25px"} isInvalid={!fechaInicio}>
+                                <FormLabel>Fecha de Inicio</FormLabel>
                                 <Input
                                     type="date"
-                                    value={textDefaultDate(fechaGasto)}
-                                    onChange={handleFechaGastoChange}
-                                    max={minDate(date)}
+                                    onChange={handleFechaInicioChange}
+                                    min={date.toISOString().split('T')[0]}
+                                    value={fechaInicio ? fechaInicio.toISOString().split('T')[0] : ''}
                                 />
-                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                    {showDate(oldDate)}
-                                </FormHelperText>
                             </FormControl>
+                            <FormControl mt={"25px"} isInvalid={fechaTerminoErr}>
+                                <FormLabel>Fecha de Término</FormLabel>
+                                <Input
+                                    type="date"
+                                    onChange={handleFechaTerminoChange}
+                                    min={fechaInicio ? fechaInicio.toISOString().split('T')[0] : undefined}
+                                    value={fechaTermino ? fechaTermino.toISOString().split('T')[0] : ''}
+                                />
+                                {fechaTerminoErr && (
+                                    <FormErrorMessage>La fecha de término debe ser igual o mayor a la fecha de inicio</FormErrorMessage>
+                                )}
+                            </FormControl>
+
                             <FormControl mt={"25px"} isInvalid={descripcionErr}>
                                 <FormLabel>Descripción</FormLabel>
                                 <Textarea
@@ -254,10 +243,11 @@ function EditarCalendario(props: {
                                 mr={3}
                                 onClick={() => {
                                     setNombreErr(false);
-                                    setValorCajaErr(false);
-                                    setFechaGastoErr(false);
+                                    setFechaInicioErr(false);
+                                    setFechaTerminoErr(false);
+                                    setEstadoActividad(false);
                                     setDescripcionErr(false);
-                                    onCloseIngreso();
+                                    onClose();
                                 }}
                             >
                                 Cancelar
@@ -265,249 +255,16 @@ function EditarCalendario(props: {
                             <Button
                                 colorScheme="blue"
                                 onClick={() => {
-                                    if (validation()) {
+                                    console.log(nombreAct)
+                                    if (nombreAct && fechaInicio && fechaTermino && estadoActividad && descripcion) {
                                         mutation.mutate({
-                                            nombre,
-                                            valorCaja,
-                                            fechaGasto,
+                                            nombreAct,
+                                            fechaInicio,
+                                            fechaTermino,
+                                            estadoActividad,
                                             descripcion,
-                                            tipo
                                         });
-                                        onCloseIngreso();
-                                    }
-                                }}
-                            >
-                                Aceptar
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
-            {/* GASTO */}
-            <AlertDialog
-                isOpen={isOpenGasto}
-                leastDestructiveRef={cancelRef}
-                onClose={onCloseGasto}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Editar Gasto
-                        </AlertDialogHeader>
-                        <AlertDialogBody>
-                            <FormControl isInvalid={nombreErr}>
-                                <FormLabel>Nombre</FormLabel>
-                                <Input
-                                    placeholder="Nombre"
-                                    value={nombre}
-                                    onChange={handleNombreChange}
-                                    maxLength={50}
-                                />
-                                {nombreErr ? (
-                                    <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-
-                            <Box>
-                                <FormLabel>Tipo</FormLabel>
-                                <Select value={tipo} onChange={handleTipoChange}>
-                                    <option value="Ingreso">Ingreso</option>
-                                    <option value="Gasto">Gasto</option>
-                                </Select>
-                            </Box>
-
-                            <FormControl isInvalid={valorCajaErr}>
-                                <FormLabel>Monto</FormLabel>
-                                <Input
-                                    placeholder="Monto"
-                                    value={valorCaja}
-                                    onChange={handleValorCajaChange}
-                                    maxLength={8}
-                                />
-                                {valorCajaErr ? (
-                                    <FormErrorMessage>Ingrese un monto válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {"$ "}{formatCLP(valorCaja)} / {"$ "}{"99.999.999"}
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Fecha</FormLabel>
-                                <Input
-                                    type="date"
-                                    value={textDefaultDate(fechaGasto)}
-                                    onChange={handleFechaGastoChange}
-                                    max={minDate(date)}
-                                />
-                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                    {showDate(oldDate)}
-                                </FormHelperText>
-                            </FormControl>
-                            <FormControl mt={"25px"} isInvalid={descripcionErr}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
-                                    value={descripcion}
-                                    onChange={handleDescripcionChange}
-                                    maxLength={250}
-                                />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
-                            </FormControl>
-                        </AlertDialogBody>
-                        <AlertDialogFooter>
-                            <Button
-                                ref={cancelRef}
-                                mr={3}
-                                onClick={() => {
-                                    setNombreErr(false);
-                                    setValorCajaErr(false);
-                                    setFechaGastoErr(false);
-                                    setDescripcionErr(false);
-                                    onCloseGasto();
-                                }}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                colorScheme="blue"
-                                onClick={() => {
-                                    if (validation()) {
-                                        console.log("AAAAAAAAAa")
-                                        console.log(descripcion);
-                                        mutation.mutate({
-                                            nombre,
-                                            valorCaja,
-                                            fechaGasto,
-                                            descripcion,
-                                            tipo
-                                        });
-                                        onCloseGasto();
-                                    }
-                                }}
-                            >
-                                Aceptar
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
-            {/* TODO */}
-            <AlertDialog
-                isOpen={isOpenTodo}
-                leastDestructiveRef={cancelRef}
-                onClose={onCloseTodo}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Editar Gasto
-                        </AlertDialogHeader>
-                        <AlertDialogBody>
-                            <FormControl isInvalid={nombreErr}>
-                                <FormLabel>Nombre</FormLabel>
-                                <Input
-                                    placeholder="Nombre"
-                                    value={nombre}
-                                    onChange={handleNombreChange}
-                                    maxLength={50}
-                                />
-                                {nombreErr ? (
-                                    <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-
-                            <Box>
-                                <FormLabel>Tipo</FormLabel>
-                                <Select value={tipo} onChange={handleTipoChange}>
-                                    <option value="Ingreso">Ingreso</option>
-                                    <option value="Gasto">Gasto</option>
-                                </Select>
-                            </Box>
-
-                            <FormControl isInvalid={valorCajaErr}>
-                                <FormLabel>Monto</FormLabel>
-                                <Input
-                                    placeholder="Monto"
-                                    value={valorCaja}
-                                    onChange={handleValorCajaChange}
-                                    maxLength={8}
-                                />
-                                {valorCajaErr ? (
-                                    <FormErrorMessage>Ingrese un monto válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {"$ "}{formatCLP(valorCaja)} / {"$ "}{"99.999.999"}
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Fecha</FormLabel>
-                                <Input
-                                    type="date"
-                                    value={textDefaultDate(fechaGasto)}
-                                    onChange={handleFechaGastoChange}
-                                    max={minDate(date)}
-                                />
-                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                    {showDate(oldDate)}
-                                </FormHelperText>
-                            </FormControl>
-                            <FormControl mt={"25px"} isInvalid={descripcionErr}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
-                                    value={descripcion}
-                                    onChange={handleDescripcionChange}
-                                    maxLength={250}
-                                />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
-                            </FormControl>
-                        </AlertDialogBody>
-                        <AlertDialogFooter>
-                            <Button
-                                ref={cancelRef}
-                                mr={3}
-                                onClick={() => {
-                                    setNombreErr(false);
-                                    setValorCajaErr(false);
-                                    setFechaGastoErr(false);
-                                    setDescripcionErr(false);
-                                    onCloseTodo();
-                                }}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                colorScheme="blue"
-                                onClick={() => {
-                                    if (validation()) {
-                                        console.log("AAAAAAAAAa")
-                                        console.log(descripcion);
-                                        mutation.mutate({
-                                            nombre,
-                                            valorCaja,
-                                            fechaGasto,
-                                            descripcion,
-                                            tipo
-                                        });
-                                        onCloseTodo();
+                                        onClose();
                                     }
                                 }}
                             >
