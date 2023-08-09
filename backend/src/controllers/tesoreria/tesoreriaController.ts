@@ -6,6 +6,8 @@ import { CallbackError } from "mongoose";
 const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
     let newItem = new ItemTesoreria2(req.body);
 
+    console.log(req.body);
+
     ItemTesoreria2.findOne({ nombre: req.body.nombre }).then(
         async (item: ItemTesoreria) => {
             if (item) {
@@ -23,8 +25,6 @@ const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
         }
     );
 };
-
-
 
 const ObtenerGastoIngresoTesoreria = async (req: Request, res: Response) => {
     await ItemTesoreria2.findOne({ name: req.body.name })

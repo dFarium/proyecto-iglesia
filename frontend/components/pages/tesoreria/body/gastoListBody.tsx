@@ -52,6 +52,7 @@ import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 export function GastoListBody() {
 
+
   const gastoQuery = useQuery({
     queryKey: ["obtenerGastoTesoreria"],
     queryFn: async () => {
@@ -66,12 +67,17 @@ export function GastoListBody() {
   const [columnVisibility] = useState({
     id: false,
     nombre: true,
+    index: false,
     valorCaja: true,
     fechaGasto: true,
     descripcion: false,
     tipo: false,
     boleta: false
   });
+
+  function formatCLP(value: number) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -99,7 +105,7 @@ export function GastoListBody() {
               <Text onClick={onOpen}>
                 {row.getValue("nombre")}
               </Text>
-              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} />
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
             </>
           )
         },
@@ -158,6 +164,18 @@ export function GastoListBody() {
         }
       },
       {
+        id: 'boleta',
+        header: 'Boleta',
+        accessorKey: "boleta",
+        cell: ({ row }) => {
+          return (
+            <Text>
+              {row.getValue("boleta")}
+            </Text>
+          )
+        }
+      },
+      {
         id: "tipo",
         header: "tipo",
         accessorKey: "tipo",
@@ -177,10 +195,11 @@ export function GastoListBody() {
             <>
               <>
                 <Circle
-                  bg={"#F6AD55"}
+                  //bg={"#F6AD55"}
+                  border={"2px solid"}
                   size={"1.5em"}
                   fontSize={"1.2em"}
-                  color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                  //color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                   cursor={"default"}
                 >
                   <MdCreate />
@@ -210,18 +229,18 @@ export function GastoListBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
+                //borderColor={
+                  //colorMode == "light"
+                    //? "tesoreriaDeleteItem.light"
+                    //: "tesoreriaDeleteItem.dark"
+                //}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
+                //color={
+                  //colorMode == "light"
+                    //? "tesoreriaDeleteItem.light"
+                    //: "tesoreriaDeleteItem.dark"
+                //}
                 cursor={"default"}
               >
                 <MdDelete />
@@ -257,10 +276,6 @@ export function GastoListBody() {
     onSortingChange: setSorting,
     debugTable: true,
   });
-
-  function formatCLP(value: number) {
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
 
   return (
     <Box w={"100%"} h={"100%"}>
@@ -380,14 +395,21 @@ export function GastoListBody() {
             <HStack display={{ base: "none", lg: "flex" }}>
               <MdHelp size={"20px"} />
               <Text minW={"400px"}>
-                Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
+                Puede ver la descripción y el archivo adjunto dando click en el nombre.
               </Text>
             </HStack>
           </HStack>
         </VStack>
       </VStack>
+
+      <VStack>
+
+      </VStack>
     </Box>
-  ); //
+
+
+
+  );
 }
 function showPages(maxRows: number, currentIndex: number, pageSize: number) {
   if (maxRows < pageSize * currentIndex + pageSize) {
@@ -396,6 +418,20 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
     return pageSize * currentIndex + pageSize;
   }
 }
+
+
+/* {
+  id: "nombre",
+  header: "Nombre",
+  accessorKey: "nombre",
+  cell: ({ row }) => {
+    return (
+      <Text>
+        {row.getValue("nombre")}
+      </Text>
+    )
+  },
+}, */
 
 
 /*
