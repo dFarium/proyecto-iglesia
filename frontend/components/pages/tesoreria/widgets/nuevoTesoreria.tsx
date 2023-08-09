@@ -318,8 +318,7 @@ function NuevoIngresoTesoreria() {
                                                 tipo: "Ingreso",
                                                 boleta: imagen ? `${fechaStd}-${imagen.name}` : "",
                                             };
-                                            console.log("AAAAAAAAAAAAAAAAAAAAaa")
-                                            console.log(formData);
+
                                             mutation.mutate(formData);
                                             const uploadData = {
                                                 originalName: imagen.name,
