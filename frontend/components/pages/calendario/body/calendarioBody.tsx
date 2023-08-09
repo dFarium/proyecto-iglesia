@@ -55,7 +55,7 @@ export function CalendarioBody() {
         cell: ({ row }) => {
           return (
             <Text>
-              {row.getValue("nombre")}
+              {row.getValue("nombreAct")}
             </Text>
           )
         },
@@ -181,10 +181,11 @@ export function CalendarioBody() {
   return (
     <>
       <Flex w={"100%"} h={"100%"} direction={{ base: "column", md: "row" }}>
-        <Box w={{ base: "100%", md: "70%" }} h={"100%"}>
+        <Box w={{ base: "100%", md: "100%" }} h={"100%"}>
           <VStack w={"100%"} h={"100%"} spacing={"30px"}>
           <HStack justifyContent={"space-between"} w={"100%"}>
               <Text textStyle={"titulo"}>Listado Actividades</Text>
+              <AgregarCalendario />
             </HStack>
             <TableContainer overflowY={"auto"} width={"100%"}>
               <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -299,12 +300,12 @@ export function CalendarioBody() {
             </VStack>
           </VStack>
         </Box>
-        <Box w={{ base: "100%", md: "30%" }} h={"100%"} marginTop={{ base: "20px", md: "0" }}>
+        {/* <Box w={{ base: "100%", md: "30%" }} h={"100%"} marginTop={{ base: "20px", md: "0" }}>
 
           <HStack alignContent="flex-start" justifyContent="flex-end">
             <AgregarCalendario />
           </HStack>
-        </Box>
+        </Box> */}
       </Flex>
     </>
   )

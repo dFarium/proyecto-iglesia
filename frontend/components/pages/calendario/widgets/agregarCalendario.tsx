@@ -37,7 +37,7 @@ import {
 } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { minDate, textDate } from "@/utils/dateUtils";
-import { ItemCalendario, crearItemCalendario } from "@/data/calendario/item";
+import { ItemCalendario, crearItemCalendario, obtenerListaCalendario } from "@/data/calendario/item";
 
 function AgregarCalendario() {
 
@@ -115,9 +115,7 @@ function AgregarCalendario() {
             return res
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["obtenerTodoTesoreria"] });
-            queryClient.invalidateQueries({ queryKey: ["obtenerIngresoTesoreria"] });
-            queryClient.invalidateQueries({ queryKey: ["obtenerGastoTesoreria"] });
+            queryClient.invalidateQueries({ queryKey: ["obtenerListaCalendario"] });
         },
 
 
@@ -220,18 +218,39 @@ function AgregarCalendario() {
                                 Cancelar
                             </Button>
                             <Button
-                                ref={cancelRef}
-                                mr={3}
                                 onClick={() => {
-                                    setNombre("");
-                                    setNombreErr(false);
-                                    setFechaInicio(date);
-                                    setFechaTermino(date);
-                                    setEstadoActividad(true);
-                                    setDescripcion("date");
-                                    onClose();
+                                    if (nombreAct && fechaInicio && fechaTermino && descripcion) {
+                                        mutation.mutate({
+                                            nombreAct,
+                                            fechaInicio,
+                                            fechaTermino,
+                                            estadoActividad: true,
+                                            descripcion,
+                                        }, {
+                                            onSuccess: () => {
+                                                setNombre("");
+                                                setNombreErr(false);
+                                                setFechaInicio(date);
+                                                setFechaTermino(date);
+                                                setDescripcion("");
+                                                onClose();
+                                            },
+                                            onError: (error) => {
+                                                console.error("Error al agregar el evento:", error);
+                                            }
+                                        });
+                                    } else {
+                                        setNombreErr(!nombreAct);
+                                        setFechaInicioErr(!fechaInicio);
+                                        setFechaTerminoErr(!fechaTermino);
+                                        setDescripcionErr(!descripcion);
+                                    }
                                 }}
-                            >Agregar</Button>
+                            >
+                                Agregar
+                            </Button>
+
+
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialogOverlay>

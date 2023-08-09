@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
 
-import {createRoles, createAdminUserIfNotExist} from "./libs/initialSetup"
+import { createRoles, createAdminUserIfNotExist } from "./libs/initialSetup"
 
 dotenv.config();
 const app: Express = express();
@@ -23,12 +23,13 @@ import { usuarioRoutes } from "./routes/usuario/usuarioRoutes";
 import { prestamoRoutes } from "./routes/prestamo/prestamoRoutes";
 import { archivosRoutes } from "./routes/archivos/archivosRoutes";
 import { cancionesRoutes } from "./routes/canciones/cancionesRoutes";
+import { calendarioRoutes } from "./routes/calendario/calendarioRoutes";
 
 app.use("/api", inventarioRoutes);
 app.use("/api", tesoreriaRoutes);
 app.use("/api", usuarioRoutes);
 app.use("/api", cancionesRoutes);
-
+app.use('/api', calendarioRoutes);
 app.use("/api", inventarioRoutes);
 app.use("/api", prestamoRoutes);
 app.use("/api", archivosRoutes);
