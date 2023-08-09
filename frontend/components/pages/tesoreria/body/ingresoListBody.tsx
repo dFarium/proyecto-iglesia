@@ -34,6 +34,7 @@ import {
   MdArrowDropUp,
   MdCreate,
   MdDelete,
+  MdEdit,
   MdHelp,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
@@ -192,17 +193,24 @@ export function IngresoListBody() {
         header: () => {
           return (
             <>
-              <>
-                <Circle
-                  bg={"#F6AD55"}
-                  size={"1.5em"}
-                  fontSize={"1.2em"}
-                  color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-                  cursor={"default"}
-                >
-                  <MdCreate />
-                </Circle>
-              </>
+              <Circle
+                border={"2px solid"}
+                //borderColor={
+                //colorMode == "light"
+                //? "tesoreriaDeleteItem.light"
+                //: "tesoreriaDeleteItem.dark"
+                //}
+                size={"1.5em"}
+                fontSize={"1.2em"}
+                //color={
+                //colorMode == "light"
+                //? "tesoreriaDeleteItem.light"
+                //: "tesoreriaDeleteItem.dark"
+                //}
+                cursor={"default"}
+              >
+                <MdEdit />
+              </Circle>
             </>
           );
         }, cell: ({ row }) => {
@@ -227,18 +235,10 @@ export function IngresoListBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
+                //borderColor={ colorMode == "light" ? "tesoreriaDeleteItem.light" : "tesoreriaDeleteItem.dark" }
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
+                //color={ borderColor={ colorMode == "light" ? "tesoreriaDeleteItem.light" : "tesoreriaDeleteItem.dark" }
                 cursor={"default"}
               >
                 <MdDelete />
@@ -393,7 +393,7 @@ export function IngresoListBody() {
             <HStack display={{ base: "none", lg: "flex" }}>
               <MdHelp size={"20px"} />
               <Text minW={"400px"}>
-                Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
+                Puede ver la descripción y el archivo adjunto dando click en el nombre.
               </Text>
             </HStack>
           </HStack>

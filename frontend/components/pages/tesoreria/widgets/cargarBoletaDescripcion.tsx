@@ -13,15 +13,9 @@ interface CargarBoletaDescripcionProps {
 const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpen, onClose, id, descripcion, nombre, boleta }) => {
     const { colorMode } = useColorMode();
     const cancelRef = useRef(null);
-    const [imagenUrl, setImagenUrl] = useState<string>("");
 
     const lightBorderImage = "5px #5c5c5c solid";
     const darkBorderImage = "5px #ffe1af solid";
-
-    const fileExtension = boleta.split('.').pop();
-
-    console.log(fileExtension);
-
 
     return (
         <>
@@ -38,7 +32,7 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpe
                         <AlertDialogBody>
                             <Stack spacing={3}>
                                 <FormLabel>
-                                    <Text>Descripción</Text>
+                                    <Text fontWeight={"bold"}>Descripción</Text>
                                 </FormLabel>
 
                                 <Text
@@ -49,18 +43,29 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpe
                                     {descripcion}
                                 </Text>
                                 <FormLabel>
-                                    <Text>Archvios adjuntos</Text>
+                                    <Text fontWeight={"bold"}>Archivo adjunto</Text>
                                 </FormLabel>
 
-                                <Image
-                                    src={`${process.env.API_URL}/upload/Boletas/${boleta}`}
-                                    fallback={LoadingImage(imagenUrl)}
-                                    objectFit={"contain"}
-                                    borderRadius={"15px"}
-                                    border={
-                                        colorMode == "light" ? lightBorderImage : darkBorderImage
-                                    }
-                                />
+                                {boleta ? (
+                                    <Image
+                                        src={`${process.env.API_URL}/upload/Boletas/${boleta}`}
+                                        fallback={
+                                            <VStack minH={"300px"} justify={"center"} align={"center"}>
+                                                <Spinner size={"xl"} />
+                                            </VStack>
+                                        }
+                                        objectFit={"contain"}
+                                        borderRadius={"15px"}
+                                        border={
+                                            colorMode === "light" ? lightBorderImage : darkBorderImage
+                                        }
+                                    />
+                                ) : (
+                                    <FormLabel>
+                                        <Text>No hay archivo disponible</Text>
+                                    </FormLabel>
+                                )}
+
                             </Stack>
                         </AlertDialogBody>
                         <AlertDialogFooter>
@@ -71,24 +76,9 @@ const CargarBoletaDescripcion: React.FC<CargarBoletaDescripcionProps> = ({ isOpe
                     </AlertDialogContent>
                 </AlertDialogOverlay>
             </AlertDialog>
+
         </>
     )
 }
 
-function LoadingImage(src: string) {
-    if (src == "") {
-        return (
-            <VStack minH={"80px"} justify={"center"} align={"center"}>
-                <Text fontWeight={"bold"}>No hay boleta disponible</Text>
-            </VStack>
-        );
-    }
-    return (
-        <VStack minH={"300px"} justify={"center"} align={"center"}>
-            <Spinner size={"xl"} />
-        </VStack>
-    );
-}
-
 export default CargarBoletaDescripcion;
-

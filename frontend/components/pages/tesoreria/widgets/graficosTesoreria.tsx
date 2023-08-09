@@ -4,9 +4,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryGroup, VictoryLegend, VictoryLine, VictoryPie, VictoryTheme } from 'victory';
 import { useQuery, useMutation } from "@tanstack/react-query";
 
+interface IngresoDataItem {
+    valorCaja: number;
+}
+
+interface GastoDataItem {
+    valorCaja: number;
+}
+
 const GraficosTesoreria = () => {
     const cancelRef = useRef(null);
     const { colorMode } = useColorMode();
+
     const ingresoQuery = useQuery({
         queryKey: ["obtenerIngresoTesoreria"],
         queryFn: async () => {
@@ -15,13 +24,13 @@ const GraficosTesoreria = () => {
         },
         initialData: [],
     });
-    const [ingresoData, setIngresoData] = useState([]);
+
+    const [ingresoData, setIngresoData] = useState<IngresoDataItem[]>([]);
+
     useEffect(() => {
         setIngresoData(ingresoQuery.data);
     }, [ingresoQuery.data]);
-    interface IngresoDataItem {
-        valorCaja: number;
-    }
+
     const gastoQuery = useQuery({
         queryKey: ["obtenerGastoTesoreria"],
         queryFn: async () => {
@@ -30,23 +39,27 @@ const GraficosTesoreria = () => {
         },
         initialData: [],
     });
-    const [gastoData, setGastoData] = useState([]);
+
+    const [gastoData, setGastoData] = useState<GastoDataItem[]>([]);
+
     useEffect(() => {
         setGastoData(gastoQuery.data);
     }, [gastoQuery.data]);
-    interface GastoDataItem {
-        valorCaja: number;
-    }
+
     const totalGasto = gastoData.reduce((acumulador: number, item: GastoDataItem) => {
         return acumulador + item.valorCaja;
     }, 0);
+
     const totalIngreso = ingresoData.reduce((acumulador: number, item: IngresoDataItem) => {
         return acumulador + item.valorCaja;
     }, 0);
+
     const totalTotal = totalIngreso - totalGasto;
+
     function formatCLP(value: number) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
+
     return (
         <>
             <Text
@@ -62,8 +75,7 @@ const GraficosTesoreria = () => {
                     <Text marginLeft={5}>Total: ${formatCLP(totalTotal)}</Text>
                 </GridItem>
             </Grid>
-            <Grid marginTop={10} /* w={"100%"} */ marginLeft={5}>
-
+            <Grid marginTop={10} marginLeft={5}>
                 <VictoryPie
                     key={`${totalGasto}-${totalIngreso}`}
                     data={[
@@ -76,28 +88,12 @@ const GraficosTesoreria = () => {
                     colorScale={["#F97D08", "#084DF9"]}
                     theme={VictoryTheme.material}
                 />
-
-                {/* <VictoryChart domainPadding={{ x: [10, 0] }} padding={{ left: 60 }} >
-                    <VictoryGroup offset={-250}>
-                        <VictoryBar data={[{ x: "Ingresos", y: totalIngreso }]} style={{ data: { fill: "#084DF9" } }} />
-                        <VictoryBar data={[{ x: "Gastos", y: totalGasto }]} style={{ data: { fill: "#F97D08" } }} />
-                    </VictoryGroup>
-                </VictoryChart> */}
-
-                {/* <VictoryChart domainPadding={{ x: [10, 0] }} padding={{ left: 60 }}>
-                    <VictoryGroup offset={-250}>
-                        <VictoryBar data={[{ x: "Ingresos", y: totalIngreso }]} style={{ data: { fill: "#084DF9" } }} />
-                        <VictoryBar data={[{ x: "Gastos", y: totalGasto }]} style={{ data: { fill: "#F97D08" } }} />
-                    </VictoryGroup>
-                </VictoryChart> */}
             </Grid>
             <Grid alignContent={"left"}>
                 <VictoryLegend x={125} y={50}
-                    //title="Leyenda"
                     centerTitle
                     orientation="horizontal"
                     gutter={20}
-                    //style={{ border: { stroke: "black" }, title: { fontSize: 20 } }}
                     data={[
                         { name: "Ingresos", symbol: { fill: "#084DF9" } },
                         { name: "Gastos", symbol: { fill: "#F97D08" } },
@@ -108,18 +104,4 @@ const GraficosTesoreria = () => {
     )
 }
 
-
-export default GraficosTesoreria
-
-
-{/* <VictoryPie
-            data={[
-                { x: "Gasto", y: totalGasto },
-                { x: "Ingreso", y: totalIngreso },
-            ]}
-            animate={{
-                duration: 2000
-            }}
-            colorScale={["#F97D08", "#084DF9"]}
-            theme={VictoryTheme.material}
-        /> */}
+export default GraficosTesoreria;
