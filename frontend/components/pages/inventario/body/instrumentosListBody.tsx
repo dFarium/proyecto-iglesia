@@ -114,15 +114,7 @@ export function InventarioInstrumentosBody() {
       },
       {
         id: "cantidad",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Cantidad
-            </Text>
-          );
-        },
+        header: "Cantidad",
         accessorKey: "cantidad",
         cell: ({ row }) => {
           return (
@@ -136,15 +128,7 @@ export function InventarioInstrumentosBody() {
       },
       {
         id: "categoria",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Categoría
-            </Text>
-          );
-        },
+        header: "Categoría",
         accessorKey: "categoria",
         cell: ({ row }) => {
           return (
@@ -158,15 +142,7 @@ export function InventarioInstrumentosBody() {
       },
       {
         id: "estado",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Estado
-            </Text>
-          );
-        },
+        header: "Estado",
         accessorKey: "estado",
         cell: ({ row }) => {
           return (
@@ -180,15 +156,7 @@ export function InventarioInstrumentosBody() {
       },
       {
         id: "prestable",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              ¿Prestable?
-            </Text>
-          );
-        },
+        header: "¿Prestable?",
         accessorKey: "prestable",
         cell({ row }) {
           const prestable: boolean = row.getValue("prestable");
@@ -223,15 +191,7 @@ export function InventarioInstrumentosBody() {
       },
       {
         id: "createdAt",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Fecha de Ingreso
-            </Text>
-          );
-        },
+        header: "Fecha Ingreso",
         accessorKey: "createdAt",
         cell: ({ row }) => {
           const date = textDate(row.getValue<Date>("createdAt"));
@@ -247,15 +207,7 @@ export function InventarioInstrumentosBody() {
       },
       {
         id: "fechaSalida",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Fecha de Salida
-            </Text>
-          );
-        },
+        header: "Fecha Salida",
         accessorKey: "fechaSalida",
         cell: ({ row }) => {
           if (!row.getValue("fechaSalida")) {
