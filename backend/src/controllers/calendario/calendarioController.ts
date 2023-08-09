@@ -11,7 +11,7 @@ const crearItemCalendario = async (req: Request, res: Response) => {
     });
     return res.status(201).send(newItem);
 };
-
+/*  */
 /* const editarItemCalendario = async (req: Request, res: Response) => {
     const { id } = req.body;
     await ItemCalendario2.findByIdAndUpdate(id, req.body)
