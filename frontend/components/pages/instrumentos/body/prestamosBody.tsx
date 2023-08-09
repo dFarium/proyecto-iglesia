@@ -94,6 +94,7 @@ export default function PrestamoBody() {
                 id: "instrumento.nombre",
                 header: "Instrumento",
                 accessorKey: "instrumento.nombre",
+                size: 90,
                 cell: ({row}) => {
                     return (
                         <VerInstrumento
@@ -105,20 +106,11 @@ export default function PrestamoBody() {
             },
             {
                 id: "prestatario.name",
-                header: () => {
-                    return (
-                        <Text
-                            //  minW={"100%"} textAlign={"center"}
-                        >
-                            Solicitante
-                        </Text>
-                    );
-                },
+                header: "Solicitante",
                 accessorKey: "prestatario.name",
                 cell: ({row}) => {
                     return (
                         <Text
-                            //  minW={"100%"} textAlign={"center"}
                         >
                             {row.getValue("prestatario.name")}
                         </Text>
@@ -128,15 +120,7 @@ export default function PrestamoBody() {
             },
             {
                 id: "prestamista.name",
-                header: () => {
-                    return (
-                        <Text
-                            //  minW={"100%"} textAlign={"center"}
-                        >
-                            Prestamista
-                        </Text>
-                    );
-                },
+                header: "Prestamista",
                 accessorKey: "prestamista.name",
                 cell: ({row}) => {
                     return (
@@ -150,15 +134,7 @@ export default function PrestamoBody() {
             },
             {
                 id: "devuelto",
-                header: () => {
-                    return (
-                        <Text
-                            //  minW={"100%"} textAlign={"center"}
-                        >
-                            ¿Devuelto?
-                        </Text>
-                    );
-                },
+                header: "¿Devuelto?",
                 accessorKey: "devuelto",
                 cell({row}) {
                     const devuelto: boolean = row.getValue("devuelto");
@@ -193,15 +169,7 @@ export default function PrestamoBody() {
             },
             {
                 id: "fechaInicio",
-                header: () => {
-                    return (
-                        <Text
-                            //  minW={"100%"} textAlign={"center"}
-                        >
-                            Fecha Prestamo
-                        </Text>
-                    );
-                },
+                header: "Fecha Prést.",
                 accessorKey: "fechaInicio",
                 cell: ({row}) => {
                     if (!row.getValue("fechaInicio")) {
@@ -226,15 +194,7 @@ export default function PrestamoBody() {
             },
             {
                 id: "fechaDevolucion",
-                header: () => {
-                    return (
-                        <Text
-                            //  minW={"100%"} textAlign={"center"}
-                        >
-                            Fecha Devolución
-                        </Text>
-                    );
-                },
+                header: "Fecha Dev.",
                 accessorKey: "fechaDevolucion",
                 cell: ({row}) => {
                     if (!row.getValue("fechaDevolucion")) {
@@ -259,15 +219,7 @@ export default function PrestamoBody() {
             },
             {
                 id: "fechaLimite",
-                header: () => {
-                    return (
-                        <Text
-                            //  minW={"100%"} textAlign={"center"}
-                        >
-                            Fecha Límite
-                        </Text>
-                    );
-                },
+                header: "Fecha Lím.",
                 accessorKey: "fechaLimite",
                 cell: ({row}) => {
                     if (!row.getValue("fechaLimite")) {
