@@ -136,7 +136,7 @@ export function GastoListBody() {
           return (
             <Text
             >
-              Fecha de Ingreso
+              Fecha de Gasto
             </Text>
           );
         },
