@@ -41,6 +41,8 @@ import {
     MdNavigateBefore,
     MdNavigateNext,
     MdUpload,
+    MdVisibility,
+    MdVisibilityOff
 } from "react-icons/md";
 import { NuevoArchivo } from "../widgets/nuevoArchivo";
 import { useMemo, useState } from "react";
@@ -314,7 +316,6 @@ export default function ArchivosAllBody() {
                                     //     Privado
                                     // </Text>
                                   <MdLock color="red"></MdLock>
-
                                 );
                             }
                             return (

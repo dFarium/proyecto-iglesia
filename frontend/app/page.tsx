@@ -34,7 +34,7 @@ export default function Page() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const res = await fetch("http://localhost:3001/api/usuario/login", {
+      const res = await fetch(`${process.env.API_URL}/usuario/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

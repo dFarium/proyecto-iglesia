@@ -51,6 +51,10 @@ import EliminarTesoreria from '../widgets/eliminarTesoreria';
 import { NuevoIngresoTesoreria } from '../widgets/nuevoTesoreria';
 import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
+function showPages(maxRows: number, currentIndex: number, pageSize: number) {
+  return Math.min(maxRows, pageSize * currentIndex + pageSize);
+}
+
 export function IngresoListBody() {
 
   const ingresoQuery = useQuery({
@@ -99,17 +103,12 @@ export function IngresoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-
-          //const { isOpen, onOpen, onClose } = useDisclosure();
-          return (
-            <>
-              <Text /* onClick={onOpen} */>
-                {row.getValue("nombre")}
-              </Text>
-              <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
-
-            </>
-          )
+          return <CargarBoletaDescripcion
+            id={row.getValue("id")}
+            descripcion={row.getValue("descripcion")}
+            nombre={row.getValue("nombre")}
+            boleta={row.getValue("boleta")}
+          />;
         },
       },
       {
@@ -406,29 +405,5 @@ export function IngresoListBody() {
 
       </VStack>
     </Box>
-
-
-
   );
 }
-function showPages(maxRows: number, currentIndex: number, pageSize: number) {
-  if (maxRows < pageSize * currentIndex + pageSize) {
-    return maxRows;
-  } else {
-    return pageSize * currentIndex + pageSize;
-  }
-}
-
-
-/* {
-  id: "nombre",
-  header: "Nombre",
-  accessorKey: "nombre",
-  cell: ({ row }) => {
-    return (
-      <Text>
-        {row.getValue("nombre")}
-      </Text>
-    )
-  },
-}, */

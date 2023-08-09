@@ -89,7 +89,6 @@ function EliminarTesoreria(props: { name: string; id: string }) {
             </AlertDialog>
         </>
     )
-
 }
 
 export default EliminarTesoreria

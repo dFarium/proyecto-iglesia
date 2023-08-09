@@ -105,22 +105,20 @@ export function TotalListBody() {
         header: "#",
         accessorFn: (_row: any, i: number) => i + 1,
         sortingFn: "basic",
+        width: 50
       },
       {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
+        width: 10,
         cell: ({ row }) => {
-
-          return (
-            <>
-              <Text >
-                {row.getValue("nombre")}
-              </Text>
-              <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
-
-            </>
-          )
+          return <CargarBoletaDescripcion
+            id={row.getValue("id")}
+            descripcion={row.getValue("descripcion")}
+            nombre={row.getValue("nombre")}
+            boleta={row.getValue("boleta")}
+          />;
         },
       },
       {
@@ -434,4 +432,3 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
     return pageSize * currentIndex + pageSize;
   }
 }
-

@@ -1,7 +1,7 @@
 "use client";
 
 import {Box, Button, Text, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox,
-    CheckboxGroup, FormErrorMessage, InputGroup, InputLeftAddon, Image } from "@chakra-ui/react";
+    CheckboxGroup, FormErrorMessage, InputGroup, InputLeftAddon, Image, Flex, FormHelperText } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from 'sweetalert2';
@@ -210,7 +210,7 @@ function RegisterUserBody() {
             if (rol.length > 0) {
                 requestBody.rol = rol;
             }
-            const res = await fetch('http://localhost:3001/api/usuario/register', {
+            const res = await fetch(`${process.env.API_URL}/usuario/register`, {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -323,19 +323,22 @@ function RegisterUserBody() {
                         )}
                     </FormControl>
                     <FormControl isInvalid={!isValidTelefono && telefonoTouched}>
-                        <FormLabel>Teléfono</FormLabel>
+                        <Flex align="center">
+                            <FormLabel flex="1">Teléfono</FormLabel>
+                            <FormHelperText fontStyle={"italic"}>Opcional</FormHelperText>
+                        </Flex>
                         <InputGroup>
                             <InputLeftAddon p={2}>
                                 +56
                             </InputLeftAddon>
                             <Input
-                            onChange={handleTelefonoChange}
-                            onBlur={handleTelefonoBlur}
-                            minLength={9}
-                            maxLength={9}
-                            pl={"10px"}  // Un padding izquierdo para que no se superponga con el prefijo.
-                            placeholder="9xxxxxxxx"
-                            value={telefono}
+                                onChange={handleTelefonoChange}
+                                onBlur={handleTelefonoBlur}
+                                minLength={9}
+                                maxLength={9}
+                                pl={"10px"}  // Un padding izquierdo para que no se superponga con el prefijo.
+                                placeholder="9xxxxxxxx"
+                                value={telefono}
                             />
                         </InputGroup>
                         {!isValidTelefono && telefonoTouched && (
@@ -343,14 +346,20 @@ function RegisterUserBody() {
                         )}
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Dirección</FormLabel>
+                        <Flex align="center">
+                            <FormLabel flex="1">Dirección</FormLabel>
+                            <FormHelperText fontStyle={"italic"}>Opcional</FormHelperText>
+                        </Flex>
                         <Input placeholder="Calle N°" value={direccion} onChange={handleDireccionChange} />
                     </FormControl>
                     <FormControl isInvalid={!isValidNumEmer && numEmerTouched}>
-                        <FormLabel>Numero de emergencia</FormLabel>
+                        <Flex align="center">
+                            <FormLabel flex="1">Numero de emergencia</FormLabel>
+                            <FormHelperText fontStyle={"italic"}>Opcional</FormHelperText>
+                        </Flex>
                         <InputGroup
-                        onChange={handleNumEmergenciaChange}
-                        onBlur={handleNumEmerBlur}>
+                            onChange={handleNumEmergenciaChange}
+                            onBlur={handleNumEmerBlur}>
                             <InputLeftAddon p={2}>
                                 +56
                             </InputLeftAddon>
@@ -367,8 +376,11 @@ function RegisterUserBody() {
                         )}
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Facebook</FormLabel>
-                        <Input placeholder="Nombre en Facebook" value={RRSS} onChange={handleRRSSChange}/>
+                        <Flex align="center">
+                            <FormLabel flex="1">Facebook</FormLabel>
+                            <FormHelperText fontStyle={"italic"}>Opcional</FormHelperText>
+                        </Flex>
+                        <Input placeholder="Nombre en Facebook" value={RRSS} onChange={handleRRSSChange} />
                     </FormControl>
                     <FormControl>
                     <FormLabel>Roles</FormLabel>

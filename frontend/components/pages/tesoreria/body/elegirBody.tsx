@@ -97,3 +97,4 @@ function Categoria(props: { titulo: string; href: string; image: string }) {
     </Link>
   );
 }
+

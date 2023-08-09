@@ -12,7 +12,7 @@ const port: string = process.env.PORT;
 createRoles();
 createAdminUserIfNotExist();
 
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: "http://146.83.198.35:1363" }));
 app.use(express.json());
 app.options("*", cors());
 
