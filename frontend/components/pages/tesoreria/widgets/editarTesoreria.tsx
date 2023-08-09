@@ -209,6 +209,7 @@ function EditarTesoreria(props: {
                 isRound
                 onClick={() => {
                     if (props.tipo == "Ingreso") {
+
                         setTodoInicio();
                         onOpenIngreso();
                     } else if (props.tipo == "Gasto") {
@@ -435,6 +436,7 @@ function EditarTesoreria(props: {
                                 colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
+
                                         mutation.mutate({
                                             nombre,
                                             valorCaja,
@@ -550,6 +552,7 @@ function EditarTesoreria(props: {
                                 colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
+
                                         mutation.mutate({
                                             nombre,
                                             valorCaja,

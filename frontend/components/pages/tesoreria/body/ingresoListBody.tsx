@@ -99,6 +99,7 @@ export function IngresoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+
           //const { isOpen, onOpen, onClose } = useDisclosure();
           return (
             <>
@@ -106,6 +107,7 @@ export function IngresoListBody() {
                 {row.getValue("nombre")}
               </Text>
               <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+
             </>
           )
         },

@@ -182,12 +182,6 @@ const colors = {
     300: "#ff7520", // dark mode _hover
   },
 
-  descargaButton: {
-    light: "#4fa324",
-    dark: "#7df042",
-  },
-
-  //prestamo instrumentos
   /* ------------------ */
 
   newTesoreriaItemButton: {
@@ -216,6 +210,15 @@ const colors = {
     light: "#C53030",
     dark: "#FC8181",
   },
+
+
+  descargaButton: {
+    light: "#4fa324",
+    dark: "#7df042",
+  },
+
+  //prestamo instrumentos
+  /* ------------------ */
 
 
   newPrestamoInstrumentoButton: {
@@ -251,7 +254,8 @@ const colors = {
     light: "#C53030",
     dark: "#FC8181",
   },
-};
+
+}
 
 
 const theme = extendTheme({
