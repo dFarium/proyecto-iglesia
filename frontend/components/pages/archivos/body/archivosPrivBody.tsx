@@ -464,7 +464,7 @@ export default function ArchivosPrivBody() {
                     if (userAccess) {
                         return (
                             <EliminarItemArchivo
-                                name={row.getValue("originalName")}
+                                name={row.getValue("userName")}
                                 id={row.getValue("id")}
                             />
                         );
