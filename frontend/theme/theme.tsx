@@ -18,6 +18,31 @@ const textStyles = {
   },
 };
 
+const graficoTextStyles = {
+  grafico: {
+    fontSize: ["2em", null, "1em"],
+    fontWeight: "bold",
+  },
+};
+
+
+// variante boton item inventario
+// const newItemInventarioButton = {
+//   color: "black",
+//   bg: "#F07B3F",
+//   fontWeight: "bold",
+//   _dark: {
+//     color: "white",
+//     bg: "#ff9655",
+//   },
+//   _hover: {
+//     bg: "#dc6529",
+//     _dark: {
+//       bg: "#67e8f9",
+//     },
+//   },
+// };
+
 const components = {
   // tabla inventario
   Table: {
@@ -60,6 +85,12 @@ const components = {
       },
     },
   },
+  // Nuevo Item Inventario
+  // Button: {
+  //   variants: {
+  //     newItemInventarioButton: newItemInventarioButton,
+  //   },
+  // },
 };
 
 /*
@@ -122,6 +153,14 @@ const colors = {
     200: "#ff9655", // dark mode
     300: "#ff7520", // dark mode _hover
   },
+
+  editInventarioItemButton: {
+    500: "#06b6d4", // light mode
+    600: "#0891b2", // light mode _hover
+    200: "#a5f3fc", // dark mode
+    300: "#67e8f9", // dark mode _hover
+  },
+
   inventarioItemEditHeaderBg: {
     light: "#4A5568",
     dark: "#2D3748",
@@ -136,9 +175,84 @@ const colors = {
   },
 
   // archivos
+  newArchivoItemButton: {
+    500: "#F07B3F", // light mode
+    600: "#dc6529", // light mode _hover
+    200: "#ff9655", // dark mode
+    300: "#ff7520", // dark mode _hover
+  },
 
-  
+  descargaButton: {
+    light: "#4fa324",
+    dark: "#7df042",
+  },
+
+  //prestamo instrumentos
+  /* ------------------ */
+
+  newTesoreriaItemButton: {
+    500: "#F07B3F", // light mode
+    600: "#dc6529", // light mode _hover
+    200: "#ff9655", // dark mode
+    300: "#ff7520", // dark mode _hover
+  },
+
+  editTesoreriaItemButton: {
+    500: "#06b6d4", // light mode
+    600: "#0891b2", // light mode _hover
+    200: "#a5f3fc", // dark mode
+    300: "#67e8f9", // dark mode _hover
+  },
+
+  tesoreriaItemEditHeaderBg: {
+    light: "#4A5568",
+    dark: "#2D3748",
+  },
+  tesoreriaItemEditBg: {
+    light: "#cce6ff",
+    dark: "#EDF2F7",
+  },
+  tesoreriaDeleteItem: {
+    light: "#C53030",
+    dark: "#FC8181",
+  },
+
+
+  newPrestamoInstrumentoButton: {
+    500: "#F07B3F", // light mode
+    600: "#dc6529", // light mode _hover
+    200: "#ff9655", // dark mode
+    300: "#ff7520", // dark mode _hover
+  },
+
+  editPrestamoInstrumentoButton: {
+    500: "#06b6d4", // light mode
+    600: "#0891b2", // light mode _hover
+    200: "#a5f3fc", // dark mode
+    300: "#67e8f9", // dark mode _hover
+  },
+
+
+  prestamoInstrumentoEditHeaderBg: {
+    light: "#4A5568",
+    dark: "#2D3748",
+  },
+  prestamoInstrumentoEditBg: {
+    light: "#cce6ff",
+    dark: "#EDF2F7",
+  },
+  prestamoInstrumentoDelete: {
+    light: "#C53030",
+    dark: "#FC8181",
+  },
+
+  //Color Canciones
+  CancionDelete: {
+    light: "#C53030",
+    dark: "#FC8181",
+  },
 };
+
 
 const theme = extendTheme({
   ...config,
@@ -147,5 +261,6 @@ const theme = extendTheme({
   components,
   colors,
 });
+
 
 export default theme;

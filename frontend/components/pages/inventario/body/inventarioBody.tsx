@@ -15,6 +15,7 @@ import {
   Circle,
   IconButton,
   useColorMode,
+  Icon,
 } from "@chakra-ui/react";
 
 import {
@@ -32,23 +33,30 @@ import {
   MdArrowDropUp,
   MdCreate,
   MdDelete,
+  MdHelp,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
   MdNavigateBefore,
   MdNavigateNext,
 } from "react-icons/md";
 import EditarItemInventario from "../widgets/editarItem";
-import NuevoItemInventario from "../widgets/nuevoItem";
+import { NuevoItemInventario } from "../widgets/nuevoItem";
 import { useMemo, useState } from "react";
 import { textDate } from "@/utils/dateUtils";
 import { IItemInventario, getAllItemsInventario } from "@/data/inventario/item";
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
+import { VerFotoItem } from "../widgets/verFotoItem";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import getRole from "@/utils/roleUtils";
 
 export function InventarioBody() {
+  //obtener rol
+  const userRole = getRole();
+
   // query todos los items
   const allItemsQuery = useQuery({
-    queryKey: ["itemsInventario"],
+    queryKey: ["allItemsInventario"],
     queryFn: getAllItemsInventario,
     initialData: [],
   });
@@ -57,25 +65,52 @@ export function InventarioBody() {
   const [columnVisibility] = useState({
     id: false,
     desc: false,
+    ultMant: false,
+    cicloMant: false,
+    index: false,
+    imgScr: false,
+    edit: userRole,
+    delete: userRole,
+    uploader: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
 
   // definicion de las columnas de la tabla
-  const columns = useMemo<ColumnDef<IItemInventario>[]>(
+  const columns: ColumnDef<IItemInventario>[] = useMemo<
+    ColumnDef<IItemInventario>[]
+  >(
     () => [
       { id: "id", accessorKey: "_id" },
       {
-        id: "name",
+        id: "index",
+        header: "#",
+        accessorFn: (_row: any, i: number) => i + 1,
+        sortingFn: "basic",
+      },
+      { id: "imgScr", accessorKey: "urlPic" },
+      { id: "uploader", accessorKey: "uploader" },
+      {
+        id: "nombre",
         header: "Nombre",
-        accessorKey: "name",
-        cell: (info) => info.getValue(),
+        accessorKey: "nombre",
+        cell: ({ row }) => {
+          return (
+            <VerFotoItem
+              nombre={row.getValue("nombre")}
+              imgScr={row.getValue("imgScr")}
+              uploader={row.getValue("uploader")}
+            />
+          );
+        },
       },
       {
         id: "cantidad",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Cantidad
             </Text>
           );
@@ -83,17 +118,21 @@ export function InventarioBody() {
         accessorKey: "cantidad",
         cell: ({ row }) => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               {row.getValue("cantidad")}
             </Text>
           );
         },
       },
       {
-        id: "category",
+        id: "categoria",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Categoría
             </Text>
           );
@@ -101,35 +140,86 @@ export function InventarioBody() {
         accessorKey: "categoria",
         cell: ({ row }) => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
-              {row.getValue("category")}
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
+              {row.getValue("categoria")}
             </Text>
           );
         },
       },
       {
-        id: "state",
+        id: "estado",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Estado
             </Text>
           );
         },
-        accessorKey: "state",
+        accessorKey: "estado",
         cell: ({ row }) => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
-              {row.getValue("state")}
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
+              {row.getValue("estado")}
             </Text>
           );
+        },
+      },
+      {
+        id: "prestable",
+        header: () => {
+          return (
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
+              ¿Prestable?
+            </Text>
+          );
+        },
+        accessorKey: "prestable",
+        cell({ row }) {
+          const prestable: boolean = row.getValue("prestable");
+
+          if (prestable) {
+            return (
+              <Text
+              //  minW={"100%"} textAlign={"center"}
+              >
+                Si
+              </Text>
+            );
+          } else {
+            if (prestable === false) {
+              return (
+                <Text
+                //  minW={"100%"} textAlign={"center"}
+                >
+                  No
+                </Text>
+              );
+            }
+            return (
+              <Text
+              //  minW={"100%"} textAlign={"center"}
+              >
+                -
+              </Text>
+            );
+          }
         },
       },
       {
         id: "createdAt",
         header: () => {
           return (
-            <Text textAlign={"center"} minW={"100%"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Fecha de Ingreso
             </Text>
           );
@@ -138,7 +228,9 @@ export function InventarioBody() {
         cell: ({ row }) => {
           const date = textDate(row.getValue<Date>("createdAt"));
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               {date}
             </Text>
           );
@@ -146,33 +238,41 @@ export function InventarioBody() {
         sortingFn: "datetime",
       },
       {
-        id: "outDate",
+        id: "fechaSalida",
         header: () => {
           return (
-            <Text minW={"100%"} textAlign={"center"}>
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
               Fecha de Salida
             </Text>
           );
         },
-        accessorKey: "outDate",
+        accessorKey: "fechaSalida",
         cell: ({ row }) => {
-          if (!row.getValue("outDate")) {
+          if (!row.getValue("fechaSalida")) {
             return (
-              <Text minW={"100%"} textAlign={"center"}>
+              <Text
+              //  minW={"100%"} textAlign={"center"}
+              >
                 -
               </Text>
             );
           }
 
           return (
-            <Text minW={"100%"} textAlign={"center"}>
-              {textDate(row.getValue("outDate"))}
+            <Text
+            //  minW={"100%"} textAlign={"center"}
+            >
+              {textDate(row.getValue("fechaSalida"))}
             </Text>
           );
         },
         sortingFn: "datetime",
       },
       { id: "desc", accessorKey: "desc" },
+      { id: "ultMant", accessorKey: "ultMant" },
+      { id: "cicloMant", accessorKey: "cicloMant" },
       {
         id: "edit",
         enableSorting: false,
@@ -180,10 +280,9 @@ export function InventarioBody() {
           return (
             <>
               <Circle
-                bg={"#F6AD55"}
+                border={"2px solid"}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                 cursor={"default"}
               >
                 <MdCreate />
@@ -195,12 +294,15 @@ export function InventarioBody() {
           return (
             <EditarItemInventario
               id={row.getValue("id")}
-              item={row.getValue("name")}
+              nombre={row.getValue("nombre")}
+              estado={row.getValue("estado")}
+              prestable={row.getValue("prestable")}
               cantidad={row.getValue("cantidad")}
-              state={row.getValue("state")}
-              category={row.getValue("category")}
-              outDate={row.getValue("outDate")}
+              categoria={row.getValue("categoria")}
+              cicloMant={row.getValue("cicloMant")}
               desc={row.getValue("desc")}
+              fechaSalida={row.getValue("fechaSalida")}
+              ultMant={row.getValue("ultMant")}
             />
           );
         },
@@ -213,18 +315,8 @@ export function InventarioBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 cursor={"default"}
               >
                 <MdDelete />
@@ -235,7 +327,7 @@ export function InventarioBody() {
         cell: ({ row }) => {
           return (
             <EliminarItemInventario
-              name={row.getValue("name")}
+              name={row.getValue("nombre")}
               id={row.getValue("id")}
             />
           );
@@ -266,8 +358,8 @@ export function InventarioBody() {
     <Box w={"100%"} h={"100%"}>
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
-          <Text textStyle={"titulo"}>Inventario</Text>
-          <NuevoItemInventario />
+          <Text textStyle={"titulo"}>Inventario Total</Text>
+          {userRole ? <NuevoItemInventario /> : null}
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -284,6 +376,7 @@ export function InventarioBody() {
                           display={"flex"}
                           flexDir={"row"}
                           alignItems={"center"}
+                          justifyContent={"center"}
                           cursor={"pointer"}
                         >
                           {flexRender(
@@ -316,6 +409,7 @@ export function InventarioBody() {
                         minH={"50px"}
                         display={"flex"}
                         alignItems={"center"}
+                        justifyContent={"center"}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -330,46 +424,54 @@ export function InventarioBody() {
           </Table>
         </TableContainer>
         <VStack flexGrow={1} minH={"50px"} w={"100%"} justifyContent={"end"}>
-          <HStack w={"100%"} overflowX={"auto"}>
-            <Text minW={"220px"} overflowX={"auto"}>
-              Mostrando{" "}
-              {table.getState().pagination.pageSize *
-                table.getState().pagination.pageIndex +
-                1}
-              {"-"}
-              {showPages(
-                table.getPrePaginationRowModel().rows.length,
-                table.getState().pagination.pageIndex,
-                table.getState().pagination.pageSize
-              )}
-              {" de "}
-              {table.getPrePaginationRowModel().rows.length}
-            </Text>
+          <HStack w={"100%"} overflowX={"auto"} justify={"space-between"}>
             <HStack>
-              <IconButton
-                icon={<MdKeyboardDoubleArrowLeft />}
-                aria-label="Primera página"
-                onClick={() => table.setPageIndex(0)}
-                isDisabled={!table.getCanPreviousPage()}
-              />
-              <IconButton
-                icon={<MdNavigateBefore />}
-                aria-label="Página anterior"
-                onClick={() => table.previousPage()}
-                isDisabled={!table.getCanPreviousPage()}
-              />
-              <IconButton
-                icon={<MdNavigateNext />}
-                aria-label="Página siguiente"
-                onClick={() => table.nextPage()}
-                isDisabled={!table.getCanNextPage()}
-              />
-              <IconButton
-                icon={<MdKeyboardDoubleArrowRight />}
-                aria-label="Última página"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                isDisabled={!table.getCanNextPage()}
-              />
+              <Text minW={"220px"} overflowX={"auto"}>
+                Mostrando{" "}
+                {table.getState().pagination.pageSize *
+                  table.getState().pagination.pageIndex +
+                  1}
+                {"-"}
+                {showPages(
+                  table.getPrePaginationRowModel().rows.length,
+                  table.getState().pagination.pageIndex,
+                  table.getState().pagination.pageSize
+                )}
+                {" de "}
+                {table.getPrePaginationRowModel().rows.length}
+              </Text>
+              <HStack>
+                <IconButton
+                  icon={<MdKeyboardDoubleArrowLeft />}
+                  aria-label="Primera página"
+                  onClick={() => table.setPageIndex(0)}
+                  isDisabled={!table.getCanPreviousPage()}
+                />
+                <IconButton
+                  icon={<MdNavigateBefore />}
+                  aria-label="Página anterior"
+                  onClick={() => table.previousPage()}
+                  isDisabled={!table.getCanPreviousPage()}
+                />
+                <IconButton
+                  icon={<MdNavigateNext />}
+                  aria-label="Página siguiente"
+                  onClick={() => table.nextPage()}
+                  isDisabled={!table.getCanNextPage()}
+                />
+                <IconButton
+                  icon={<MdKeyboardDoubleArrowRight />}
+                  aria-label="Última página"
+                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                  isDisabled={!table.getCanNextPage()}
+                />
+              </HStack>
+            </HStack>
+            <HStack display={{ base: "none", lg: "flex" }}>
+              <MdHelp size={"20px"} />
+              <Text minW={"400px"}>
+                Puede ver las fotos dando click en el nombre del Item
+              </Text>
             </HStack>
           </HStack>
         </VStack>
@@ -384,4 +486,7 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
   } else {
     return pageSize * currentIndex + pageSize;
   }
+}
+function useEffect(arg0: () => void, arg1: never[]) {
+  throw new Error("Function not implemented.");
 }

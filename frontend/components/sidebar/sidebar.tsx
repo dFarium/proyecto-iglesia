@@ -12,56 +12,64 @@ import {
   useColorMode,
   Link,
 } from "@chakra-ui/react";
-import React, { ReactNode } from "react";
+import React from "react";
 import { IconType } from "react-icons";
 import {
   MdCalendarMonth,
   MdDarkMode,
+  MdLogout,
   MdMusicNote,
   MdOutlineDarkMode,
   MdOutlineInventory,
   MdOutlineInventory2,
   MdPerson,
   MdPiano,
+  MdOutlineSavings,
 } from "react-icons/md";
 import NextLink from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function SideBar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
-
+  function handleLogout() {
+    localStorage.removeItem('auth-token');  // Elimina el token del local storage
+    router.push('/');
+  }
   return (
     <Box
       height={"100%"}
       borderRadius={"25px"}
       pt={"25px"}
-      // bg={colorMode == "light" ? "container.light" : "container.dark"}
       display={{ base: "none", md: "block" }}
+      overflowY={"auto"}
+      minW={"260px"}
     >
-      <VStack spacing={88} align={"left"}>
-        <Menu autoSelect={false} variant={"custom"}>
-          <MenuButton
-            as={Avatar}
-            src="/image.png"
-            size={"2xl"}
-            ml={"25px"}
-            cursor={"pointer"}
-          />
-          <MenuList>
-            <MenuItem h={"50px"} onClick={() => router.push("/")}>
-              Cerrar Sesión
-            </MenuItem>
-            <MenuItem h={"50px"} onClick={toggleColorMode}>
-              <Text mr={"10px"}>Cambiar Modo</Text>
-              <Icon
-                as={colorMode == "light" ? MdOutlineDarkMode : MdDarkMode}
-              />
-            </MenuItem>
-          </MenuList>
-        </Menu>
+      <VStack justify={"space-between"} h={"100%"}>
+        <VStack spacing={88} align={"left"}>
+          <Menu autoSelect={false} variant={"custom"}>
+            <MenuButton
+              as={Avatar}
+              src="/image.png"
+              size={"2xl"}
+              ml={"25px"}
+              cursor={"pointer"}
+            />
+            <MenuList>
+              <MenuItem h={"50px"} onClick={toggleColorMode}>
+                <Text mr={"10px"}>Cambiar Modo</Text>
+                <Icon
+                  as={colorMode == "light" ? MdOutlineDarkMode : MdDarkMode}
+                />
+              </MenuItem>
+            </MenuList>
+          </Menu>
 
-        <SideMenu />
+          <SideMenu />
+        </VStack>
+
+        <MenuItemSideBar icon={MdLogout} option="Cerrar Sesión" onClick={handleLogout} />
       </VStack>
     </Box>
   );
@@ -70,13 +78,14 @@ export default function SideBar() {
 function MenuItemSideBar(prop: {
   icon: IconType;
   option: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
 }) {
   const pathName: string = usePathname();
 
   const { colorMode } = useColorMode();
   return (
-    <Link as={NextLink} href={prop.href}>
+      <Link as={NextLink} href={prop.href || '#'} onClick={prop.onClick}> {/* '#' usado en caso de que href sea null o undefine */}
       <Box pr={"25px"} as="button">
         <HStack
           _hover={
@@ -84,13 +93,6 @@ function MenuItemSideBar(prop: {
               ? { bg: "sideBarItemHover.light" }
               : { bg: "sideBarItemHover.dark" }
           }
-          // bg={
-          //   pathName == prop.href
-          //     ? colorMode == "light"
-          //       ? "sideBarItemHover.light"
-          //       : "sideBarItemHover.dark"
-          //     : ""
-          // }
           h={"50px"}
           borderRightRadius={"25px"}
           minW={"230px"}
@@ -114,26 +116,16 @@ function MenuItemSideBar(prop: {
 function SideMenu() {
   return (
     <Box>
-      <VStack display={"flex"} spacing={4} align={"left"}>
-        <MenuItemSideBar
-          icon={MdOutlineInventory}
-          option="Inventario"
-          href="/home/inventario"
-        />
-        <MenuItemSideBar
-          icon={MdPerson}
-          option="Usuarios"
-          href="/home/usuarios"
-        />
-        <MenuItemSideBar
-          icon={MdPiano}
-          option="Instrumentos"
-          href="/home/instrumentos"
-        />
+      <VStack spacing={4} align={"left"}>
         <MenuItemSideBar
           icon={MdOutlineInventory2}
           option="Archivos"
           href="/home/archivos"
+        />
+        <MenuItemSideBar
+          icon={MdCalendarMonth}
+          option="Calendario"
+          href="/home/calendario"
         />
         <MenuItemSideBar
           icon={MdMusicNote}
@@ -141,9 +133,24 @@ function SideMenu() {
           href="/home/canciones"
         />
         <MenuItemSideBar
-          icon={MdCalendarMonth}
-          option="Calendario"
-          href="/home/calendario"
+          icon={MdPiano}
+          option="Préstamos"
+          href="/home/instrumentos"
+        />
+        <MenuItemSideBar
+          icon={MdOutlineInventory}
+          option="Inventario"
+          href="/home/inventario"
+        />
+        <MenuItemSideBar
+          icon={MdOutlineSavings}
+          option="Tesoreria"
+          href="/home/tesoreria"
+        />
+        <MenuItemSideBar
+          icon={MdPerson}
+          option="Usuarios"
+          href="/home/usuarios/getUsuarios"
         />
       </VStack>
     </Box>
