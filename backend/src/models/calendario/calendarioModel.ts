@@ -4,9 +4,7 @@ export interface ItemCalendario {
     nombreAct: string;
     fechaInicio?: Date;
     fechaTermino?: Date;
-
-    estadoActividad?: "Activo" | "Inactivo";
-
+    estadoActividad?: boolean;
     descripcion: string;
 }
 
@@ -16,7 +14,7 @@ const calendarioSchema = new Schema<ItemCalendario>(
         fechaInicio: { type: Date },
         fechaTermino: { type: Date },
 
-        estadoActividad: { type: String, enum: ["Activo", "Inactivo"] },
+        estadoActividad: { type: Boolean },
 
         descripcion: { type: String, maxlength: 250 },
     },

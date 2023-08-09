@@ -8,8 +8,8 @@ import React, { useMemo, useState } from 'react'
 import { MdArrowDropDown, MdArrowDropUp, MdCreate, MdDelete, MdHelp, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
 import AgregarCalendario from '../widgets/agregarCalendario'
 import EliminarCalendario from '../widgets/eliminarCalendario';
-/* import EditarCalendario from '../widgets/editarCalendario';
- */
+import EditarCalendario from '../widgets/editarCalendario';
+
 export function CalendarioBody() {
 
   const todoQuery = useQuery({
@@ -123,7 +123,7 @@ export function CalendarioBody() {
           )
         }
       },
-      /* {
+      {
         id: "edit",
         enableSorting: false,
         header: () => {
@@ -147,7 +147,7 @@ export function CalendarioBody() {
           return (
             <EditarCalendario
               id={row.getValue("id")}
-              nombreAct={row.getValue("nombre")}
+              nombre={row.getValue("nombreAct")}
               fechaInicio={row.getValue("fechaInicio")}
               fechaTermino={row.getValue("fechaTermino")}
               estadoActividad={row.getValue("estadoActividad")}
@@ -156,7 +156,7 @@ export function CalendarioBody() {
           );
         },
 
-      }, */
+      },
       {
         id: "delete",
         enableSorting: false,
@@ -218,7 +218,7 @@ export function CalendarioBody() {
       <Flex w={"100%"} h={"100%"} direction={{ base: "column", md: "row" }}>
         <Box w={{ base: "100%", md: "100%" }} h={"100%"}>
           <VStack w={"100%"} h={"100%"} spacing={"30px"}>
-          <HStack justifyContent={"space-between"} w={"100%"}>
+            <HStack justifyContent={"space-between"} w={"100%"}>
               <Text textStyle={"titulo"}>Listado Actividades</Text>
               <AgregarCalendario />
             </HStack>

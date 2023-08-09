@@ -173,14 +173,15 @@ function AgregarCalendario() {
                                 )}
                             </FormControl>
                             <FormControl mt={"25px"} isInvalid={!fechaInicio}>
-                                <FormLabel>Fecha de Inicio</FormLabel>
-                                <Input
-                                    type="date"
-                                    onChange={handleFechaInicioChange}
-                                    min={date.toISOString().split('T')[0]}
-                                    value={fechaInicio ? fechaInicio.toISOString().split('T')[0] : ''}
-                                />
-                            </FormControl>
+                        <FormLabel>Fecha de Inicio</FormLabel>
+                        <Input
+                            type="date"
+                            onChange={handleFechaInicioChange}
+                            min={date.toISOString().split('T')[0]}  // Establecemos el mínimo como hoy
+                            value={fechaInicio ? fechaInicio.toISOString().split('T')[0] : ''}
+                        />
+                    </FormControl>
+
                             <FormControl mt={"25px"} isInvalid={fechaTerminoErr}>
                                 <FormLabel>Fecha de Término</FormLabel>
                                 <Input

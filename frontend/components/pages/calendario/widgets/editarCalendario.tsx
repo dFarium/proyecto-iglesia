@@ -1,40 +1,33 @@
 import {
     AlertDialog,
     AlertDialogBody,
+    AlertDialogContent,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogContent,
     AlertDialogOverlay,
     Button,
-    useDisclosure,
-    IconButton,
-    useColorMode,
+    Flex,
     FormControl,
+    FormErrorMessage,
     FormHelperText,
     FormLabel,
-    HStack,
+    IconButton,
     Input,
-    Textarea,
-    FormErrorMessage,
-    Box,
-    Switch,
-    MenuButton,
-    Menu,
-    MenuList,
-    MenuItem,
-    Circle,
     Select,
+    Switch,
+    useColorMode,
+    useDisclosure,
 } from "@chakra-ui/react";
 
 import { useRef, useState } from "react";
-import { MdCreate, MdExpandMore } from "react-icons/md";
-import { minDate, textDate, textDefaultDate } from "@/utils/dateUtils";
+import { MdCreate } from "react-icons/md";
+import { minDate, textDate } from "@/utils/dateUtils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ItemCalendario, editarItemCalendario } from "@/data/calendario/item";
+import { editarItemCalendario } from "@/data/calendario/item";
 
 function EditarCalendario(props: {
     id: string;
-    nombreAct: string;
+    nombre: string;
     fechaInicio: Date;
     fechaTermino: Date;
     estadoActividad: boolean;
@@ -44,54 +37,38 @@ function EditarCalendario(props: {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef(null);
     const { colorMode } = useColorMode();
-
     const date = new Date();
 
-    const [nombreAct, setNombre] = useState<string>("");
+    const hoy = new Date();
+    const [nombre, setNombre] = useState<string>("");
     const [nombreErr, setNombreErr] = useState<boolean>(false);
-
-    const [fechaInicio, setFechaInicio] = useState<Date>();
-    const [fechaInicioErr, setFechaInicioErr] = useState<boolean>(false);
-
-    const [fechaTermino, setFechaTermino] = useState<Date>(date);
-    const [fechaTerminoErr, setFechaTerminoErr] = useState<boolean>(false);
-
-    const [estadoActividad, setEstadoActividad] = useState<boolean>();
-    const [estadoActividadErr, setEstadoActividadErr] = useState<boolean>(false);
-
+    const [fechaInicio, setFechaInicio] = useState<Date>(hoy);
+    const [fechaTermino, setFechaTermino] = useState<Date>(hoy);
+    const [estadoActividad, setEstadoActividad] = useState<boolean>(false);
     const [descripcion, setDescripcion] = useState<string>("");
-    const [descripcionErr, setDescripcionErr] = useState<boolean>(false);
+
+    const [isFechaInicioValid, setIsFechaInicioValid] = useState(true);
+    const [isFechaLimiteValid, setIsFechaLimiteValid] = useState(false);
 
     const setTodoInicio = () => {
-
-        setNombre(props.nombreAct);
-        setNombreErr(false);
-
+        setNombre(props.nombre);
         setFechaInicio(props.fechaInicio);
-        setFechaInicioErr(false);
-
         setFechaTermino(props.fechaTermino);
-        setFechaTerminoErr(false)
-
-        setEstadoActividad(props.estadoActividad)
-        setEstadoActividadErr(false)
-
+        setEstadoActividad(props.estadoActividad);
         setDescripcion(props.descripcion);
-        setDescripcionErr(false);
-    };
+    }
 
-    const showDate = (date: Date): string => {
-        if (date) {
-            return "Actual: " + textDate(date);
-        }
-        return "Sin fecha";
-    };
+    const fechaToValue = (fecha: Date) => {
+        if (!fecha) return undefined;
+        const objDate = new Date(fecha);
+        return objDate.toISOString().split('T')[0];
+    }
 
     const queryClient = useQueryClient();
 
     const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        const isValid = /^(?!.*[ ]{2,})[a-zA-Z0-9._-]*$/.test(value);
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value);
         setNombreErr(value === "" || !isValid);
         if (isValid) {
             setNombre(value);
@@ -100,48 +77,24 @@ function EditarCalendario(props: {
 
     const handleFechaInicioChange = (e: any) => {
         const d = new Date(e.target.value);
-        const selectedDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-
-        if (selectedDate >= date) {
-            setFechaInicio(selectedDate);
-
-            if (fechaTermino && selectedDate > fechaTermino) {
-                setFechaTermino(selectedDate);
-                setFechaTerminoErr(false);
-            }
-
-            if (!fechaTermino) {
-                setFechaTermino(selectedDate);
-                setFechaTerminoErr(false);
-            }
-        }
+        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        setFechaInicio(date);
+        setIsFechaInicioValid(!!e.target.value);
     };
 
     const handleFechaTerminoChange = (e: any) => {
         const d = new Date(e.target.value);
         const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-
-        if (!fechaInicio || date >= fechaInicio) {
-            setFechaTermino(date);
-            setFechaTerminoErr(false);
-        } else {
-            setFechaTerminoErr(true);
-        }
-    };
-
-    const handleEstadoActividadChange = (e: any) => {
-        setEstadoActividad(e.target.value);
-    };
-
-
-    const handleDescripcionChange = (e: any) => {
-        setDescripcion(e.target.value);
-        setDescripcionErr(false);
+        setFechaTermino(date);
+        /* setIsFechaLimiteValid(!isMenorQueInicio(fechaInicio, fechaTermino)); */
     };
 
     const mutation = useMutation({
-        mutationFn: async (newItem: ItemCalendario) => {
+        mutationFn: async (newItem: any) => {
             const res = await editarItemCalendario(props.id, newItem);
+
+            console.log("AAAAAAAAAAAAAAAAAAAAAAAA");
+            console.log(res);
             return res;
         },
         onSuccess: () => {
@@ -150,35 +103,33 @@ function EditarCalendario(props: {
     });
 
     return (
-
         <>
-
             <IconButton
                 bg={
                     colorMode == "light"
-                        ? "calendarioItemEditBg.light"
-                        : "calendarioItemEditBg.dark"
+                        ? "inventarioItemEditBg.light"
+                        : "inventarioItemEditBg.dark"
                 }
-                icon={<MdCreate />}
+                isRound
+                _hover={{ bg: "#66b4ff" }}
                 fontSize={"1.4em"}
                 aria-label={"Editar"}
-                _hover={{ bg: "#66b4ff" }}
-                isRound
-                onClick={() => { onOpen }}
-                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                icon={<MdCreate />}
+                onClick={() => {
+                    onOpen();
+                    setTodoInicio();
+                }}
+                color={colorMode == "light" ? "#4A5568" : "#2D3748"}></IconButton>
 
-            />
-
-            {/* INGRESO */}
             <AlertDialog
-                isOpen={isOpenIngreso}
+                isOpen={isOpen}
                 leastDestructiveRef={cancelRef}
-                onClose={onCloseIngreso}
+                onClose={onClose}
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Editar Ingreso
+                            Editar Evento
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             <FormControl isInvalid={nombreErr}>
@@ -193,59 +144,19 @@ function EditarCalendario(props: {
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombre.length} / 25
                                     </FormHelperText>
                                 )}
                             </FormControl>
 
-                            <Box>
-                                <FormLabel>Tipo</FormLabel>
-                                <Select value={tipo} onChange={handleTipoChange}>
-                                    <option value="Ingreso">Ingreso</option>
-                                    <option value="Gasto">Gasto</option>
-                                </Select>
-                            </Box>
-
-                            <FormControl isInvalid={valorCajaErr}>
-                                <FormLabel>Monto</FormLabel>
+                            <FormControl isDisabled={true}>
+                                <FormLabel>Fecha Inicio</FormLabel>
                                 <Input
-                                    placeholder="Monto"
-                                    value={valorCaja}
-                                    onChange={handleValorCajaChange}
-                                    maxLength={8}
-                                />
-                                {valorCajaErr ? (
-                                    <FormErrorMessage>Ingrese un monto válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {"$ "}{formatCLP(valorCaja)} / {"$ "}{"99.999.999"}
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Fecha</FormLabel>
-                                <Input
-                                    type="date"
-                                    value={textDefaultDate(fechaGasto)}
-                                    onChange={handleFechaGastoChange}
-                                    max={minDate(date)}
-                                />
-                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                    {showDate(oldDate)}
-                                </FormHelperText>
-                            </FormControl>
-                            <FormControl mt={"25px"} isInvalid={descripcionErr}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
-                                    value={descripcion}
-                                    onChange={handleDescripcionChange}
-                                    maxLength={250}
-                                />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
+                                    defaultValue={fechaToValue(props.fechaInicio)}
+                                    type={"date"}
+                                    onChange={handleFechaInicioChange}
+                                    min={minDate(date)}></Input>
+                                <FormErrorMessage>Ingrese una fecha Válida</FormErrorMessage>
                             </FormControl>
                         </AlertDialogBody>
                         <AlertDialogFooter>
@@ -253,11 +164,12 @@ function EditarCalendario(props: {
                                 ref={cancelRef}
                                 mr={3}
                                 onClick={() => {
-                                    setNombreErr(false);
-                                    setValorCajaErr(false);
-                                    setFechaGastoErr(false);
-                                    setDescripcionErr(false);
-                                    onCloseIngreso();
+                                    setNombre("");
+                                    setEstadoActividad(false);
+                                    setDescripcion("");
+                                    setIsFechaInicioValid(false);
+                                    setIsFechaLimiteValid(false);
+                                    onClose();
                                 }}
                             >
                                 Cancelar
@@ -265,15 +177,20 @@ function EditarCalendario(props: {
                             <Button
                                 colorScheme="blue"
                                 onClick={() => {
-                                    if (validation()) {
+
+                                    if (
+                                        nombre/*  &&
+                                        fechaInicio &&
+                                        fechaTermino &&
+                                        estadoActividad &&
+                                        descripcion */
+                                    ) {
                                         mutation.mutate({
-                                            nombre,
-                                            valorCaja,
-                                            fechaGasto,
-                                            descripcion,
-                                            tipo
-                                        });
-                                        onCloseIngreso();
+                                            nombre
+                                        })
+                                        setIsFechaInicioValid(false);
+                                        setIsFechaLimiteValid(false);
+                                        onClose();
                                     }
                                 }}
                             >
@@ -282,245 +199,10 @@ function EditarCalendario(props: {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialogOverlay>
-            </AlertDialog>
-
-            {/* GASTO */}
-            <AlertDialog
-                isOpen={isOpenGasto}
-                leastDestructiveRef={cancelRef}
-                onClose={onCloseGasto}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Editar Gasto
-                        </AlertDialogHeader>
-                        <AlertDialogBody>
-                            <FormControl isInvalid={nombreErr}>
-                                <FormLabel>Nombre</FormLabel>
-                                <Input
-                                    placeholder="Nombre"
-                                    value={nombre}
-                                    onChange={handleNombreChange}
-                                    maxLength={50}
-                                />
-                                {nombreErr ? (
-                                    <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-
-                            <Box>
-                                <FormLabel>Tipo</FormLabel>
-                                <Select value={tipo} onChange={handleTipoChange}>
-                                    <option value="Ingreso">Ingreso</option>
-                                    <option value="Gasto">Gasto</option>
-                                </Select>
-                            </Box>
-
-                            <FormControl isInvalid={valorCajaErr}>
-                                <FormLabel>Monto</FormLabel>
-                                <Input
-                                    placeholder="Monto"
-                                    value={valorCaja}
-                                    onChange={handleValorCajaChange}
-                                    maxLength={8}
-                                />
-                                {valorCajaErr ? (
-                                    <FormErrorMessage>Ingrese un monto válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {"$ "}{formatCLP(valorCaja)} / {"$ "}{"99.999.999"}
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Fecha</FormLabel>
-                                <Input
-                                    type="date"
-                                    value={textDefaultDate(fechaGasto)}
-                                    onChange={handleFechaGastoChange}
-                                    max={minDate(date)}
-                                />
-                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                    {showDate(oldDate)}
-                                </FormHelperText>
-                            </FormControl>
-                            <FormControl mt={"25px"} isInvalid={descripcionErr}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
-                                    value={descripcion}
-                                    onChange={handleDescripcionChange}
-                                    maxLength={250}
-                                />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
-                            </FormControl>
-                        </AlertDialogBody>
-                        <AlertDialogFooter>
-                            <Button
-                                ref={cancelRef}
-                                mr={3}
-                                onClick={() => {
-                                    setNombreErr(false);
-                                    setValorCajaErr(false);
-                                    setFechaGastoErr(false);
-                                    setDescripcionErr(false);
-                                    onCloseGasto();
-                                }}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                colorScheme="blue"
-                                onClick={() => {
-                                    if (validation()) {
-                                        console.log("AAAAAAAAAa")
-                                        console.log(descripcion);
-                                        mutation.mutate({
-                                            nombre,
-                                            valorCaja,
-                                            fechaGasto,
-                                            descripcion,
-                                            tipo
-                                        });
-                                        onCloseGasto();
-                                    }
-                                }}
-                            >
-                                Aceptar
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
-            {/* TODO */}
-            <AlertDialog
-                isOpen={isOpenTodo}
-                leastDestructiveRef={cancelRef}
-                onClose={onCloseTodo}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-                            Editar Gasto
-                        </AlertDialogHeader>
-                        <AlertDialogBody>
-                            <FormControl isInvalid={nombreErr}>
-                                <FormLabel>Nombre</FormLabel>
-                                <Input
-                                    placeholder="Nombre"
-                                    value={nombre}
-                                    onChange={handleNombreChange}
-                                    maxLength={50}
-                                />
-                                {nombreErr ? (
-                                    <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-
-                            <Box>
-                                <FormLabel>Tipo</FormLabel>
-                                <Select value={tipo} onChange={handleTipoChange}>
-                                    <option value="Ingreso">Ingreso</option>
-                                    <option value="Gasto">Gasto</option>
-                                </Select>
-                            </Box>
-
-                            <FormControl isInvalid={valorCajaErr}>
-                                <FormLabel>Monto</FormLabel>
-                                <Input
-                                    placeholder="Monto"
-                                    value={valorCaja}
-                                    onChange={handleValorCajaChange}
-                                    maxLength={8}
-                                />
-                                {valorCajaErr ? (
-                                    <FormErrorMessage>Ingrese un monto válido</FormErrorMessage>
-                                ) : (
-                                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {"$ "}{formatCLP(valorCaja)} / {"$ "}{"99.999.999"}
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Fecha</FormLabel>
-                                <Input
-                                    type="date"
-                                    value={textDefaultDate(fechaGasto)}
-                                    onChange={handleFechaGastoChange}
-                                    max={minDate(date)}
-                                />
-                                <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                    {showDate(oldDate)}
-                                </FormHelperText>
-                            </FormControl>
-                            <FormControl mt={"25px"} isInvalid={descripcionErr}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
-                                    value={descripcion}
-                                    onChange={handleDescripcionChange}
-                                    maxLength={250}
-                                />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {descripcion.length} / 250
-                                </FormHelperText>
-                            </FormControl>
-                        </AlertDialogBody>
-                        <AlertDialogFooter>
-                            <Button
-                                ref={cancelRef}
-                                mr={3}
-                                onClick={() => {
-                                    setNombreErr(false);
-                                    setValorCajaErr(false);
-                                    setFechaGastoErr(false);
-                                    setDescripcionErr(false);
-                                    onCloseTodo();
-                                }}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                colorScheme="blue"
-                                onClick={() => {
-                                    if (validation()) {
-                                        console.log("AAAAAAAAAa")
-                                        console.log(descripcion);
-                                        mutation.mutate({
-                                            nombre,
-                                            valorCaja,
-                                            fechaGasto,
-                                            descripcion,
-                                            tipo
-                                        });
-                                        onCloseTodo();
-                                    }
-                                }}
-                            >
-                                Aceptar
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
+            </AlertDialog >
         </>
     )
+
 }
 
-
-export default EditarCalendario
+export default EditarCalendario;
