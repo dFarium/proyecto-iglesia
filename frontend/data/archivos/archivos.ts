@@ -63,8 +63,9 @@ const viewFavorite = async (id: string) => {
 };
 
 const downloadFile = async (id: string) => {
+  console.log(process.env.API_URL, "/file/download/", id);
     const res = await axios.get(`${process.env.API_URL}/file/download/${id}`);
-    return res.data;
+    return res;
 };
 
 // const subirArchivo = async () => {
@@ -73,9 +74,11 @@ const downloadFile = async (id: string) => {
 // };
 
 const deleteFile = async (id: string) => {
-    const res = await axios.get(`${process.env.API_URL}/file/delete/${id}`);
+  console.log("dir ",process.env.API_URL,"/file/delete/",id);
+    const res = await axios.delete(`${process.env.API_URL}/file/delete/${id}`);
     return res.data;
 };
+
 
 export {
     viewAllFiles,
