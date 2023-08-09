@@ -1,3 +1,4 @@
+"use client";
 import React from 'react'
 
 import {
@@ -15,6 +16,7 @@ import {
   Circle,
   IconButton,
   useColorMode,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -46,8 +48,10 @@ import { ItemTesoreria, obtenerGastoTesoreria } from '@/data/tesoreria/item';
 import EditarTesoreria from '../widgets/editarTesoreria';
 import EliminarTesoreria from '../widgets/eliminarTesoreria';
 import { NuevoGastoTesoreria } from '../widgets/nuevoTesoreria';
+import CargarBoletaDescripcion from '../widgets/cargarBoletaDescripcion';
 
 export function GastoListBody() {
+
 
   const gastoQuery = useQuery({
     queryKey: ["obtenerGastoTesoreria"],
@@ -63,12 +67,17 @@ export function GastoListBody() {
   const [columnVisibility] = useState({
     id: false,
     nombre: true,
+    index: false,
     valorCaja: true,
     fechaGasto: true,
-    descripcion: true,
+    descripcion: false,
     tipo: false,
     boleta: false
   });
+
+  function formatCLP(value: number) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -90,10 +99,14 @@ export function GastoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+          const { isOpen, onOpen, onClose } = useDisclosure();
           return (
-            <Text>
-              {row.getValue("nombre")}
-            </Text>
+            <>
+              <Text onClick={onOpen}>
+                {row.getValue("nombre")}
+              </Text>
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+            </>
           )
         },
       },
@@ -102,7 +115,6 @@ export function GastoListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               Monto
             </Text>
@@ -112,9 +124,8 @@ export function GastoListBody() {
         cell: ({ row }) => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
-              {row.getValue("valorCaja")}
+              ${formatCLP(row.getValue("valorCaja"))}
             </Text>
           );
         },
@@ -124,9 +135,8 @@ export function GastoListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
-              Fecha de Gasto
+              Fecha de Ingreso
             </Text>
           );
         },
@@ -135,7 +145,6 @@ export function GastoListBody() {
           const date = textDate(row.getValue<Date>("fechaGasto"));
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               {date}
             </Text>
@@ -155,6 +164,18 @@ export function GastoListBody() {
         }
       },
       {
+        id: 'boleta',
+        header: 'Boleta',
+        accessorKey: "boleta",
+        cell: ({ row }) => {
+          return (
+            <Text>
+              {row.getValue("boleta")}
+            </Text>
+          )
+        }
+      },
+      {
         id: "tipo",
         header: "tipo",
         accessorKey: "tipo",
@@ -167,6 +188,40 @@ export function GastoListBody() {
         },
       },
       {
+        id: "edit",
+        enableSorting: false,
+        header: () => {
+          return (
+            <>
+              <>
+                <Circle
+                  //bg={"#F6AD55"}
+                  border={"2px solid"}
+                  size={"1.5em"}
+                  fontSize={"1.2em"}
+                  //color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                  cursor={"default"}
+                >
+                  <MdCreate />
+                </Circle>
+              </>
+            </>
+          );
+        }, cell: ({ row }) => {
+          return (
+            <EditarTesoreria
+              id={row.getValue("id")}
+              nombre={row.getValue("nombre")}
+              valorCaja={row.getValue("valorCaja")}
+              tipo={row.getValue("tipo")}
+              descripcion={row.getValue("descripcion")}
+              fechaGasto={row.getValue("fechaGasto")}
+            />
+          );
+        },
+
+      },
+      {
         id: "delete",
         enableSorting: false,
         header: () => {
@@ -174,18 +229,18 @@ export function GastoListBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
+                //borderColor={
+                  //colorMode == "light"
+                    //? "tesoreriaDeleteItem.light"
+                    //: "tesoreriaDeleteItem.dark"
+                //}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
+                //color={
+                  //colorMode == "light"
+                    //? "tesoreriaDeleteItem.light"
+                    //: "tesoreriaDeleteItem.dark"
+                //}
                 cursor={"default"}
               >
                 <MdDelete />
@@ -222,13 +277,14 @@ export function GastoListBody() {
     debugTable: true,
   });
 
-
   return (
     <Box w={"100%"} h={"100%"}>
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Gastos</Text>
-          < NuevoGastoTesoreria />
+          <HStack>
+            <NuevoGastoTesoreria />
+          </HStack>
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -336,17 +392,24 @@ export function GastoListBody() {
                 />
               </HStack>
             </HStack>
-            {/* <HStack display={{ base: "none", lg: "flex" }}>
+            <HStack display={{ base: "none", lg: "flex" }}>
               <MdHelp size={"20px"} />
               <Text minW={"400px"}>
-                Puede ver las fotos dando click en el nombre del Item
+                Puede ver la descripción y el archivo adjunto dando click en el nombre.
               </Text>
-            </HStack> */}
+            </HStack>
           </HStack>
         </VStack>
       </VStack>
+
+      <VStack>
+
+      </VStack>
     </Box>
-  ); //
+
+
+
+  );
 }
 function showPages(maxRows: number, currentIndex: number, pageSize: number) {
   if (maxRows < pageSize * currentIndex + pageSize) {
@@ -357,7 +420,22 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
 }
 
 
+/* {
+  id: "nombre",
+  header: "Nombre",
+  accessorKey: "nombre",
+  cell: ({ row }) => {
+    return (
+      <Text>
+        {row.getValue("nombre")}
+      </Text>
+    )
+  },
+}, */
+
+
 /*
+
        {
         id: "edit",
         enableSorting: false,

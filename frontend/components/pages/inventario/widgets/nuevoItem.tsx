@@ -1,4 +1,8 @@
 import { IItemInventario, createItemInventario } from "@/data/inventario/item";
+import {
+  IPrestamoInstrumento,
+  createPrestamoInstrumento,
+} from "@/data/prestamos/prestamos";
 import { minDate, textDefaultDate } from "@/utils/dateUtils";
 import {
   AlertDialog,
@@ -24,19 +28,23 @@ import {
   Text,
   Switch,
   Box,
+  VStack,
 } from "@chakra-ui/react";
 
 import { useRef, useState } from "react";
-import {
-  MdAdd,
-  MdComputer,
-  MdPiano,
-  MdReceipt,
-  MdReceiptLong,
-} from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  IArchivos,
+  uploadNewFile,
+  uploadNewFileData,
+} from "@/data/archivos/archivos";
+import { getUserName } from "@/utils/roleUtils";
 
 function NuevoInstrumento() {
+  //get username
+  const userName = getUserName();
+
   // use disclosure
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -44,10 +52,6 @@ function NuevoInstrumento() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
-
-  const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -57,18 +61,13 @@ function NuevoInstrumento() {
   const [desc, setDesc] = useState<string>("");
   const [prestable, setPrestable] = useState<boolean>(false);
 
+  const [imagen, setImagen] = useState<File | null>(null);
+
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
-  };
-
-  const handleCantidadChange = (e: any) => {
-    const r = e.target.value.replace(/\D/g, "");
-    setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -83,38 +82,38 @@ function NuevoInstrumento() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
-      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
       queryClient.invalidateQueries({
         queryKey: ["itemsInventarioInstrumentos"],
       });
     },
   });
+
+  const handlePicChange = async (file: any) => {
+    const imagen = file.target.files?.[0] || null;
+    setImagen(imagen);
+  };
+
+  const uploadPicture = async (file: any, fileData: IArchivos) => {
+    const formFile = new FormData();
+    formFile.append("archivos", file);
+    try {
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
+    } catch (error) {
+      console.log("file no arriba:", fileData.fileName);
+    }
+  };
 
   return (
     <>
@@ -148,6 +147,8 @@ function NuevoInstrumento() {
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         onClose={onClose}
       >
         <AlertDialogOverlay>
@@ -164,13 +165,10 @@ function NuevoInstrumento() {
                   onChange={handleNombreChange}
                   maxLength={50}
                 />
-                {nombreErr ? (
-                  <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                ) : (
-                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                    {nombre.length} / 50
-                  </FormHelperText>
-                )}
+
+                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                  {nombre.length} / 50
+                </FormHelperText>
               </FormControl>
               <FormControl mt={"25px"}>
                 <FormLabel>Fecha de Salida</FormLabel>
@@ -196,13 +194,30 @@ function NuevoInstrumento() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      // accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -234,45 +249,61 @@ function NuevoInstrumento() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
+
                   setFechaSalida(undefined);
                   setDesc("");
                   setCicloMant(undefined);
                   setPrestable(false);
                   onClose();
+                  setImagen(null);
                 }}
               >
                 Cancelar
               </Button>
               <Button
+                isDisabled={!nombre}
                 colorScheme="blue"
                 onClick={() => {
-                  // validation();
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Instrumento",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad: 1,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Instrumento",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad: 1,
+                    uploader: userName,
+                    desc,
+                    cicloMant,
+                    ultMant,
+                    ultMod: userName,
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setPrestable(false);
-                    onClose();
                   }
+
+                  setNombre("");
+
+                  // setCantidad(1);
+                  // setCantidadErr(false);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setImagen(null);
+                  setPrestable(false);
+                  onClose();
                 }}
               >
                 Aceptar
@@ -286,6 +317,9 @@ function NuevoInstrumento() {
 }
 
 function NuevoEquipoElec() {
+  //get username
+  const userName = getUserName();
+
   // use disclosure
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -293,10 +327,8 @@ function NuevoEquipoElec() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
 
   const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -306,18 +338,18 @@ function NuevoEquipoElec() {
   const [desc, setDesc] = useState<string>("");
   const [prestable, setPrestable] = useState<boolean>(false);
 
+  const [imagen, setImagen] = useState<File | null>(null);
+
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
   };
 
   const handleCantidadChange = (e: any) => {
     const r = e.target.value.replace(/\D/g, "");
     setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -332,34 +364,37 @@ function NuevoEquipoElec() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
     },
   });
+
+  const handlePicChange = async (file: any) => {
+    const imagen = file.target.files?.[0] || null;
+    setImagen(imagen);
+  };
+
+  const uploadPicture = async (file: any, fileData: IArchivos) => {
+    const formFile = new FormData();
+    formFile.append("archivos", file);
+    try {
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
+      console.log("file");
+    } catch (error) {
+      console.log("file:", fileData.fileName);
+    }
+  };
 
   return (
     <>
@@ -392,6 +427,8 @@ function NuevoEquipoElec() {
 
       <AlertDialog
         isOpen={isOpen}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onClose}
       >
@@ -403,23 +440,20 @@ function NuevoEquipoElec() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
                     <Input
                       value={cantidad}
@@ -454,13 +488,30 @@ function NuevoEquipoElec() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -493,43 +544,57 @@ function NuevoEquipoElec() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
                   setDesc("");
                   setPrestable(false);
                   onClose();
+                  setImagen(null);
                 }}
               >
                 Cancelar
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Equipo",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Equipo",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad,
+                    uploader: userName,
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: userName,
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    setNombre("");
-                    setFechaSalida(undefined);
-                    setDesc("");
-                    setCicloMant(undefined);
-                    setPrestable(false);
-                    onClose();
                   }
+                  setNombre("");
+                  setFechaSalida(undefined);
+                  setDesc("");
+                  setCicloMant(undefined);
+                  setPrestable(false);
+                  onClose();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -543,6 +608,9 @@ function NuevoEquipoElec() {
 }
 
 function NuevoItemInventario() {
+  //get username
+  const userName = getUserName();
+  
   // use disclosures
   const {
     isOpen: isOpenInstrumentos,
@@ -565,10 +633,8 @@ function NuevoItemInventario() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
 
   const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -578,18 +644,18 @@ function NuevoItemInventario() {
   const [desc, setDesc] = useState<string>("");
   const [prestable, setPrestable] = useState<boolean>(false);
 
+  const [imagen, setImagen] = useState<File | null>(null);
+
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
   };
 
   const handleCantidadChange = (e: any) => {
     const r = e.target.value.replace(/\D/g, "");
     setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -604,34 +670,36 @@ function NuevoItemInventario() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
     },
   });
+
+  const handlePicChange = async (file: any) => {
+    const imagen = file.target.files?.[0] || null;
+    setImagen(imagen);
+  };
+
+  const uploadPicture = async (file: any, fileData: IArchivos) => {
+    const formFile = new FormData();
+    formFile.append("archivos", file);
+    try {
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
+    } catch (error) {
+      console.log("file:", fileData.fileName);
+    }
+  };
 
   return (
     <>
@@ -695,6 +763,8 @@ function NuevoItemInventario() {
 
       <AlertDialog
         isOpen={isOpenInstrumentos}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onCloseInstrumentos}
       >
@@ -704,7 +774,7 @@ function NuevoItemInventario() {
               Agregar Instrumento Musical
             </AlertDialogHeader>
             <AlertDialogBody>
-              <FormControl>
+              <FormControl isInvalid={!nombre}>
                 <FormLabel>Nombre</FormLabel>
 
                 <Input
@@ -712,13 +782,10 @@ function NuevoItemInventario() {
                   onChange={handleNombreChange}
                   maxLength={50}
                 />
-                {nombreErr ? (
-                  <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                ) : (
-                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                    {nombre.length} / 50
-                  </FormHelperText>
-                )}
+
+                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                  {nombre.length} / 50
+                </FormHelperText>
               </FormControl>
               <FormControl mt={"25px"}>
                 <FormLabel>Fecha de Salida</FormLabel>
@@ -744,13 +811,30 @@ function NuevoItemInventario() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -782,45 +866,59 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setFechaSalida(undefined);
                   setDesc("");
                   setCicloMant(undefined);
                   setPrestable(false);
                   onCloseInstrumentos();
+                  setImagen(null);
                 }}
               >
                 Cancelar
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre}
                 onClick={() => {
                   // validation();
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Instrumento",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad: 1,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Instrumento",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad: 1,
+                    uploader: userName,
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: userName,
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setPrestable(false);
-                    onCloseInstrumentos();
                   }
+                  setNombre("");
+                  setCantidad(1);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setPrestable(false);
+                  onCloseInstrumentos();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -834,6 +932,8 @@ function NuevoItemInventario() {
 
       <AlertDialog
         isOpen={isOpenEquipo}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onCloseEquipo}
       >
@@ -845,23 +945,20 @@ function NuevoItemInventario() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
                     <Input
                       value={cantidad}
@@ -896,13 +993,30 @@ function NuevoItemInventario() {
                   </FormHelperText>
                 </FormControl>
               </HStack>
-              <HStack mt={"25px"} justify={"space-between"}>
-                <Button>Subir Foto</Button>
+              <HStack mt={"25px"} justify={"space-between"} align={"start"}>
+                <VStack>
+                  <Button>
+                    Subir Foto
+                    <Input
+                      type="file"
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      aria-hidden="true"
+                      accept="image/*"
+                      onChange={handlePicChange}
+                    />
+                  </Button>
+                  <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                </VStack>
                 <Box>
                   <FormControl
                     display={"flex"}
                     flexDir={"column"}
-                    alignItems={"end"}
+                    alignItems={"center"}
                   >
                     <FormLabel>¿Disponible para préstamo?</FormLabel>
                     <Switch
@@ -935,43 +1049,57 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
                   setDesc("");
                   setPrestable(false);
                   onCloseEquipo();
+                  setImagen(null);
                 }}
               >
                 Cancelar
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Equipo",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Equipo",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad,
+                    uploader: userName,
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: userName,
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    setNombre("");
-                    setFechaSalida(undefined);
-                    setDesc("");
-                    setCicloMant(undefined);
-                    setPrestable(false);
-                    onCloseEquipo();
                   }
+                  setNombre("");
+                  setFechaSalida(undefined);
+                  setDesc("");
+                  setCicloMant(undefined);
+                  setPrestable(false);
+                  onCloseEquipo();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -985,6 +1113,8 @@ function NuevoItemInventario() {
 
       <AlertDialog
         isOpen={isOpenVarios}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
         leastDestructiveRef={cancelRef}
         onClose={onCloseVarios}
       >
@@ -996,25 +1126,26 @@ function NuevoItemInventario() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
-                    <Input type="text" onChange={handleCantidadChange} />
+                    <Input
+                      value={cantidad}
+                      type="text"
+                      onChange={handleCantidadChange}
+                    />
                     <FormErrorMessage>Ingrese la cantidad</FormErrorMessage>
                   </FormControl>
                 </Box>
@@ -1040,9 +1171,7 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
@@ -1055,28 +1184,25 @@ function NuevoItemInventario() {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Varios",
-                      estado: "Activo",
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      ultMod: "Yo",
-                    });
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setPrestable(false);
-                    onCloseVarios();
-                  }
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Varios",
+                    estado: "Activo",
+                    cantidad,
+                    uploader: userName,
+                    desc,
+                    ultMod: userName,
+                  });
+                  setNombre("");
+                  setCantidad(1);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setPrestable(false);
+                  onCloseVarios();
                 }}
               >
                 Aceptar

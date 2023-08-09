@@ -1,41 +1,61 @@
 import { Archivos, IArchivos } from "../../models/archivos/archivos";
 import { Request, Response } from "express";
 import { CallbackError } from "mongoose";
-import * as fs from 'fs'
+import * as fs from "fs";
+import path from "path";
+
 interface MulterRequest extends Request {
     file: any;
 }
 
-const uploadNewFile = async(req: Request, res: Response) => {
-    const file = req.files[0]
-    // if (req.params.fileValido === false){
-    //     return res.status(415).send({ message: 'Solo se aceptan archivos con extensión .pdf, .doc y .docx' })
-    // }
-    // if (file.length === 0) {
-    //     return res.status(404).send({ message: 'No se ha seleccionado ningun archivo' })
-    // }
-    const newFile = new Archivos({
-        fileName:file.originalname,
-        tagCategoria: "random",
-        mimetype:file.mimetype,
-        url: file.destination,
-        userSubida: null,
-        userModifica: null,
-        publico: false
-    })
+const uploadNewFile = async (req: Request, res: Response) => {
 
-    await newFile.save().catch((err: CallbackError) => {
-        return res.status(400).send({ message: "Error al subir el archivo" });
-    });
-    return res.status(201).send(newFile);
+    const file = req.files[0]
+    //console.log("FILE", file)
+    const newFile = new Archivos({
+        originalName: file.originalname,
+        fileName: file.filename,
+        userName: file.originalname,
+        mimetype: file.mimetype,
+        url: file.destination,
+        tagCategoria: req.params.tag,
+        publico: req.params.acceso
+    })
+    //console.log("newFile:", newFile)
+    await newFile
+        .save()
+        .catch((err: CallbackError) => {
+            //console.log("NO save ",err);
+            return res.status(400).send({ message: "Error al subir el archivo" });
+        }).then(() => {
+            //console.log("Subido");
+            return res.status(201).send(newFile);
+        })
 }
 
+// const getFiles = async (req: Request, res: Response) => {
+//     await Archivos.find({tagCategoria: "-random"})
+//         .sort({ createdAt: "desc" })
+//         .then((items: IArchivos[]) => {
+//             if (items.length === 0) {
+//                 //console.log("Vacio");
+//                 return res.status(200).send([]);
+//             }
+//             return res.status(200).send(items);
+//         })
+//         .catch((err: CallbackError) => {
+//             return res
+//                 .status(400)
+//                 .send({ message: "Error al obtener los archivos completos" });
+//         });
+// };
+
 const getFiles = async (req: Request, res: Response) => {
-    await Archivos.find({})
+    await Archivos.find({ tagCategoria: { $nin: ["Fotos Inventario", "Random", "Boletas", "Canciones"] } })
         .sort({ createdAt: "desc" })
         .then((items: IArchivos[]) => {
             if (items.length === 0) {
-                console.log("Vacio")
+                //console.log("Vacio");
                 return res.status(200).send([]);
             }
             return res.status(200).send(items);
@@ -47,35 +67,33 @@ const getFiles = async (req: Request, res: Response) => {
         });
 };
 
+
 const downloadFile = async (req: Request, res: Response) => {
     await Archivos.findById(req.params.id)
         .then((item) => {
-            let fechaArchivo = item.createdAt.getFullYear() + '_' + (item.createdAt.getMonth() + 1) + '_' + item.createdAt.getDate() + '_' + item.createdAt.getHours() + '_' + item.createdAt.getMinutes() + '_' + item.createdAt.getSeconds()
-            return res.download(item.url+'/'+fechaArchivo+' '+item.fileName);
+            //console.log(item.url + "/" + item.fileName)
+            return res.download(item.url + "/" + item.fileName, item.originalName);
         })
         .catch((err: CallbackError) => {
-            return res
-            .status(400)
-            .send({ message: "Error al encontrar el archivo" });
+            return res.status(400).send({ message: "Error al encontrar el archivo" });
         });
 };
 
 const deleteFile = async (req: Request, res: Response) => {
     await Archivos.findByIdAndDelete(req.params.id)
         .then((item) => {
-            let fechaArchivo = item.createdAt.getFullYear() + '_' + (item.createdAt.getMonth() + 1) + '_' + item.createdAt.getDate() + '_' + item.createdAt.getHours() + '_' + item.createdAt.getMinutes() + '_' + item.createdAt.getSeconds()
-            let fileUrl= item.url+'/'+fechaArchivo+' '+item.fileName
-            fs.unlink(fileUrl,(err)=>{
-                if (err){
-                    return res.status(400).send({ message: "Error al obtener el archivo" })
+            let fileUrl = item.url + "/" + item.fileName;
+            fs.unlink(fileUrl, (err) => {
+                if (err) {
+                    return res
+                        .status(400)
+                        .send({ message: "Error al obtener el archivo" });
                 }
-                return res.status(200).send({ message: "Archivo Eliminado" })
-            })
+                return res.status(200).send({ message: "Archivo Eliminado" });
+            });
         })
         .catch((err: CallbackError) => {
-            return res
-            .status(400)
-            .send({ message: "Error al borrar el archivo" });
+            return res.status(400).send({ message: "Error al borrar el archivo" });
         });
 };
 
@@ -85,23 +103,107 @@ const viewFile = async (req: Request, res: Response) => {
             return res.status(200).send(item);
         })
         .catch((err: CallbackError) => {
-            return res
-            .status(400)
-            .send({ message: "Error al encontrar el archivo" });
+            return res.status(400).send({ message: "Error al encontrar el archivo" });
         });
 };
 
-// const viewFavorite = async (req: Request, res: Response) => {
-//     await Archivos.findById(req.params.id)
-//         .then((item) => {
-//             return res.status(200).send(item);
-//         })
-//         .catch((err: CallbackError) => {
-//             return res
-//             .status(400)
-//             .send({ message: "Error al encontrar el archivo" });
-//         });
-// };
+const sendImg = async (req: Request, res: Response) => {
+    const folderName = req.params.folderName;
+    const imgName = req.params.name;
+    const imgPath = path.join(process.cwd(), "upload", folderName, imgName);
+    console.log(imgPath);
+    console.log("path:", imgPath);
+
+    res.sendFile(imgPath);
+};
+
+const uploadNewFileData = async (req: Request, res: Response) => {
+    const newFile = new Archivos(req.params.originalName);
+    Archivos.findOne({ originalName: req.params.originalName }).then(
+        async (file: IArchivos) => {
+            await newFile
+                .save()
+                .catch((err: CallbackError) => {
+                    console.log(err);
+                    return res.status(400).send({ message: "Error al subir archivo" });
+                })
+                .then(() => {
+                    return res.status(201).send(newFile);
+                });
+        });
+};
+
+const viewFavorite = async (req: Request, res: Response) => {
+    await Archivos.findById(req.params.id)
+        .then((item) => {
+            return res.status(200).send(item);
+        })
+        .catch((err: CallbackError) => {
+            return res
+                .status(400)
+                .send({ message: "Error al encontrar el archivo" });
+        });
+};
+
+const updateArchivo = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+    await Archivos.findByIdAndUpdate(id, req.body.newItem)
+        .then((item: IArchivos) => {
+            if (!item) {
+                return res.status(404).send({ message: "Archivo no encontrado" });
+            }
+            return res.status(200).send({ message: "Archivo actualizado" });
+        })
+        .catch((err: CallbackError) => {
+            console.log(err);
+            return res.status(400).send({ message: "Error al editar Archivo" });
+        });
+};
+
+const subirNewFile = async (req: Request, res: Response) => {
+
+    const file = req.files[0]
+    //console.log("FILE", file)
+    const newFile = new Archivos({
+        originalName: file.originalname,
+        fileName: file.filename,
+        userName: req.params.usuarioName,
+        mimetype: file.mimetype,
+        url: file.destination,
+        tagCategoria: req.params.tag,
+        publico: req.params.acceso
+    })
+    //console.log("newFile:", newFile)
+    await newFile
+        .save()
+        .catch((err: CallbackError) => {
+            //console.log("NO save ",err);
+            return res.status(400).send({ message: "Error al subir el archivo" });
+        }).then(() => {
+            //console.log("Subido");
+            return res.status(201).send(newFile);
+        })
+}
+
+const getSpecificFiles = async (req: Request, res: Response) => {
+    const acceso = req.params.access;
+    //console.log("access:", acceso)
+    await Archivos.find({ tagCategoria: { $nin: ["Fotos Inventario", "Random", "Boletas", "Canciones"] }, publico: acceso })
+        .sort({ createdAt: "desc" })
+        .then((items: IArchivos[]) => {
+            if (items.length === 0) {
+                //console.log("Vacio");
+                return res.status(200).send([]);
+            }
+            return res.status(200).send(items);
+        })
+        .catch((err: CallbackError) => {
+            return res
+                .status(400)
+                .send({ message: "Error al obtener los archivos completos" });
+        });
+};
+
 
 // const viewAsambleaFiles = (req, res)=>{
 
@@ -126,11 +228,5 @@ const viewFile = async (req: Request, res: Response) => {
 //     })
 // }
 
+export { uploadNewFile, uploadNewFileData, getFiles, downloadFile, deleteFile, viewFile, sendImg, updateArchivo, subirNewFile, getSpecificFiles };
 
-export{
-    uploadNewFile,
-    getFiles,
-    downloadFile,
-    deleteFile,
-    viewFile
-}

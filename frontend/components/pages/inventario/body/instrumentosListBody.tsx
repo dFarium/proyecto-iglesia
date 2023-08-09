@@ -50,8 +50,13 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import EliminarItemInventario from "../widgets/eliminarItem";
 import { VerFotoItem } from "../widgets/verFotoItem";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import getRole from "@/utils/roleUtils";
 
 export function InventarioInstrumentosBody() {
+  //obtener rol
+  const userRole = getRole();
+
   // query todos los instrumentos
   const instrumentosQuery = useQuery({
     queryKey: ["itemsInventarioInstrumentos"],
@@ -71,6 +76,10 @@ export function InventarioInstrumentosBody() {
     desc: false,
     ultMant: false,
     cicloMant: false,
+    imgScr: false,
+    edit: userRole,
+    delete: userRole,
+    uploader: false,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const { colorMode } = useColorMode();
@@ -87,12 +96,20 @@ export function InventarioInstrumentosBody() {
         accessorFn: (_row: any, i: number) => i + 1,
         sortingFn: "basic",
       },
+      { id: "imgScr", accessorKey: "urlPic" },
+      { id: "uploader", accessorKey: "uploader" },
       {
         id: "nombre",
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
-          return <VerFotoItem nombre={row.getValue("nombre")} imgScr={""} />;
+          return (
+            <VerFotoItem
+              nombre={row.getValue("nombre")}
+              imgScr={row.getValue("imgScr")}
+              uploader={row.getValue("uploader")}
+            />
+          );
         },
       },
       {
@@ -271,10 +288,9 @@ export function InventarioInstrumentosBody() {
           return (
             <>
               <Circle
-                bg={"#F6AD55"}
+                border={"2px solid"}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                 cursor={"default"}
               >
                 <MdCreate />
@@ -307,18 +323,8 @@ export function InventarioInstrumentosBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "inventarioDeleteItem.light"
-                    : "inventarioDeleteItem.dark"
-                }
                 cursor={"default"}
               >
                 <MdDelete />
@@ -361,7 +367,7 @@ export function InventarioInstrumentosBody() {
       <VStack w={"100%"} h={"100%"} spacing={"30px"}>
         <HStack justifyContent={"space-between"} w={"100%"}>
           <Text textStyle={"titulo"}>Instrumentos Musicales</Text>
-          <NuevoInstrumento />
+          {userRole ? <NuevoInstrumento /> : null}
         </HStack>
         <TableContainer overflowY={"auto"} width={"100%"}>
           <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -488,4 +494,7 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
   } else {
     return pageSize * currentIndex + pageSize;
   }
+}
+function useEffect(arg0: () => void, arg1: never[]) {
+  throw new Error("Function not implemented.");
 }

@@ -3,18 +3,10 @@ import { Request, Response } from "express";
 import { CallbackError } from "mongoose";
 
 
-// const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
-//    let newItem = new ItemTesoreria2(req.body);
-//    await newItem.save().catch((err: CallbackError) => {
-//        console.log(err);
-//        return res.status(400).send({ message: "Error al crear Gasto" });
-//    });
-//    return res.status(201).send(newItem);
-//}; */
-
-
 const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
     let newItem = new ItemTesoreria2(req.body);
+
+    console.log(req.body);
 
     ItemTesoreria2.findOne({ nombre: req.body.nombre }).then(
         async (item: ItemTesoreria) => {
@@ -33,8 +25,6 @@ const crearGastoIngresoTesoreria = async (req: Request, res: Response) => {
         }
     );
 };
-
-
 
 const ObtenerGastoIngresoTesoreria = async (req: Request, res: Response) => {
     await ItemTesoreria2.findOne({ name: req.body.name })
@@ -132,6 +122,41 @@ const obtenerGastoTesoreria = async (req: Request, res: Response) => {
         });
 };
 
+const obtenerGastosTesoreriaPorFecha = async (req: Request, res: Response, fechaInicio: Date, fechaFin: Date) => {
+    await ItemTesoreria2.find({ tipo: "Gasto", fechaGasto: { $gte: fechaInicio, $lte: fechaFin } })
+        .sort({ createdAt: "desc" })
+        .then((items: ItemTesoreria[]) => {
+            if (items.length === 0) {
+                return res.status(200).send([]);
+            }
+            return res.status(200).send(items);
+        })
+        .catch((err: CallbackError) => {
+            console.log(err);
+            return res
+                .status(400)
+                .send({ message: "Error al obtener los Items de tesoreria" });
+        });
+};
+
+const obtenerIngresoTesoreriaPorFecha = async (req: Request, res: Response, fechaInicio: Date, fechaFin: Date) => {
+    await ItemTesoreria2.find({ tipo: "Ingreso", fechaGasto: { $gte: fechaInicio, $lte: fechaFin } })
+        .sort({ createdAt: "desc" })
+        .then((items: ItemTesoreria[]) => {
+            if (items.length === 0) {
+                return res.status(200).send([]);
+            }
+            return res.status(200).send(items);
+        })
+        .catch((err: CallbackError) => {
+            console.log(err);
+            return res
+                .status(400)
+                .send({ message: "Error al obtener los Items de tesoreria" });
+        });
+};
+
+
 export {
     crearGastoIngresoTesoreria,
     ObtenerGastoIngresoTesoreria,
@@ -140,4 +165,6 @@ export {
     obtenerTodoTesoreria,
     obtenerIngresoTesoreria,
     obtenerGastoTesoreria,
+    obtenerGastosTesoreriaPorFecha,
+    obtenerIngresoTesoreriaPorFecha
 };

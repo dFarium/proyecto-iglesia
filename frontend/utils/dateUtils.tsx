@@ -8,7 +8,7 @@ export function minDate(today: Date) {
   } else {
     day = today.getDate().toString();
   }
-  if (today.getMonth() < 10) {
+  if (today.getMonth() < 9) {
     month = "0" + (today.getMonth() + 1).toString();
   } else {
     month = (today.getMonth() + 1).toString();
@@ -18,6 +18,28 @@ export function minDate(today: Date) {
 
   return fullDate;
 }
+
+export function maxDate(today: Date) {
+  let day: string = "";
+  let month: string = "";
+  let fullDate: string = "";
+
+  if (today.getDate() < 10) {
+    day = "0" + today.getDate().toString();
+  } else {
+    day = today.getDate().toString();
+  }
+  if (today.getMonth() < 9) {
+    month = "0" + (today.getMonth() + 1).toString();
+  } else {
+    month = (today.getMonth() + 1).toString();
+  }
+
+  fullDate = today.getFullYear().toString() + "-" + month + "-" + day;
+
+  return fullDate;
+}
+
 
 
 export function textDefaultDate(date: Date) {
@@ -32,7 +54,7 @@ export function textDefaultDate(date: Date) {
   } else {
     day = nDate.getDate().toString();
   }
-  if (nDate.getMonth() < 10) {
+  if (nDate.getMonth() < 9) {
     month = "0" + (nDate.getMonth() + 1).toString();
   } else {
     month = (nDate.getMonth() + 1).toString();
@@ -55,7 +77,7 @@ export function textDate(date: Date) {
   } else {
     day = nDate.getDate().toString();
   }
-  if (nDate.getMonth() < 10) {
+  if (nDate.getMonth() < 9) {
     month = "0" + (nDate.getMonth() + 1).toString();
   } else {
     month = (nDate.getMonth() + 1).toString();

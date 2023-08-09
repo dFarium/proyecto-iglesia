@@ -1,9 +1,12 @@
 import { ItemInventario, IItemInventario } from "../../models/inventario/item";
 import { Request, Response } from "express";
 import { CallbackError } from "mongoose";
+import { Archivos } from "../../models/archivos/archivos";
+import * as fs from "fs";
 
 const createItemInventario = async (req: Request, res: Response) => {
   let newItem = new ItemInventario(req.body);
+  console.log(newItem.ultMant);
 
   ItemInventario.findOne({ nombre: req.body.nombre }).then(
     async (item: IItemInventario) => {
@@ -53,8 +56,18 @@ const editItemInventario = async (req: Request, res: Response) => {
 const deleteItemInventario = async (req: Request, res: Response) => {
   const { id } = req.body;
   await ItemInventario.findByIdAndDelete(id)
-    .then(() => {
-      return res.status(200).send({ message: "Item eliminado correctamente" });
+    .then((item) => {
+      Archivos.findOneAndDelete({ fileName: item.urlPic }).then(() => {
+        let fileUrl = "./upload/Imagenes/" + item.urlPic;
+        fs.unlink(fileUrl, (err) => {
+          if (err) {
+            return res
+              .status(400)
+              .send({ message: "Error al obtener el archivo" });
+          }
+          return res.status(200).send({ message: "Archivo Eliminado" });
+        });
+      });
     })
     .catch((err: CallbackError) => {
       console.log(err);

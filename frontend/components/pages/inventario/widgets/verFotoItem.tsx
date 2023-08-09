@@ -1,3 +1,4 @@
+import { viewImg } from "@/data/archivos/archivos";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -14,18 +15,30 @@ import {
   Flex,
   VStack,
 } from "@chakra-ui/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-function VerFotoItem(props: { nombre: string; imgScr: string }) {
+function VerFotoItem(props: {
+  nombre: string;
+  imgScr: string;
+  uploader: string;
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const cancelRef = useRef(null);
+  const [imagenUrl, setImagenUrl] = useState<string>("");
 
   const lightBorderImage = "5px #5c5c5c solid";
   const darkBorderImage = "5px #ffe1af solid";
   return (
     <>
-      <Link onClick={onOpen}>{props.nombre}</Link>
+      <Link
+        onClick={() => {
+          onOpen();
+          // imgScr();
+        }}
+      >
+        {props.nombre}
+      </Link>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -33,22 +46,24 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
         isCentered
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent maxW={"1000px"}>
             <AlertDialogBody
               p={"15px"}
               display={"flex"}
               justifyContent={"center"}
-              maxH={"600px"}
             >
-              <Image
-                src={`https://picsum.photos/${props.imgScr}`}
-                fallback={LoadingImage(props.imgScr)}
-                objectFit={"cover"}
-                borderRadius={"15px"}
-                border={
-                  colorMode == "light" ? lightBorderImage : darkBorderImage
-                }
-              />
+              <VStack>
+                <Image
+                  src={`${process.env.API_URL}/upload/Imagenes/${props.imgScr}`}
+                  fallback={LoadingImage(imagenUrl)}
+                  objectFit={"contain"}
+                  borderRadius={"15px"}
+                  border={
+                    colorMode == "light" ? lightBorderImage : darkBorderImage
+                  }
+                />
+                <Text>Item creado por: {props.uploader}</Text>
+              </VStack>
             </AlertDialogBody>
           </AlertDialogContent>
         </AlertDialogOverlay>
