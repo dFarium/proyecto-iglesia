@@ -1,5 +1,8 @@
 import { IItemInventario, createItemInventario } from "@/data/inventario/item";
-import {IPrestamoInstrumento,createPrestamoInstrumento} from "@/data/prestamos/prestamos";
+import {
+  IPrestamoInstrumento,
+  createPrestamoInstrumento,
+} from "@/data/prestamos/prestamos";
 import { minDate, textDefaultDate } from "@/utils/dateUtils";
 import {
   AlertDialog,
@@ -45,10 +48,6 @@ function NuevoInstrumento() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
-
-  const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -59,20 +58,12 @@ function NuevoInstrumento() {
   const [prestable, setPrestable] = useState<boolean>(false);
 
   const [imagen, setImagen] = useState<File | null>(null);
-  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
-  };
-
-  const handleCantidadChange = (e: any) => {
-    const r = e.target.value.replace(/\D/g, "");
-    setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -87,33 +78,12 @@ function NuevoInstrumento() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
-      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
       queryClient.invalidateQueries({
         queryKey: ["itemsInventarioInstrumentos"],
       });
@@ -123,15 +93,19 @@ function NuevoInstrumento() {
   const handlePicChange = async (file: any) => {
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
-    setUploadImg(true);
   };
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
-      console.log("file si arriba");
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
     } catch (error) {
       console.log("file no arriba:", fileData.fileName);
     }
@@ -187,13 +161,10 @@ function NuevoInstrumento() {
                   onChange={handleNombreChange}
                   maxLength={50}
                 />
-                {nombreErr ? (
-                  <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                ) : (
-                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                    {nombre.length} / 50
-                  </FormHelperText>
-                )}
+
+                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                  {nombre.length} / 50
+                </FormHelperText>
               </FormControl>
               <FormControl mt={"25px"}>
                 <FormLabel>Fecha de Salida</FormLabel>
@@ -274,64 +245,61 @@ function NuevoInstrumento() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
+
                   setFechaSalida(undefined);
                   setDesc("");
                   setCicloMant(undefined);
                   setPrestable(false);
                   onClose();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
               </Button>
               <Button
+                isDisabled={!nombre}
                 colorScheme="blue"
                 onClick={() => {
-                  // validation();
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Instrumento",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad: 1,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant,
-                      ultMod: "Yo",
-                      prestable,
-                      urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Instrumento",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad: 1,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant,
+                    ultMod: "Yo",
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setImagen(null);
-                    setPrestable(false);
-                    onClose();
                   }
+
+                  setNombre("");
+
+                  // setCantidad(1);
+                  // setCantidadErr(false);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setImagen(null);
+                  setPrestable(false);
+                  onClose();
                 }}
               >
                 Aceptar
@@ -352,10 +320,8 @@ function NuevoEquipoElec() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
 
   const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -366,20 +332,17 @@ function NuevoEquipoElec() {
   const [prestable, setPrestable] = useState<boolean>(false);
 
   const [imagen, setImagen] = useState<File | null>(null);
-  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
   };
 
   const handleCantidadChange = (e: any) => {
     const r = e.target.value.replace(/\D/g, "");
     setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -394,49 +357,32 @@ function NuevoEquipoElec() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["itemsInventarioEquipos"] });
     },
   });
 
   const handlePicChange = async (file: any) => {
-    // const fecha: Date = new Date();
-    // const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
-
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
-    setUploadImg(true);
   };
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
       console.log("file");
     } catch (error) {
       console.log("file:", fileData.fileName);
@@ -487,23 +433,20 @@ function NuevoEquipoElec() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
                     <Input
                       value={cantidad}
@@ -594,9 +537,7 @@ function NuevoEquipoElec() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
@@ -604,49 +545,49 @@ function NuevoEquipoElec() {
                   setPrestable(false);
                   onClose();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Equipo",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Equipo",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: "Yo",
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-                    setNombre("");
-                    setFechaSalida(undefined);
-                    setDesc("");
-                    setCicloMant(undefined);
-                    setPrestable(false);
-                    onClose();
                   }
+                  setNombre("");
+                  setFechaSalida(undefined);
+                  setDesc("");
+                  setCicloMant(undefined);
+                  setPrestable(false);
+                  onClose();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -682,10 +623,8 @@ function NuevoItemInventario() {
 
   // variables
   const [nombre, setNombre] = useState<string>("");
-  const [nombreErr, setNombreErr] = useState<boolean>(false);
 
   const [cantidad, setCantidad] = useState<number>(1);
-  const [cantidadErr, setCantidadErr] = useState<boolean>(false);
 
   const [fechaSalida, setFechaSalida] = useState<Date>();
   const [ultMant, setUltMant] = useState<Date>();
@@ -696,20 +635,17 @@ function NuevoItemInventario() {
   const [prestable, setPrestable] = useState<boolean>(false);
 
   const [imagen, setImagen] = useState<File | null>(null);
-  const [uploadImg, setUploadImg] = useState<boolean>(false);
 
   const date = new Date();
   const queryClient = useQueryClient();
 
   const handleNombreChange = (e: any) => {
     setNombre(e.target.value);
-    setNombreErr(false);
   };
 
   const handleCantidadChange = (e: any) => {
     const r = e.target.value.replace(/\D/g, "");
     setCantidad(r);
-    setCantidadErr(false);
   };
 
   const handleFechaSalidaChange = (e: any) => {
@@ -724,50 +660,32 @@ function NuevoItemInventario() {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
-
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await createItemInventario(newItem);
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemsInventario"] });
+      queryClient.invalidateQueries({ queryKey: ["allItemsInventario"] });
     },
   });
 
   const handlePicChange = async (file: any) => {
-    // const fecha: Date = new Date();
-    // const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
-
     const imagen = file.target.files?.[0] || null;
     setImagen(imagen);
-    setUploadImg(true);
   };
 
   const uploadPicture = async (file: any, fileData: IArchivos) => {
     const formFile = new FormData();
     formFile.append("archivos", file);
     try {
-      await uploadNewFile(formFile, "Imagenes", fileData.fileName, fileData.tagCategoria, fileData.publico );
-      console.log("file");
+      await uploadNewFile(
+        formFile,
+        "Imagenes",
+        fileData.fileName,
+        fileData.tagCategoria,
+        fileData.publico
+      );
     } catch (error) {
       console.log("file:", fileData.fileName);
     }
@@ -846,7 +764,7 @@ function NuevoItemInventario() {
               Agregar Instrumento Musical
             </AlertDialogHeader>
             <AlertDialogBody>
-              <FormControl>
+              <FormControl isInvalid={!nombre}>
                 <FormLabel>Nombre</FormLabel>
 
                 <Input
@@ -854,13 +772,10 @@ function NuevoItemInventario() {
                   onChange={handleNombreChange}
                   maxLength={50}
                 />
-                {nombreErr ? (
-                  <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                ) : (
-                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                    {nombre.length} / 50
-                  </FormHelperText>
-                )}
+
+                <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                  {nombre.length} / 50
+                </FormHelperText>
               </FormControl>
               <FormControl mt={"25px"}>
                 <FormLabel>Fecha de Salida</FormLabel>
@@ -941,62 +856,59 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setFechaSalida(undefined);
                   setDesc("");
                   setCicloMant(undefined);
                   setPrestable(false);
                   onCloseInstrumentos();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre}
                 onClick={() => {
                   // validation();
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Instrumento",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad: 1,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
-                      urlPic: "",
+
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Instrumento",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad: 1,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: "Yo",
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setPrestable(false);
-                    onCloseInstrumentos();
                   }
+                  setNombre("");
+                  setCantidad(1);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setPrestable(false);
+                  onCloseInstrumentos();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -1023,23 +935,20 @@ function NuevoItemInventario() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
                     <Input
                       value={cantidad}
@@ -1130,9 +1039,7 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
@@ -1140,49 +1047,49 @@ function NuevoItemInventario() {
                   setPrestable(false);
                   onCloseEquipo();
                   setImagen(null);
-                  setUploadImg(false);
                 }}
               >
                 Cancelar
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    const fecha: Date = new Date();
-                    const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Equipo",
-                      estado: "Activo",
-                      fechaSalida,
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant: date,
-                      ultMod: "Yo",
-                      prestable,
+                  const fecha: Date = new Date();
+                  const fechaStd: string = `${fecha.getDate()}-${fecha.getMonth()}-${fecha.getFullYear()}-${fecha.getHours()}-${fecha.getMinutes()}-${fecha.getSeconds()}`;
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Equipo",
+                    estado: "Activo",
+                    fechaSalida,
+                    cantidad,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant: date,
+                    ultMod: "Yo",
+                    prestable,
+                    urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
+                  });
+                  if (imagen) {
+                    uploadPicture(imagen, {
+                      originalName: `${imagen.name}`,
+                      fileName: `${fechaStd}-${imagen.name}`,
+                      tagCategoria: "Fotos Inventario",
+                      mimetype: imagen.type,
+                      //url: `${fechaStd}-${imagen.name}`,
+                      url: "./upload/Imagenes",
+                      userSubida: "user",
+                      publico: true,
                     });
-                    if (imagen) {
-                      uploadPicture(imagen, {
-                        originalName: `${imagen.name}`,
-                        fileName: `${fechaStd}-${imagen.name}`,
-                        tagCategoria: "Fotos Inventario",
-                        mimetype: imagen.type,
-                        //url: `${fechaStd}-${imagen.name}`,
-                        url: "./upload/Imagenes",
-                        userSubida: "user",
-                        publico: true,
-                      });
-                    }
-                    setNombre("");
-                    setFechaSalida(undefined);
-                    setDesc("");
-                    setCicloMant(undefined);
-                    setPrestable(false);
-                    onCloseEquipo();
                   }
+                  setNombre("");
+                  setFechaSalida(undefined);
+                  setDesc("");
+                  setCicloMant(undefined);
+                  setPrestable(false);
+                  onCloseEquipo();
+                  setImagen(null);
                 }}
               >
                 Aceptar
@@ -1209,25 +1116,26 @@ function NuevoItemInventario() {
 
             <AlertDialogBody>
               <HStack align={"start"}>
-                <FormControl isInvalid={nombreErr}>
+                <FormControl isInvalid={!nombre}>
                   <FormLabel>Nombre</FormLabel>
                   <Input
                     placeholder="Nombre"
                     onChange={handleNombreChange}
                     maxLength={50}
                   />
-                  {nombreErr ? (
-                    <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                  ) : (
-                    <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                      {nombre.length} / 50
-                    </FormHelperText>
-                  )}
+
+                  <FormHelperText pl={"5px"} fontStyle={"italic"}>
+                    {nombre.length} / 50
+                  </FormHelperText>
                 </FormControl>
                 <Box>
-                  <FormControl isInvalid={cantidadErr}>
+                  <FormControl isInvalid={!cantidad}>
                     <FormLabel>Cantidad</FormLabel>
-                    <Input type="text" onChange={handleCantidadChange} />
+                    <Input
+                      value={cantidad}
+                      type="text"
+                      onChange={handleCantidadChange}
+                    />
                     <FormErrorMessage>Ingrese la cantidad</FormErrorMessage>
                   </FormControl>
                 </Box>
@@ -1253,9 +1161,7 @@ function NuevoItemInventario() {
                 mr={3}
                 onClick={() => {
                   setNombre("");
-                  setNombreErr(false);
                   setCantidad(1);
-                  setCantidadErr(false);
                   setFechaSalida(undefined);
                   setUltMant(undefined);
                   setCicloMant(undefined);
@@ -1268,28 +1174,25 @@ function NuevoItemInventario() {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Varios",
-                      estado: "Activo",
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      ultMod: "Yo",
-                    });
-                    setNombre("");
-                    setNombreErr(false);
-                    setCantidad(1);
-                    setCantidadErr(false);
-                    setFechaSalida(undefined);
-                    setUltMant(undefined);
-                    setCicloMant(undefined);
-                    setDesc("");
-                    setPrestable(false);
-                    onCloseVarios();
-                  }
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Varios",
+                    estado: "Activo",
+                    cantidad,
+                    uploader: "Yo",
+                    desc,
+                    ultMod: "Yo",
+                  });
+                  setNombre("");
+                  setCantidad(1);
+                  setFechaSalida(undefined);
+                  setUltMant(undefined);
+                  setCicloMant(undefined);
+                  setDesc("");
+                  setPrestable(false);
+                  onCloseVarios();
                 }}
               >
                 Aceptar

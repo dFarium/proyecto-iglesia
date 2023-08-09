@@ -27,7 +27,8 @@ export interface IItemInventario {
 }
 
 export interface IEditPrestable {
-    prestable: boolean;
+    prestable?: boolean;
+    estado: string;
 }
 
 const getAllItemsInventario = async () => {

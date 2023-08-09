@@ -47,10 +47,15 @@ import {NuevoPrestamoInstrumento} from "@/components/pages/instrumentos/widgets/
 import EliminarPrestamoInstrumento from "@/components/pages/instrumentos/widgets/eliminarPrestamo";
 import EditarPrestamo from "@/components/pages/instrumentos/widgets/editarPrestamo";
 import {VerInstrumento} from "@/components/pages/instrumentos/widgets/verInstrumento";
+import getRole from "@/utils/roleUtils";
 
-const userAccess: boolean = true;
+
+
 
 export default function PrestamoBody() {
+
+    const userAccess = getRole();
+
     // query todos los items
     const allPrestamosQuery = useQuery({
         queryKey: ["allPrestamos"],
@@ -360,6 +365,7 @@ export default function PrestamoBody() {
                             <EliminarPrestamoInstrumento
                                 instrumentoId={row.getValue("instrumentoId")}
                                 id={row.getValue("id")}
+                                devuelto={row.getValue("devuelto")}
                             />
                         );
                     }

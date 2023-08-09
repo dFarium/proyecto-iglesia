@@ -13,6 +13,9 @@ const jwt = require('jsonwebtoken'); // Constante usada para crear el token
 
 // Registro de usuario
 const registerUser = async (req: Request, res: Response) => {
+    console.log(req.body.email);
+    console.log(req.body.rut);
+    console.log(req.body.password);
 
     // Validación de usuario
     const { error } = schemaRegister.validate(req.body);
@@ -55,10 +58,10 @@ const registerUser = async (req: Request, res: Response) => {
 
     try {
         const userDB = await newUser.save();
-        console.log(userDB)
+        // console.log(userDB)
         res.json({ error: null, data: userDB})
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(400).json({error: error.message})
     }
 }
@@ -72,7 +75,7 @@ const loginUser = async (req: Request, res: Response) => {
     
     // Busqueda del usuario
     const user = await UsuarioModel.findOne({ email: req.body.email })
-    if (!user) return res.status(400).json({ error: 'Usuario no encontrado' })
+    if (!user) return res.status(401).json({ error: 'Usuario no encontrado' })
 
     // Buscar los roles del usuario
     const rol = await Role.find({_id: {$in: user.rol}})
