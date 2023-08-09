@@ -2,7 +2,7 @@
 
 import { Text, FormControl, useColorModeValue, HStack, FormLabel, Input, Table, Button, 
     IconButton, Container, Tbody, Thead, Th, Tr, Td, Tooltip, Modal, ModalOverlay, ModalContent,
-    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack, InputGroup, InputLeftAddon } from "@chakra-ui/react";
+    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack, InputGroup, InputLeftAddon, useColorMode } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import Swal from 'sweetalert2'
@@ -11,7 +11,7 @@ import { ArrowUpIcon, ArrowDownIcon } from "@chakra-ui/icons";
 import { FaRegEdit, FaRegTrashAlt, FaUserPlus } from 'react-icons/fa';
 
 function GetUsersBody() {
-
+    const { colorMode } = useColorMode();
     interface Usuario {
         _id: string;
         name: string;
@@ -185,10 +185,7 @@ function GetUsersBody() {
     useEffect(() => {
         getUsers();
 
-        let token = null;
-        if (typeof window !== "undefined") {
-            token = localStorage.getItem('auth-token');
-        }
+        token = localStorage.getItem('auth-token');
 
         if (!token) {
             console.log('No hay token guardado.');
@@ -219,6 +216,7 @@ function GetUsersBody() {
         } else {
             setAdmin(false);
             setDirectiva(false);
+            setMiembro(false);
         }
     }, []);
 
@@ -230,7 +228,7 @@ function GetUsersBody() {
                 return null;
             }
             return(
-                <Tr key={usuario._id} bgColor={index % 2 === 0 ? "gray.100" : "white"}>
+                <Tr key={usuario._id} bgColor={index % 2 === 0 ? (colorMode === 'light' ? "gray.100" : "#212121") : (colorMode === 'light' ? "white" : "#323232")}>
                     <Td isTruncated maxWidth="400px">{usuario.name}</Td>
                     <Td isTruncated maxWidth="200px">{usuario.rut}</Td>
                     <Td isTruncated maxWidth="350px">{usuario.email}</Td>
