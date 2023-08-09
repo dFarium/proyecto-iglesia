@@ -65,8 +65,8 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string,
             <IconButton
                 borderColor={
                     colorMode == "light"
-                        ? "prestamoDeleteItem.light"
-                        : "prestamoDeleteItem.dark"
+                        ? "inventarioDeleteItem.light"
+                        : "inventarioDeleteItem.dark"
                 }
                 isRound
                 fontSize={"1.4em"}
@@ -75,8 +75,8 @@ function EliminarPrestamoInstrumento(props: { instrumentoId: string, id: string,
                 onClick={onOpen}
                 color={
                     colorMode == "light"
-                        ? "prestamoDeleteItem.light"
-                        : "prestamoDeleteItem.dark"
+                        ? "inventarioDeleteItem.light"
+                        : "inventarioDeleteItem.dark"
                 }
             />
             <AlertDialog

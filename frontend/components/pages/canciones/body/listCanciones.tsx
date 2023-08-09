@@ -219,10 +219,11 @@ export function ListCancionesBody() {
                 return (
                     <>
                     <Circle
-                        bg={"#F6AD55"}
+                        // bg={"#F6AD55"}
+                        border={"2px solid"}
                         size={"1.5em"}
                         fontSize={"1.2em"}
-                        color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                        // color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                         cursor={"default"}
                     >
                         <MdCreate />
@@ -251,18 +252,18 @@ export function ListCancionesBody() {
                     <>
                     <Circle
                         border={"2px solid"}
-                        borderColor={
-                        colorMode == "light"
-                            ? "inventarioDeleteItem.light"
-                            : "inventarioDeleteItem.dark"
-                        }
+                        // borderColor={
+                        // colorMode == "light"
+                        //     ? "inventarioDeleteItem.light"
+                        //     : "inventarioDeleteItem.dark"
+                        // }
                         size={"1.5em"}
                         fontSize={"1.2em"}
-                        color={
-                        colorMode == "light"
-                            ? "inventarioDeleteItem.light"
-                            : "inventarioDeleteItem.dark"
-                        }
+                        // color={
+                        // colorMode == "light"
+                        //     ? "inventarioDeleteItem.light"
+                        //     : "inventarioDeleteItem.dark"
+                        // }
                         cursor={"default"}
                     >
                         <MdDelete />
@@ -398,7 +399,7 @@ export function ListCancionesBody() {
                         <HStack display={{ base: "none", lg: "flex" }}>
                             <MdHelp size={"20px"} />
                             <Text minW={"400px"}>
-                                Puede ver la letra y reproducir el audio dando click en la letra y el audio de la cancion
+                                Puede ver la letra y reproducir el audio dando click en la letra y el audio de la canción
                             </Text>
                         </HStack>
                     </HStack>
