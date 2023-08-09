@@ -48,6 +48,7 @@ import { NuevaCancion } from "@/components/pages/canciones/widgets/nuevaCancion"
 import EliminarCancion from "../widgets/eliminarCancion";
 import Editarcancion from "../widgets/editarCancion";
 import ReproducirAudio from "../widgets/audioCanciones";
+import VerLetraCancion  from "../widgets/verLetraCanciones";
 
 export function ListCancionesBody() {
     //query todas las canciones
@@ -133,9 +134,7 @@ export function ListCancionesBody() {
                 accessorKey: "letra",
                 cell: ({row}) => {
                     return (
-                        <Text>
-                            {row.getValue("letra")}
-                        </Text>
+                        <VerLetraCancion nombre={row.getValue("letra")} />
                     )
                 }
             },
@@ -209,7 +208,7 @@ export function ListCancionesBody() {
                 accessorKey: "id_song",
                 cell: ({row}) => {
                     return (
-                        <ReproducirAudio/>
+                        <ReproducirAudio nombre={row.getValue("id_song")}/>
                     )
                 }
             },

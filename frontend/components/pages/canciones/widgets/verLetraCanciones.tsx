@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
-function VerFotoItem(props: { nombre: string; imgScr: string }) {
+function VerLetraCancion(props: { nombre: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const cancelRef = useRef(null);
@@ -82,4 +82,4 @@ function LoadingImage(src: string) {
   );
 }
 
-export { VerFotoItem };
+export default VerLetraCancion ;
