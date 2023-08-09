@@ -65,7 +65,7 @@ export default function ArchivosPrivBody() {
     const filesQuery = useQuery({
         queryKey: ["PrivFiles"],
         queryFn: async () => {
-            const data = viewAllSpecificFiles(true);
+            const data = viewAllSpecificFiles(false);
             return data;
         },
         initialData: [],
@@ -85,7 +85,7 @@ export default function ArchivosPrivBody() {
         download: true,
         updatedAt: false,
         fileName: false,
-        originalName:false,
+        originalName: false,
         userName: true,
     });
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -402,22 +402,24 @@ export default function ArchivosPrivBody() {
                     }
                 },
                 cell: ({ row }) => {
-                    return (
-                        <EditarArchivo
-                            id={row.getValue("id")}
-                            originalName={row.getValue("originalName")}
-                            fileName={row.getValue("fileName")}
-                            userName={row.getValue("userName")}
-                            tagCategoria={row.getValue("tagCategoria")}
-                            mimetype={row.getValue("mimetype")}
-                            url={row.getValue("url")}
-                            userSubida={row.getValue("userSubida")}
-                            userModifica={row.getValue("userModifica")}
-                            publico={row.getValue("publico")}
-                            createdAt={row.getValue("createdAt")}
-                            updatedAt={row.getValue("updatedAt")}
-                        />
-                    );
+                    if (userAccess) {
+                        return (
+                            <EditarArchivo
+                                id={row.getValue("id")}
+                                originalName={row.getValue("originalName")}
+                                fileName={row.getValue("fileName")}
+                                userName={row.getValue("userName")}
+                                tagCategoria={row.getValue("tagCategoria")}
+                                mimetype={row.getValue("mimetype")}
+                                url={row.getValue("url")}
+                                userSubida={row.getValue("userSubida")}
+                                userModifica={row.getValue("userModifica")}
+                                publico={row.getValue("publico")}
+                                createdAt={row.getValue("createdAt")}
+                                updatedAt={row.getValue("updatedAt")}
+                            />
+                        );
+                    }
                 },
             },
             //delete
@@ -522,7 +524,7 @@ export default function ArchivosPrivBody() {
         <Box w={"100%"} h={"100%"}>
             <VStack w={"100%"} h={"100%"} spacing={"30px"}>
                 <HStack justifyContent={"space-between"} w={"100%"}>
-                    <Text textStyle={"titulo"}>Lista de Archivos</Text>
+                    <Text textStyle={"titulo"}>Biblioteca Privada</Text>
                     <NuevoArchivo />
                 </HStack>
                 <TableContainer overflowY={"auto"} width={"100%"}>
