@@ -106,7 +106,7 @@ function EditarTesoreria(props: {
 
     const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        const isValid = /^(?!.*[ ]{2,})[a-zA-Z0-9._-]*$/.test(value);
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value);
         setNombreErr(value === "" || !isValid);
         if (isValid) {
             setNombre(value);
@@ -136,12 +136,13 @@ function EditarTesoreria(props: {
 
     const handleDescripcionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value;
-        const isValid = /^[a-zA-Z0-9,._-]*$/.test(value) && value.length <= 250;
+        const isValid = /^(?!.*\s{2})[A-Za-z0-9 ]*$/.test(value) && value.length <= 250;
         setDescripcionErr(!isValid);
         if (isValid) {
             setDescripcion(value);
         }
     };
+
 
     const handleTipoChange = (e: any) => {
         setTipo(e.target.value);
@@ -209,7 +210,7 @@ function EditarTesoreria(props: {
                 isRound
                 onClick={() => {
                     if (props.tipo == "Ingreso") {
-
+                        console.log("Hola");
                         setTodoInicio();
                         onOpenIngreso();
                     } else if (props.tipo == "Gasto") {
@@ -242,13 +243,13 @@ function EditarTesoreria(props: {
                                     placeholder="Nombre"
                                     value={nombre}
                                     onChange={handleNombreChange}
-                                    maxLength={50}
+                                    maxLength={25}
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombre.length} / 25
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -357,13 +358,13 @@ function EditarTesoreria(props: {
                                     placeholder="Nombre"
                                     value={nombre}
                                     onChange={handleNombreChange}
-                                    maxLength={50}
+                                    maxLength={25}
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombre.length} / 25
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -436,7 +437,8 @@ function EditarTesoreria(props: {
                                 colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
-
+                                        console.log("AAAAAAAAAa")
+                                        console.log(descripcion);
                                         mutation.mutate({
                                             nombre,
                                             valorCaja,
@@ -473,13 +475,13 @@ function EditarTesoreria(props: {
                                     placeholder="Nombre"
                                     value={nombre}
                                     onChange={handleNombreChange}
-                                    maxLength={50}
+                                    maxLength={25}
                                 />
                                 {nombreErr ? (
                                     <FormErrorMessage>Ingrese nombre válido</FormErrorMessage>
                                 ) : (
                                     <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                        {nombre.length} / 50
+                                        {nombre.length} / 25
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -552,7 +554,6 @@ function EditarTesoreria(props: {
                                 colorScheme="blue"
                                 onClick={() => {
                                     if (validation()) {
-
                                         mutation.mutate({
                                             nombre,
                                             valorCaja,
