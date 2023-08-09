@@ -32,15 +32,16 @@ import { IItemInventario, editItemInventario } from "@/data/inventario/item";
 
 function EditarArchivo(props: {
     id: string;
-    nombre: string;
-    estado: string;
-    prestable: boolean;
-    categoria: string;
-    cantidad: number;
-    fechaSalida: Date;
-    desc: string;
-    cicloMant: number;
-    ultMant: Date;
+    originalName: string;
+    fileName: string;
+    tagCategoria: string;
+    mimetype: string;
+    url: string;
+    userSubida: string;
+    userModifica?: string;
+    publico: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }) {
     // use disclosures
     const {
@@ -85,18 +86,18 @@ function EditarArchivo(props: {
     const [oldMant, setOldMant] = useState<Date>(date);
 
     const setTodoInicio = () => {
-        setNombre(props.nombre);
-        setNombreErr(false);
-        setEstado(props.estado);
-        setUltMant(props.ultMant);
-        setCantidad(props.cantidad);
-        setCantidadErr(false);
-        setFechaSalida(props.fechaSalida);
-        setCicloMant(props.cicloMant);
-        setDesc(props.desc);
-        setPrestable(props.prestable);
-        setOldDate(props.fechaSalida);
-        setOldMant(props.ultMant);
+        // setNombre(props.nombre);
+        // setNombreErr(false);
+        // setEstado(props.estado);
+        // setUltMant(props.ultMant);
+        // setCantidad(props.cantidad);
+        // setCantidadErr(false);
+        // setFechaSalida(props.fechaSalida);
+        // setCicloMant(props.cicloMant);
+        // setDesc(props.desc);
+        // setPrestable(props.prestable);
+        // setOldDate(props.fechaSalida);
+        // setOldMant(props.ultMant);
     };
 
     const showDate = (date: Date): string => {
@@ -177,16 +178,16 @@ function EditarArchivo(props: {
                 aria-label={"Editar"}
                 icon={<MdCreate />}
                 onClick={() => {
-                    if (props.categoria == "Instrumento") {
-                        setTodoInicio();
-                        onOpenInstrumentos();
-                    } else if (props.categoria == "Equipo") {
-                        setTodoInicio();
-                        onOpenEquipo();
-                    } else {
-                        setTodoInicio();
-                        onOpenVarios();
-                    }
+                    // if (props.categoria == "Instrumento") {
+                    //     setTodoInicio();
+                    //     onOpenInstrumentos();
+                    // } else if (props.categoria == "Equipo") {
+                    //     setTodoInicio();
+                    //     onOpenEquipo();
+                    // } else {
+                    //     setTodoInicio();
+                    //     onOpenVarios();
+                    // }
                 }}
                 color={colorMode == "light" ? "#4A5568" : "#2D3748"}
             />
@@ -345,278 +346,6 @@ function EditarArchivo(props: {
                                             prestable,
                                         });
                                         onCloseInstrumentos();
-                                    }
-                                }}
-                            >
-                                Aceptar
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
-            {/* Alerta de Equipo Electronico */}
-
-            <AlertDialog
-                isOpen={isOpenEquipo}
-                leastDestructiveRef={cancelRef}
-                onClose={onCloseEquipo}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Editar Equipo Electrónico
-                        </AlertDialogHeader>
-
-                        <AlertDialogBody>
-                            <HStack align={"start"}>
-                                <FormControl isInvalid={nombreErr}>
-                                    <FormLabel>Nombre</FormLabel>
-                                    <Input
-                                        placeholder="Nombre"
-                                        value={nombre}
-                                        onChange={handleNombreChange}
-                                        maxLength={50}
-                                    />
-                                    {nombreErr ? (
-                                        <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {nombre.length} / 50
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                <Box>
-                                    <FormLabel>Estado</FormLabel>
-                                    <Menu autoSelect={false}>
-                                        <MenuButton as={Button} rightIcon={<MdExpandMore />}>
-                                            {estado}
-                                        </MenuButton>
-                                        <MenuList>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setEstado("Activo");
-                                                }}
-                                            >
-                                                Activo
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setEstado("Inactivo");
-                                                }}
-                                            >
-                                                Inactivo
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                    setEstado("Prestado");
-                                                }}
-                                            >
-                                                En préstamo
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Box>
-                            </HStack>
-                            <HStack mt={"25px"} justify={"space-between"} align={"start"}>
-                                <FormControl>
-                                    <FormLabel>Fecha de Salida</FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={textDefaultDate(oldDate)}
-                                        onChange={handleFechaSalidaChange}
-                                        min={minDate(date)}
-                                    />
-                                    <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                        {showDate(oldDate)}
-                                    </FormHelperText>
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel>Cantidad</FormLabel>
-                                    <Input
-                                        type="text"
-                                        value={cantidad}
-                                        onChange={handleCantidadChange}
-                                    />
-                                </FormControl>
-                            </HStack>
-                            <HStack mt={"25px"} align={"start"}>
-                                <FormControl>
-                                    <FormLabel>Ciclo de Mantemiento</FormLabel>
-                                    <Input value={cicloMant} />
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel>Última Mantención</FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={textDefaultDate(oldMant)}
-                                        onChange={handleUltMantChange}
-                                    />
-                                    <FormHelperText fontStyle={"italic"} pl={"5px"}>
-                                        {showDate(oldMant)}
-                                    </FormHelperText>
-                                </FormControl>
-                            </HStack>
-                            <HStack mt={"25px"} justify={"space-between"}>
-                                <Button>Cambiar Foto</Button>
-                                <Box>
-                                    <FormControl
-                                        display={"flex"}
-                                        flexDir={"column"}
-                                        alignItems={"end"}
-                                    >
-                                        <FormLabel>¿Disponible para préstamo?</FormLabel>
-                                        <Switch
-                                            id="prest"
-                                            isChecked={prestable}
-                                            onChange={(e) => {
-                                                setPrestable(e.target.checked);
-                                            }}
-                                        />
-                                    </FormControl>
-                                </Box>
-                            </HStack>
-
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    maxH={"300px"}
-                                    onChange={(e) => {
-                                        setDesc(e.target.value);
-                                    }}
-                                />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {desc.length} / 200
-                                </FormHelperText>
-                            </FormControl>
-                        </AlertDialogBody>
-
-                        <AlertDialogFooter>
-                            <Button
-                                ref={cancelRef}
-                                mr={3}
-                                onClick={() => {
-                                    setNombreErr(false);
-                                    setCantidadErr(false);
-                                    onCloseEquipo();
-                                }}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                colorScheme="blue"
-                                onClick={() => {
-                                    if (validation()) {
-                                        mutation.mutate({
-                                            nombre,
-                                            categoria: "Equipo",
-                                            estado,
-                                            fechaSalida,
-                                            cantidad,
-                                            uploader: "Yo",
-                                            desc,
-                                            cicloMant,
-                                            ultMant,
-                                            ultMod: "Yo",
-                                            prestable,
-                                        });
-                                        onCloseEquipo();
-                                    }
-                                }}
-                            >
-                                Aceptar
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
-            {/* Alerta de varios  */}
-
-            <AlertDialog
-                isOpen={isOpenVarios}
-                leastDestructiveRef={cancelRef}
-                onClose={onCloseVarios}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Editar Item
-                        </AlertDialogHeader>
-
-                        <AlertDialogBody>
-                            <HStack align={"start"}>
-                                <FormControl isInvalid={nombreErr}>
-                                    <FormLabel>Nombre</FormLabel>
-                                    <Input
-                                        placeholder="Nombre"
-                                        value={nombre}
-                                        onChange={handleNombreChange}
-                                        maxLength={50}
-                                    />
-                                    {nombreErr ? (
-                                        <FormErrorMessage>Ingrese nombre</FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                            {nombre.length} / 50
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                <Box>
-                                    <FormControl isInvalid={cantidadErr}>
-                                        <FormLabel>Cantidad</FormLabel>
-                                        <Input
-                                            value={cantidad}
-                                            type="text"
-                                            onChange={handleCantidadChange}
-                                        />
-                                        <FormErrorMessage>Ingrese la cantidad</FormErrorMessage>
-                                    </FormControl>
-                                </Box>
-                            </HStack>
-                            <FormControl mt={"25px"}>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder="Descripción"
-                                    value={desc}
-                                    maxH={"300px"}
-                                    onChange={(e) => {
-                                        setDesc(e.target.value);
-                                    }}
-                                />
-                                <FormHelperText pl={"5px"} fontStyle={"italic"}>
-                                    {desc.length} / 200
-                                </FormHelperText>
-                            </FormControl>
-                        </AlertDialogBody>
-
-                        <AlertDialogFooter>
-                            <Button
-                                ref={cancelRef}
-                                mr={3}
-                                onClick={() => {
-                                    setNombreErr(false);
-                                    setCantidadErr(false);
-                                    onCloseVarios();
-                                }}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                colorScheme="blue"
-                                onClick={() => {
-                                    if (validation()) {
-                                        mutation.mutate({
-                                            nombre,
-                                            estado,
-                                            cantidad,
-                                            desc,
-                                            ultMod: "Yo",
-                                        });
-                                        setNombreErr(false);
-                                        setCantidadErr(false);
-                                        onCloseVarios();
                                     }
                                 }}
                             >

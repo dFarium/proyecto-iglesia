@@ -48,24 +48,24 @@ const viewImg = async (folderName: string, imgName: string) => {
 };
 
 const viewAllFiles = async () => {
-    const res = await axios.get(`${process.env.API_URL}/files/`);
-    return res.data;
+  const res = await axios.get(`${process.env.API_URL}/files/`);
+  return res.data;
 };
 
 const viewOneFile = async (id: string) => {
-    const res = await axios.get(`${process.env.API_URL}/file/specific/${id}`);
-    return res.data;
+  const res = await axios.get(`${process.env.API_URL}/file/specific/${id}`);
+  return res.data;
 };
 
 const viewFavorite = async (id: string) => {
-    const res = await axios.get(`${process.env.API_URL}/file/${id}`);
-    return res.data;
+  const res = await axios.get(`${process.env.API_URL}/file/${id}`);
+  return res.data;
 };
 
 const downloadFile = async (id: string) => {
   console.log(process.env.API_URL, "/file/download/", id);
-    const res = await axios.get(`${process.env.API_URL}/file/download/${id}`);
-    return res;
+  const res = await axios.get(`${process.env.API_URL}/file/download/${id}`);
+  return res;
 };
 
 // const subirArchivo = async () => {
@@ -74,20 +74,27 @@ const downloadFile = async (id: string) => {
 // };
 
 const deleteFile = async (id: string) => {
-  console.log("dir ",process.env.API_URL,"/file/delete/",id);
-    const res = await axios.delete(`${process.env.API_URL}/file/delete/${id}`);
-    return res.data;
+  console.log("dir ", process.env.API_URL, "/file/delete/", id);
+  const res = await axios.delete(`${process.env.API_URL}/file/delete/${id}`);
+  return res.data;
 };
 
+const updateFile = async (id: string, newItem: IArchivos) => {
+  const res = await axios.put(`${process.env.API_URL}/inventario/edit/${id}`, {
+    newItem,
+  });
+  return res.data;
+};
 
 export {
-    viewAllFiles,
-    viewOneFile,
-    viewFavorite,
-    downloadFile,
-   // subirArchivo,
-    deleteFile,
+  viewAllFiles,
+  viewOneFile,
+  viewFavorite,
+  downloadFile,
+  // subirArchivo,
+  deleteFile,
   uploadNewFile,
   viewImg,
-  uploadNewFileData
+  uploadNewFileData,
+  updateFile
 };

@@ -144,6 +144,21 @@ const viewFavorite = async (req: Request, res: Response) => {
         });
 };
 
+const updateArchivo = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+    await Archivos.findByIdAndUpdate(id, req.body.newItem)
+        .then((item: IArchivos) => {
+            if (!item) {
+                return res.status(404).send({message: "Archivo no encontrado"});
+            }
+            return res.status(200).send({message: "Archivo actualizado"});
+        })
+        .catch((err: CallbackError) => {
+            console.log(err);
+            return res.status(400).send({message: "Error al editar Archivo"});
+        });
+};
+
 // const viewAsambleaFiles = (req, res)=>{
 
 //     Asamblea.findById(req.params.id, (error, asamblea) => {
@@ -167,5 +182,5 @@ const viewFavorite = async (req: Request, res: Response) => {
 //     })
 // }
 
-export { uploadNewFile, uploadNewFileData, getFiles, downloadFile, deleteFile, viewFile, sendImg };
+export { uploadNewFile, uploadNewFileData, getFiles, downloadFile, deleteFile, viewFile, sendImg, updateArchivo };
 

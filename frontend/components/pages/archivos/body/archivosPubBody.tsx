@@ -77,9 +77,13 @@ export default function ArchivosPubBody() {
         id: false,
         index: false,
         mimetype: false,
+        userSubida: false,
+        userModifica: false,
         publico: true,
         url: false,
         download: true,
+        updatedAt: false,
+        fileName: false,
     });
     const [sorting, setSorting] = useState<SortingState>([]);
     const { colorMode } = useColorMode();
@@ -88,6 +92,7 @@ export default function ArchivosPubBody() {
     const columns: ColumnDef<IArchivos>[] = useMemo<ColumnDef<IArchivos>[]>(
         () => [
             { id: "id", accessorKey: "_id" },
+            //id
             {
                 id: "index",
                 header: "#",
@@ -95,6 +100,7 @@ export default function ArchivosPubBody() {
                 sortingFn: "basic",
             },
             // { id: "imgScr", accessorKey: "urlPic" },
+            //originalName
             {
                 id: "originalName",
                 header: () => {
@@ -115,6 +121,28 @@ export default function ArchivosPubBody() {
                     );
                 },
             },
+            //fileName
+            {
+                id: "fileName",
+                header: () => {
+                    return (
+                        <Text
+                        //minW={"100%"} textAlign={"center"}
+                        >
+                            Nombre
+                        </Text>
+                    );
+                },
+                accessorKey: "fileName",
+                cell: ({ row }) => {
+                    return (
+                        <Text minW={"100%"} textAlign={"center"}>
+                            {row.getValue("fileName")}
+                        </Text>
+                    );
+                },
+            },
+            //mimetype
             {
                 id: "mimetype",
                 header: () => {
@@ -137,6 +165,7 @@ export default function ArchivosPubBody() {
                     );
                 },
             },
+            //tagCategoria
             {
                 id: "tagCategoria",
                 header: () => {
@@ -159,6 +188,7 @@ export default function ArchivosPubBody() {
                     );
                 },
             },
+            //url
             {
                 id: "url",
                 header: () => {
@@ -181,6 +211,53 @@ export default function ArchivosPubBody() {
                     );
                 },
             },
+            //userSubida
+            {
+                id: "userSubida",
+                header: () => {
+                    return (
+                        <Text
+                            minW={"100%"} textAlign={"center"}
+                        >
+                            Subido por
+                        </Text>
+                    );
+                },
+                accessorKey: "userSubida",
+                cell: ({ row }) => {
+                    return (
+                        <Text
+                            minW={"100%"} textAlign={"center"}
+                        >
+                            {row.getValue("userSubida")}
+                        </Text>
+                    );
+                },
+            },
+            //userModifica
+            {
+                id: "userModifica",
+                header: () => {
+                    return (
+                        <Text
+                            minW={"100%"} textAlign={"center"}
+                        >
+                            Modificado por
+                        </Text>
+                    );
+                },
+                accessorKey: "userModifica",
+                cell: ({ row }) => {
+                    return (
+                        <Text
+                            minW={"100%"} textAlign={"center"}
+                        >
+                            {row.getValue("userModifica")}
+                        </Text>
+                    );
+                },
+            },
+            //publico - acceso
             {
                 id: "publico",
                 header: () => {
@@ -228,6 +305,7 @@ export default function ArchivosPubBody() {
                     }
                 },
             },
+            //createdAt - fecha
             {
                 id: "createdAt",
                 header: () => {
@@ -252,54 +330,82 @@ export default function ArchivosPubBody() {
                 },
                 sortingFn: "datetime",
             },
-            // {
-            //     id: "edit",
-            //     enableSorting: false,
-            //     header: () => {
-            //         if (userAccess) {
-            //             return (
-            //                 <>
-            //                     <Circle
-            //                         border={"2px solid"}
+            //updatedAt - fecha
+            {
+                id: "updatedAt",
+                header: () => {
+                    return (
+                        <Text
+                        //  minW={"100%"} textAlign={"center"}
+                        >
+                            Fecha de Actualización
+                        </Text>
+                    );
+                },
+                accessorKey: "updatedAt",
+                cell: ({ row }) => {
+                    const date = textDate(row.getValue<Date>("updatedAt"));
+                    return (
+                        <Text
+                        //  minW={"100%"} textAlign={"center"}
+                        >
+                            {date}
+                        </Text>
+                    );
+                },
+                sortingFn: "datetime",
+            },
+            //edit
+            {
+                id: "edit",
+                enableSorting: false,
+                header: () => {
+                    if (userAccess) {
+                        return (
+                            <>
+                                <Circle
+                                    border={"2px solid"}
             //                         borderColor={
             //                             colorMode == "light"
             //                                 ? "archivoDeleteItem.light"
             //                                 : "archivoDeleteItem.dark"
             //                         }
-            //                         size={"1.5em"}
-            //                         fontSize={"1.2em"}
+                                    size={"1.5em"}
+                                    fontSize={"1.2em"}
             //                         color={
             //                             colorMode == "light"
             //                                 ? "archivoDeleteItem.light"
             //                                 : "archivoDeleteItem.dark"
             //                         }
-            //                         cursor={"default"}
-            //                     >
-            //                         <MdCreate />
-            //                     </Circle>
-            //                 </>
-            //             );
-            //         }
-            //     },
-            //     cell: ({ row }) => {
-            //         if (userAccess) {
-            //             return (
-            //                 <EditarArchivo
-            //                     id={row.getValue("id")}
-            //                     nombre={row.getValue("nombre")}
-            //                     estado={row.getValue("estado")}
-            //                     prestable={row.getValue("prestable")}
-            //                     cantidad={row.getValue("cantidad")}
-            //                     categoria={row.getValue("categoria")}
-            //                     cicloMant={row.getValue("cicloMant")}
-            //                     desc={row.getValue("desc")}
-            //                     fechaSalida={row.getValue("fechaSalida")}
-            //                     ultMant={row.getValue("ultMant")}
-            //                 />
-            //             );
-            //         }
-            //     },
-            // },
+                                    cursor={"default"}
+                                >
+                                    <MdCreate />
+                                </Circle>
+                            </>
+                        );
+                    }
+                },
+                cell: ({ row }) => {
+                    if (userAccess) {
+                        return (
+                            <EditarArchivo
+                                id={row.getValue("id")}
+                                originalName={row.getValue("originalName")}
+                                fileName={row.getValue("fileName")}
+                                tagCategoria={row.getValue("tagCategoria")}
+                                mimetype={row.getValue("mimetype")}
+                                url={row.getValue("url")}
+                                userSubida={row.getValue("userSubida")}
+                                userModifica={row.getValue("userModifica")}
+                                publico={row.getValue("publico")}
+                                createdAt={row.getValue("createdAt")}
+                                updatedAt={row.getValue("updatedAt")}
+                            />
+                        );
+                    }
+                },
+            },
+            //delete
             {
                 id: "delete",
                 enableSorting: false,
@@ -309,18 +415,18 @@ export default function ArchivosPubBody() {
                             <>
                                 <Circle
                                     border={"2px solid"}
-                                    borderColor={
-                                        colorMode == "light"
-                                            ? "archivoDeleteItem.light"
-                                            : "archivoDeleteItem.dark"
-                                    }
+                                    // borderColor={
+                                    //     colorMode == "light"
+                                    //         ? "archivoDeleteItem.light"
+                                    //         : "archivoDeleteItem.dark"
+                                    // }
                                     size={"1.5em"}
                                     fontSize={"1.2em"}
-                                    color={
-                                        colorMode == "light"
-                                            ? "archivoDeleteItem.light"
-                                            : "archivoDeleteItem.dark"
-                                    }
+                                    // color={
+                                    //     colorMode == "light"
+                                    //         ? "archivoDeleteItem.light"
+                                    //         : "archivoDeleteItem.dark"
+                                    // }
                                     cursor={"default"}
                                 >
                                     <MdDelete />
@@ -344,6 +450,7 @@ export default function ArchivosPubBody() {
                     }
                 },
             },
+            //download
             {
                 id: "download",
                 enableSorting: false,
@@ -352,18 +459,18 @@ export default function ArchivosPubBody() {
                         <>
                             <Circle
                                 border={"2px solid"}
-                                borderColor={
-                                    colorMode == "light"
-                                        ? "archivoDeleteItem.light"
-                                        : "archivoDeleteItem.dark"
-                                }
+                                // borderColor={
+                                //     colorMode == "light"
+                                //         ? "archivoDeleteItem.light"
+                                //         : "archivoDeleteItem.dark"
+                                // }
                                 size={"1.5em"}
                                 fontSize={"1.2em"}
-                                color={
-                                    colorMode == "light"
-                                        ? "archivoDeleteItem.light"
-                                        : "archivoDeleteItem.dark"
-                                }
+                                // color={
+                                //     colorMode == "light"
+                                //         ? "archivoDeleteItem.light"
+                                //         : "archivoDeleteItem.dark"
+                                // }
                                 cursor={"default"}
                             >
                                 <MdDownload />

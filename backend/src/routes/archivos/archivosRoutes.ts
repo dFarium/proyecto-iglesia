@@ -9,6 +9,7 @@ import {
   viewFile,
   sendImg,
   uploadNewFileData,
+  updateArchivo,
 } from "../../controllers/archivos/archivosController";
 
 export const archivosRoutes = Router();
@@ -22,7 +23,7 @@ archivosRoutes.post(
 );
 
 //put
-// archivosRoutes.put("/inventario/edit/:id", editItemInventario);
+ archivosRoutes.put("/files/update/:id", updateArchivo);
 
 //delete
 archivosRoutes.delete("/file/delete/:id", deleteFile);
