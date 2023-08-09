@@ -266,26 +266,24 @@ function NuevoIngresoTesoreria() {
 
                             </FormControl>
 
-                            <HStack mt={"25px"} justify={"space-between"} align={"center"}>
-                                <VStack>
-                                    <Button>
-                                        Subir Archivo
-                                        <Input
-                                            type="file"
-                                            height="100%"
-                                            width="100%"
-                                            position="absolute"
-                                            top="0"
-                                            left="0"
-                                            opacity="0"
-                                            aria-hidden="true"
-                                            accept="image/*"
-                                            onChange={handlePicChange}
-                                        />
-                                    </Button>
-                                    <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
-                                </VStack>
-                            </HStack>
+                            <FormControl mt="25px" display="flex" flexDirection="column" alignItems="center">
+                                <Button>
+                                    Subir Archivo
+                                    <Input
+                                        type="file"
+                                        height="100%"
+                                        width="100%"
+                                        position="absolute"
+                                        top="0"
+                                        left="0"
+                                        opacity="0"
+                                        aria-hidden="true"
+                                        accept="image/*"
+                                        onChange={handlePicChange}
+                                    />
+                                </Button>
+                                <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                            </FormControl>
                         </AlertDialogBody>
                         <AlertDialogFooter>
                             <Button
@@ -964,26 +962,24 @@ function NuevoGastoIngresoTesoreria() {
                                 )}
                             </FormControl>
 
-                            <HStack mt={"25px"} justify={"space-between"} align={"start"}>
-                                <VStack>
-                                    <Button>
-                                        Subir Archivo
-                                        <Input
-                                            type="file"
-                                            height="100%"
-                                            width="100%"
-                                            position="absolute"
-                                            top="0"
-                                            left="0"
-                                            opacity="0"
-                                            aria-hidden="true"
-                                            accept="image/*"
-                                            onChange={handlePicChange}
-                                        />
-                                    </Button>
-                                    <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
-                                </VStack>
-                            </HStack>
+                            <FormControl mt="25px" display="flex" flexDirection="column" alignItems="center">
+                                <Button>
+                                    Subir Archivo
+                                    <Input
+                                        type="file"
+                                        height="100%"
+                                        width="100%"
+                                        position="absolute"
+                                        top="0"
+                                        left="0"
+                                        opacity="0"
+                                        aria-hidden="true"
+                                        accept="image/*"
+                                        onChange={handlePicChange}
+                                    />
+                                </Button>
+                                <Text>{imagen ? imagen.name : "No hay imagen"}</Text>
+                            </FormControl>
                         </AlertDialogBody>
                         <AlertDialogFooter>
                             <Button
