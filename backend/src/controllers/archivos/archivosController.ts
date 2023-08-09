@@ -50,7 +50,7 @@ const uploadNewFile = async(req: Request, res: Response) => {
 // };
 
 const getFiles = async (req: Request, res: Response) => {
-    await Archivos.find({tagCategoria: {$nin: ["Fotos Inventario","Random"]}})
+    await Archivos.find({tagCategoria: {$nin: ["Fotos Inventario","Random","Boletas","Canciones"]}})
         .sort({ createdAt: "desc" })
         .then((items: IArchivos[]) => {
             if (items.length === 0) {

@@ -174,6 +174,11 @@ const colors = {
     300: "#ff7520", // dark mode _hover
   },
 
+  descargaButton: {
+    light: "#4fa324",
+    dark: "#7df042",
+  },
+
   //prestamo instrumentos
   newPrestamoInstrumentoButton: {
     500: "#F07B3F", // light mode
