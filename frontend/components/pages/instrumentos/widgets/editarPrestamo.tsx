@@ -5,13 +5,15 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
-    Button, Flex,
+    Button,
+    Flex,
     FormControl,
     FormErrorMessage,
     FormLabel,
     IconButton,
     Input,
-    Select, Switch,
+    Select,
+    Switch,
     useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
@@ -21,7 +23,7 @@ import {MdCreate} from "react-icons/md";
 import {minDate, textDate} from "@/utils/dateUtils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {editPrestamoInstrumento} from "@/data/prestamos/prestamos";
-import {editItemInventario, editPrestable} from "@/data/inventario/item";
+import {editPrestable} from "@/data/inventario/item";
 
 
 function EditarPrestamo(props: {
@@ -66,7 +68,7 @@ function EditarPrestamo(props: {
         setDevuelto(props.devuelto);
         setFechaInicio(props.fechaInicio);
         setFechaLimite(props.fechaLimite);
-        setFechaDevolucion(fechaActualOrDevolucion(props.fechaDevolucion));
+        setFechaDevolucion(fechaInicioOrDevolucion(props.fechaDevolucion));
         //setComentario(props.comentario);
     };
 
@@ -145,13 +147,11 @@ function EditarPrestamo(props: {
         return devolucion && devolucion < inicio;
     }
 
-    const fechaActualOrDevolucion = (date: Date) => {
+    const fechaInicioOrDevolucion = (date: Date) => {
         if (date) {
             return date;
         } else {
-            const ayer: Date = new Date();
-            ayer.setDate(ayer.getDate() - 1);
-            return ayer;
+            return new Date(fechaInicio);
         }
     }
 
@@ -242,7 +242,7 @@ function EditarPrestamo(props: {
                                         type="date"
                                         isDisabled={!devuelto || props.devuelto}
                                         onChange={handleFechaDevolucionChange}
-                                        value={fechaToValue(fechaActualOrDevolucion(fechaDevolucion))}
+                                        value={fechaToValue(fechaInicioOrDevolucion(fechaDevolucion))}
                                         min={minDate(new Date(fechaInicio))}
                                     />
                                     <FormErrorMessage>Debe escoger una fecha válida</FormErrorMessage>
