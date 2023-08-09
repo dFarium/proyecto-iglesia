@@ -36,6 +36,8 @@ import {
     MdHelp,
     MdKeyboardDoubleArrowLeft,
     MdKeyboardDoubleArrowRight,
+    MdLockOpen,
+    MdLock,
     MdNavigateBefore,
     MdNavigateNext,
     MdUpload,
@@ -303,7 +305,7 @@ export default function ArchivosAllBody() {
                                 // >
                                 //     Publico
                                 // </Text>
-                                <MdVisibility></MdVisibility>
+                                <MdLockOpen color="green"></MdLockOpen>
                             );
                         } else {
                             if (!publico) {
@@ -313,7 +315,7 @@ export default function ArchivosAllBody() {
                                     // >
                                     //     Privado
                                     // </Text>
-                                    <MdVisibilityOff></MdVisibilityOff>
+                                  <MdLock color="red"></MdLock>
                                 );
                             }
                             return (

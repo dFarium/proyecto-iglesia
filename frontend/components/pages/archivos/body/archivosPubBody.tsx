@@ -36,6 +36,8 @@ import {
     MdHelp,
     MdKeyboardDoubleArrowLeft,
     MdKeyboardDoubleArrowRight,
+    MdLock,
+    MdLockOpen,
     MdNavigateBefore,
     MdNavigateNext,
     MdUpload,
@@ -297,20 +299,22 @@ export default function ArchivosPubBody() {
 
                         if (publico) {
                             return (
-                                <Text
-                                //  minW={"100%"} textAlign={"center"}
-                                >
-                                    Publico
-                                </Text>
+                                // <Text
+                                // //  minW={"100%"} textAlign={"center"}
+                                // >
+                                //     Publico
+                                // </Text>
+                                <MdLockOpen color="green"></MdLockOpen>
                             );
                         } else {
                             if (!publico) {
                                 return (
-                                    <Text
-                                    //  minW={"100%"} textAlign={"center"}
-                                    >
-                                        Privado
-                                    </Text>
+                                    // <Text
+                                    // //  minW={"100%"} textAlign={"center"}
+                                    // >
+                                    //     Privado
+                                    // </Text>
+                                    <MdLock color="red"></MdLock>
                                 );
                             }
                             return (
