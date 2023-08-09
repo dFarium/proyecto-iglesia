@@ -2,19 +2,15 @@
 
 import { Text, FormControl, useColorModeValue, HStack, FormLabel, Input, Table, Button, 
     IconButton, Container, Tbody, Thead, Th, Tr, Td, Tooltip, Modal, ModalOverlay, ModalContent,
-    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack, Checkbox, CheckboxGroup } from "@chakra-ui/react";
+    ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Box, VStack, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import Swal from 'sweetalert2'
-import { useRouter } from "next/navigation";
 import { ArrowUpIcon, ArrowDownIcon } from "@chakra-ui/icons";
 //instalar -> npm install react-icons
 import { FaRegEdit, FaRegTrashAlt, FaUserPlus } from 'react-icons/fa';
 
 function GetUsersBody() {
-
-    const router = useRouter();
-    const [loading, setLoading] = useState(true);
 
     interface Usuario {
         _id: string;
@@ -26,38 +22,21 @@ function GetUsersBody() {
         direccion: string;
         fecha_nacimiento: Date;
         num_emergencia: string;
-        //más
+        RRSS: string;
     }
     const [usuarios, setUsers] = useState<Usuario[]>([]);
     const [admin, setAdmin] = useState(false);
 
     const [directiva, setDirectiva] = useState(false);
 
-    const [rol, setRoles] = useState<string[]>([]);
+    const [miembro, setMiembro] = useState(false);
 
-    const [isAscendingOrder, setIsAscendingOrder] = useState(true);
-
-    const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("asc");
+    // Estados para ordenar
+    const [orderDirectionName, setOrderDirectionName] = useState<"asc" | "desc">("asc");
+    const [orderDirectionRUT, setOrderDirectionRUT] = useState<"asc" | "desc">("asc");
 
     // Estados para editar el usuario
     const [editingUser, setEditingUser] = useState<Usuario | null>(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem('auth-token');
-    
-        if (!token) {
-            router.push('/');
-        } else {
-            setLoading(false);
-        }
-
-    }, []);
-
-    useEffect(() => {
-        if (editingUser) {
-            setRoles(editingUser.rol.map(role => role.name));
-        }
-    }, [editingUser]);
 
     // Estados para mostrar detalles del usuario
     const [getUser, setGetUser] = useState<Usuario | null>(null);
@@ -101,8 +80,7 @@ function GetUsersBody() {
                     direccion: editingUser.direccion,
                     fecha_nacimiento: editingUser.fecha_nacimiento,
                     num_emergencia: editingUser.num_emergencia,
-                    RRSS: editingUser.num_emergencia,
-                    rol: rol.map(role => ({ name: role })),
+                    RRSS: editingUser.RRSS,
                 }),
             });
             if (!res.ok) {
@@ -187,6 +165,16 @@ function GetUsersBody() {
                 dateValue.setHours(12); // Ajustamos al mediodía del tiempo local
                 value = dateValue.toISOString();
             }
+
+           // Si el input es 'telefono', añadimos '+56' si no comienza con eso
+            if (event.target.name === 'telefono') {
+                value = value.startsWith('+56') ? value : "+56" + value;
+            }
+
+            if (event.target.name === 'num_emergencia') {
+                value = value.startsWith('+56') ? value : "+56" + value;
+            }
+            
             setEditingUser({
                 ...editingUser,
                 [event.target.name]: event.target.value
@@ -223,6 +211,8 @@ function GetUsersBody() {
                         setAdmin(true);
                     } else if (roleObject.name === 'directiva'){
                         setDirectiva(true);
+                    } else if (roleObject.name === 'miembro'){
+                        setMiembro(true);
                     }
                 });
             }
@@ -245,10 +235,12 @@ function GetUsersBody() {
                     <Td isTruncated maxWidth="200px">{usuario.rut}</Td>
                     <Td isTruncated maxWidth="350px">{usuario.email}</Td>
                     <Td isTruncated maxWidth="400px">{roles}</Td>
+                    {miembro && (
+                    <Td isTruncated maxWidth="200px">{usuario.RRSS}</Td>)}
                     {(admin || directiva) && (
                         <Td maxW={"70px"}>
                             <Button colorScheme="twitter" variant='link' fontWeight="thin"
-                            onClick={() => { openDetailModal(); setGetUser(usuario); setRoles(usuario.rol.map(rol => rol.name));}}>detalle</Button>
+                            onClick={() => { openDetailModal(); setGetUser(usuario);}}>detalle</Button>
                         </Td>)}
                     {admin && (
                         <Td maxW={"1px"}>
@@ -286,29 +278,34 @@ function GetUsersBody() {
         });
     }
 
-    // const handleRolesChange = (values: string[]) => {
-    //     setRoles(values);
-    // };
-
-    if (loading) {
-        return null;
-    }
-
     // Constante usada para establecer el calendario hasta la fecha actual.
     const currentDate = new Date().toISOString().split('T')[0];
 
+    // Funciones para ordenar
     const sortUsersByName = () => {
         const sortedUsers = [...usuarios];
-        if (orderDirection === "asc") {
+        if (orderDirectionName === "asc") {
             sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
-            setOrderDirection("desc");
+            setOrderDirectionName("desc");
         } else {
             sortedUsers.sort((a, b) => b.name.localeCompare(a.name));
-            setOrderDirection("asc");
+            setOrderDirectionName("asc");
+        }
+        setUsers(sortedUsers);
+    };
+    const sortUsersByRUT = () => {
+        const sortedUsers = [...usuarios];
+        if (orderDirectionRUT === "asc") {
+            sortedUsers.sort((a, b) => a.rut.localeCompare(b.rut));
+            setOrderDirectionRUT("desc");
+        } else {
+            sortedUsers.sort((a, b) => b.rut.localeCompare(a.rut));
+            setOrderDirectionRUT("asc");
         }
         setUsers(sortedUsers);
     };
     
+
     return(
         <Container maxW='1250px' >
             <HStack justifyContent={"space-between"} h='100px'>
@@ -321,10 +318,12 @@ function GetUsersBody() {
             <Table variant="simple" >
                 <Thead >
                 <Tr>
-                <Th onClick={sortUsersByName}>NOMBRE{orderDirection === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}</Th>
-                    <Th>RUT</Th>
+                <Th onClick={sortUsersByName}>NOMBRE{orderDirectionName === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}</Th>
+                    <Th onClick={sortUsersByRUT}>RUT{orderDirectionRUT === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}</Th>
                     <Th>CORREO</Th>
                     <Th>ROL</Th>
+                    {miembro && (
+                    <Th>FACEBOOK</Th>)}
                 </Tr>
                 </Thead>
                 <Tbody >
@@ -342,31 +341,47 @@ function GetUsersBody() {
                     <ModalBody>
                         <form onSubmit={EditUser}>
                             <FormControl>
-                                <FormLabel htmlFor="name">Nombre</FormLabel>
+                                <FormLabel p={2} h={6} htmlFor="name">Nombre</FormLabel>
                                 <Input type="text" id="name" name="name" value={editingUser?.name || ''} onChange={handleInputChange} />
-                                <FormLabel htmlFor="rut">RUT</FormLabel>
-                                <Input type="text" id="rut" name="rut" value={editingUser?.rut || ''} onChange={handleInputChange} />
-                                <FormLabel htmlFor="email">Email</FormLabel>
+                                <FormLabel p={2} h={6} htmlFor="rut">RUT</FormLabel>
+                                <Input type="text" id="rut" name="rut" value={editingUser?.rut || ''} onChange={handleInputChange} minLength={12} maxLength={12}/>
+                                <FormLabel p={2} h={6} htmlFor="email">Email</FormLabel>
                                 <Input type="text" id="email" name="email" value={editingUser?.email || ''} onChange={handleInputChange} />
-                                <FormLabel htmlFor="telefono">Telefono</FormLabel>
-                                <Input type="text" id="telefono" name="telefono" value={editingUser?.telefono || ''} onChange={handleInputChange} />
-                                <FormLabel htmlFor="direccion">Direccion</FormLabel>
+                                <FormLabel p={2} h={6} htmlFor="telefono">Telefono</FormLabel>
+                                <InputGroup onChange={handleInputChange}>
+                                    <InputLeftAddon p={2}>
+                                        +56
+                                    </InputLeftAddon>
+                                    <Input
+                                        pl={"10px"}  // Un padding izquierdo para que no se superponga con el prefijo.
+                                        type="text" 
+                                        id="telefono" 
+                                        name="telefono" 
+                                        value={editingUser?.telefono ? editingUser.telefono.replace('+56', '') : ''} 
+                                    />
+                                </InputGroup>
+                                <FormLabel p={2} h={6} htmlFor="direccion">Direccion</FormLabel>
                                 <Input type="text" id="direccion" name="direccion" value={editingUser?.direccion || ''} onChange={handleInputChange} />
-                                <FormLabel htmlFor="fecha_nacimiento">Fecha de nacimiento</FormLabel>
+                                <FormLabel p={2} h={6} htmlFor="fecha_nacimiento">Fecha de nacimiento</FormLabel>
                                 <Input type="date" id="fecha_nacimiento" name="fecha_nacimiento" max={currentDate}
                                     value={editingUser?.fecha_nacimiento ? new Date(editingUser.fecha_nacimiento).toISOString().split('T')[0] : ''} 
                                     onChange={handleInputChange} 
                                 />
-                                <FormLabel htmlFor="num_emergencia">Nro de emergencia</FormLabel>
-                                <Input type="text" id="num_emergencia" name="num_emergencia" value={editingUser?.num_emergencia || ''} onChange={handleInputChange} />
-                                {/* <FormLabel htmlFor="rol">Rol</FormLabel> */}
-                                {/* <CheckboxGroup colorScheme="green" value={rol} onChange={(roles: any) => handleRolesChange(roles)}>
-                                    <HStack spacing={3}>
-                                        <Checkbox value="admin">Admin</Checkbox>
-                                        <Checkbox value="directiva">Directiva</Checkbox>
-                                        <Checkbox value="miembro">Miembro</Checkbox>
-                                    </HStack>
-                                </CheckboxGroup> */}
+                                <FormLabel p={2} h={6} htmlFor="num_emergencia">Nro de emergencia</FormLabel>
+                                <InputGroup onChange={handleInputChange}>
+                                    <InputLeftAddon p={2}>
+                                        +56
+                                    </InputLeftAddon>
+                                    <Input
+                                        pl={"10px"}  // Un padding izquierdo para que no se superponga con el prefijo.
+                                        type="text" 
+                                        id="num_emergencia" 
+                                        name="num_emergencia" 
+                                        value={editingUser?.num_emergencia ? editingUser.num_emergencia.replace('+56', '') : ''} 
+                                    />
+                                </InputGroup>
+                                <FormLabel p={2} h={6} htmlFor="RRSS">Facebook</FormLabel>
+                                <Input type="text" id="RRSS" name="RRSS" value={editingUser?.RRSS || ''} onChange={handleInputChange} />
                             </FormControl>
                         </form>
                     </ModalBody>
@@ -398,7 +413,7 @@ function GetUsersBody() {
                             <Text>{getUser.email}</Text>
                         </HStack>
                         <HStack>
-                            <Text>Telefono: </Text>
+                            <Text>Telefono: +56</Text>
                             <Text>{getUser.telefono}</Text>
                         </HStack>
                         <HStack>
@@ -410,11 +425,15 @@ function GetUsersBody() {
                             <Text>{new Date(getUser.fecha_nacimiento).toLocaleDateString()}</Text>
                         </HStack>
                         <HStack>
-                            <Text>Nro de emergencia: </Text>
+                            <Text>Nro de emergencia: +56</Text>
                             <Text>{getUser.num_emergencia}</Text>
                         </HStack>
                         <HStack>
-                            <Text>Rol: </Text>
+                            <Text>Facebook: </Text>
+                            <Text>{getUser.RRSS}</Text>
+                        </HStack>
+                        <HStack>
+                            <Text>Rol/es: </Text>
                             <Text>{getUser.rol.map(rol => rol.name).join(', ')}</Text>
                         </HStack>
                     </VStack>

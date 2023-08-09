@@ -72,7 +72,7 @@ const loginUser = async (req: Request, res: Response) => {
     
     // Busqueda del usuario
     const user = await UsuarioModel.findOne({ email: req.body.email })
-    if (!user) return res.status(400).json({ error: 'Usuario no encontrado' })
+    if (!user) return res.status(401).json({ error: 'Usuario no encontrado' })
 
     // Buscar los roles del usuario
     const rol = await Role.find({_id: {$in: user.rol}})
