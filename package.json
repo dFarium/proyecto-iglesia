@@ -1,14 +1,9 @@
 {
   "dependencies": {
-<<<<<<< HEAD
-    "express": "^4.18.2",
-    "mongoose": "^7.4.2"
-=======
     "@emotion/react": "^11.11.1",
     "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.2.1"
->>>>>>> a836dd232029836a668c0e2b47271f156b18b3e3
   }
 }

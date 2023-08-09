@@ -1,11 +1,12 @@
 "use client";
 import { ItemCalendario, obtenerListaCalendario } from '@/data/calendario/item';
 import { textDate } from '@/utils/dateUtils';
-import { Box, Circle, HStack, Text, VStack, useColorMode } from '@chakra-ui/react';
+import { Box, Circle, Flex, HStack, IconButton, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack, useColorMode } from '@chakra-ui/react';
 import { useQuery } from "@tanstack/react-query";
-import { ColumnDef, SortingState, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, SortingState, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import React, { useMemo, useState } from 'react'
-import { MdDelete } from 'react-icons/md';
+import { MdArrowDropDown, MdArrowDropUp, MdDelete, MdHelp, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
+import AgregarCalendario from '../widgets/agregarCalendario'
 
 export function CalendarioBody() {
 
@@ -17,6 +18,8 @@ export function CalendarioBody() {
     },
     initialData: [],
   });
+
+  console.log(todoQuery)
 
   const todoData = todoQuery.data;
 
@@ -45,9 +48,9 @@ export function CalendarioBody() {
         sortingFn: "basic",
       },
       {
-        id: "nombre",
+        id: "nombreAct",
         header: "Nombre",
-        accessorKey: "nombre",
+        accessorKey: "nombreAct",
         cell: ({ row }) => {
           return (
             <Text>
@@ -139,14 +142,135 @@ export function CalendarioBody() {
   });
 
   return (
-    <Box w={"100%"} h={"100%"}>
-      <VStack w={"100%"} h={"100%"} spacing={"30px"}>
-        <HStack justifyContent={"space-between"} w={"100%"}>
-          <Text> Botón Agregar</Text>
-        </HStack>
-      </VStack>
-    </Box>
-    )
+    <>
+      <Flex w={"100%"} h={"100%"} direction={{ base: "column", md: "row" }}>
+        <Box w={{ base: "100%", md: "70%" }} h={"100%"}>
+          <VStack w={"100%"} h={"100%"} spacing={"30px"}>
+          <HStack justifyContent={"space-between"} w={"100%"}>
+              <Text textStyle={"titulo"}>Listado Actividades</Text>
+            </HStack>
+            <TableContainer overflowY={"auto"} width={"100%"}>
+              <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
+                <Thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <Tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <Th
+                          key={header.id}
+                          onClick={header.column.getToggleSortingHandler()}>
+                          {header.isPlaceholder ? null : (
+                            <Box
+                              display={"flex"}
+                              flexDir={"row"}
+                              alignItems={"center"}
+                              justifyContent={"center"}
+                              cursor={"pointer"}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                              <Box fontSize={"1.5em"}>
+                                {header.column.getIsSorted() ? (
+                                  header.column.getIsSorted() === "desc" ? (
+                                    <MdArrowDropDown />
+                                  ) : (
+                                    <MdArrowDropUp />
+                                  )
+                                ) : null}
+                              </Box>
+                            </Box>
+                          )}
+                        </Th>
+                      ))}
+                    </Tr>
+                  ))}
+                </Thead>
+                <Tbody>
+                  {table.getRowModel().rows.map(row => (
+                    <Tr key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <Td key={cell.id} maxW={"270px"}>
+                          <Box
+                            overflowX={"auto"}
+                            minH={"50px"}
+                            display={"flex"}
+                            alignItems={"center"}
+                            justifyContent={"center"}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </Box>
+                        </Td>
+                      ))}
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+            <VStack flexGrow={1} minH={"50px"} w={"100%"} justifyContent={"end"}>
+              <HStack w={"100%"} overflowX={"auto"} justify={"space-between"}>
+                <HStack>
+                  <Text minW={"220px"} overflowX={"auto"}>
+                    Mostrando{" "}
+                    {table.getState().pagination.pageSize * table.getState().pagination.pageIndex + 1}
+                    {"-"}
+                    {showPages(
+                      table.getPrePaginationRowModel().rows.length,
+                      table.getState().pagination.pageIndex,
+                      table.getState().pagination.pageSize
+                    )}
+                    {" de "}
+                    {table.getPrePaginationRowModel().rows.length}
+                  </Text>
+                  <HStack>
+                    <IconButton
+                      icon={<MdKeyboardDoubleArrowLeft />}
+                      aria-label="Primera página"
+                      onClick={() => table.setPageIndex(0)}
+                      isDisabled={!table.getCanPreviousPage()}
+                    />
+                    <IconButton
+                      icon={<MdNavigateBefore />}
+                      aria-label="Página anterior"
+                      onClick={() => table.previousPage()}
+                      isDisabled={!table.getCanPreviousPage()}
+                    />
+                    <IconButton
+                      icon={<MdNavigateNext />}
+                      aria-label="Página siguiente"
+                      onClick={() => table.nextPage()}
+                      isDisabled={!table.getCanNextPage()}
+                    />
+                    <IconButton
+                      icon={<MdKeyboardDoubleArrowRight />}
+                      aria-label="Última página"
+                      onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                      isDisabled={!table.getCanNextPage()}
+                    />
+                  </HStack>
+                </HStack>
+                <HStack display={{ base: "none", lg: "flex" }}>
+                  <MdHelp size={"20px"} />
+                  <Text minW={"400px"}>
+                    Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
+                  </Text>
+                </HStack>
+              </HStack>
+            </VStack>
+          </VStack>
+        </Box>
+        <Box w={{ base: "100%", md: "30%" }} h={"100%"} marginTop={{ base: "20px", md: "0" }}>
+
+          <HStack alignContent="flex-start" justifyContent="flex-end">
+            <AgregarCalendario />
+          </HStack>
+        </Box>
+      </Flex>
+    </>
+  )
 }
 
 function showPages(maxRows: number, currentIndex: number, pageSize: number) {
