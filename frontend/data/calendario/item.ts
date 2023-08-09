@@ -10,8 +10,13 @@ export interface ItemCalendario {
 }
 
 const obtenerListaCalendario = async () => {
-    const res = await axios.get(`${process.env.API_URL}/calendario/getall`);
-    return res.data;
+    try {
+        const res = await axios.get(`${process.env.API_URL}/calendario/getall`);
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching calendar data:", error);
+        throw error; // Rethrow the error to be caught by the caller
+    }
 };
 
 const crearItemCalendario = async (item: ItemCalendario) => {

@@ -71,14 +71,36 @@ function AgregarCalendario() {
 
     const handleFechaInicioChange = (e: any) => {
         const d = new Date(e.target.value);
-        const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        setFechaInicio(date);
+        const selectedDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+
+        // Verificamos que la fecha seleccionada no sea anterior a hoy
+        if (selectedDate >= date) {
+            setFechaInicio(selectedDate);
+
+            // Si la fecha de término está establecida, verificamos si también es válida
+            if (fechaTermino && selectedDate > fechaTermino) {
+                setFechaTermino(selectedDate);
+                setFechaTerminoErr(false);
+            }
+
+            // Si la fecha de término no está establecida, simplemente la actualizamos a la fecha de inicio
+            if (!fechaTermino) {
+                setFechaTermino(selectedDate);
+                setFechaTerminoErr(false);
+            }
+        }
     };
 
     const handleFechaTerminoChange = (e: any) => {
         const d = new Date(e.target.value);
         const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        setFechaTermino(date);
+
+        if (!fechaInicio || date >= fechaInicio) {
+            setFechaTermino(date);
+            setFechaTerminoErr(false);
+        } else {
+            setFechaTerminoErr(true);
+        }
     };
 
     const handleEstadoActividadChange = (e: any) => {
@@ -155,23 +177,26 @@ function AgregarCalendario() {
                                     </FormHelperText>
                                 )}
                             </FormControl>
-                            <FormControl mt={"25px"} isInvalid={!fechaTermino}>
+                            <FormControl mt={"25px"} isInvalid={!fechaInicio}>
                                 <FormLabel>Fecha de Inicio</FormLabel>
                                 <Input
                                     type="date"
-                                    onChange={handleFechaTerminoChange}
-                                    max={date.toISOString().split('T')[0]}
-                                    value={fechaTermino.toISOString().split('T')[0]}
+                                    onChange={handleFechaInicioChange}
+                                    min={date.toISOString().split('T')[0]}  // Establecemos el mínimo como hoy
+                                    value={fechaInicio ? fechaInicio.toISOString().split('T')[0] : ''}
                                 />
                             </FormControl>
-                            <FormControl mt={"25px"} isInvalid={!fechaTermino}>
+                            <FormControl mt={"25px"} isInvalid={fechaTerminoErr}>
                                 <FormLabel>Fecha de Término</FormLabel>
                                 <Input
                                     type="date"
                                     onChange={handleFechaTerminoChange}
-                                    max={date.toISOString().split('T')[0]}
-                                    value={fechaTermino.toISOString().split('T')[0]}
+                                    min={fechaInicio ? fechaInicio.toISOString().split('T')[0] : undefined}
+                                    value={fechaTermino ? fechaTermino.toISOString().split('T')[0] : ''}
                                 />
+                                {fechaTerminoErr && (
+                                    <FormErrorMessage>La fecha de término debe ser igual o mayor a la fecha de inicio</FormErrorMessage>
+                                )}
                             </FormControl>
                             <FormControl mt={"25px"} isInvalid={descripcionErr}>
                                 <FormLabel>Descripción</FormLabel>
