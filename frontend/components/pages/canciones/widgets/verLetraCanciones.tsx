@@ -49,7 +49,7 @@ function VerLetraCancion(props: { nombre: string }) {
               justifyContent={"center"}
             >
               {/* {imagenUrl && ( */}
-              <Image
+              {/* <Image
                 src={`${process.env.API_URL}/upload/Imagenes/${props.imgScr}`}
                 fallback={LoadingImage(imagenUrl)}
                 objectFit={"contain"}
@@ -57,7 +57,7 @@ function VerLetraCancion(props: { nombre: string }) {
                 border={
                   colorMode == "light" ? lightBorderImage : darkBorderImage
                 }
-              />
+              /> */}
               {/* )} */}
             </AlertDialogBody>
           </AlertDialogContent>
