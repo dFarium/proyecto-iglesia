@@ -1,4 +1,4 @@
-import { eliminarGastoIngresoTesoreria } from "@/data/tesoreria/item";
+import { eliminarItemCalendario } from "@/data/calendario/item";
 import {
     useDisclosure,
     useColorMode,
@@ -25,7 +25,7 @@ function EliminarCalendario(props: { name: string; id: string }) {
 
     const mutation = useMutation({
         mutationFn: async () => {
-            const res = await eliminarGastoIngresoTesoreria(props.id);
+            const res = await eliminarItemCalendario(props.id);
             return res;
         }, onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["obtenerListaCalendario"] });
