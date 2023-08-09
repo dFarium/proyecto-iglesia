@@ -39,8 +39,12 @@ import {
   uploadNewFile,
   uploadNewFileData,
 } from "@/data/archivos/archivos";
+import { getUserName } from "@/utils/roleUtils";
 
 function NuevoInstrumento() {
+  //get username
+  const userName = getUserName();
+
   // use disclosure
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -268,11 +272,11 @@ function NuevoInstrumento() {
                     estado: "Activo",
                     fechaSalida,
                     cantidad: 1,
-                    uploader: "Yo",
+                    uploader: userName,
                     desc,
                     cicloMant,
                     ultMant,
-                    ultMod: "Yo",
+                    ultMod: userName,
                     prestable,
                     urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                   });
@@ -313,6 +317,9 @@ function NuevoInstrumento() {
 }
 
 function NuevoEquipoElec() {
+  //get username
+  const userName = getUserName();
+
   // use disclosure
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -561,11 +568,11 @@ function NuevoEquipoElec() {
                     estado: "Activo",
                     fechaSalida,
                     cantidad,
-                    uploader: "Yo",
+                    uploader: userName,
                     desc,
                     cicloMant,
                     ultMant: date,
-                    ultMod: "Yo",
+                    ultMod: userName,
                     prestable,
                     urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                   });
@@ -601,6 +608,9 @@ function NuevoEquipoElec() {
 }
 
 function NuevoItemInventario() {
+  //get username
+  const userName = getUserName();
+  
   // use disclosures
   const {
     isOpen: isOpenInstrumentos,
@@ -880,11 +890,11 @@ function NuevoItemInventario() {
                     estado: "Activo",
                     fechaSalida,
                     cantidad: 1,
-                    uploader: "Yo",
+                    uploader: userName,
                     desc,
                     cicloMant,
                     ultMant: date,
-                    ultMod: "Yo",
+                    ultMod: userName,
                     prestable,
                     urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                   });
@@ -1063,11 +1073,11 @@ function NuevoItemInventario() {
                     estado: "Activo",
                     fechaSalida,
                     cantidad,
-                    uploader: "Yo",
+                    uploader: userName,
                     desc,
                     cicloMant,
                     ultMant: date,
-                    ultMod: "Yo",
+                    ultMod: userName,
                     prestable,
                     urlPic: imagen ? `${fechaStd}-${imagen.name}` : "",
                   });
@@ -1181,9 +1191,9 @@ function NuevoItemInventario() {
                     categoria: "Varios",
                     estado: "Activo",
                     cantidad,
-                    uploader: "Yo",
+                    uploader: userName,
                     desc,
-                    ultMod: "Yo",
+                    ultMod: userName,
                   });
                   setNombre("");
                   setCantidad(1);

@@ -13,9 +13,6 @@ const jwt = require('jsonwebtoken'); // Constante usada para crear el token
 
 // Registro de usuario
 const registerUser = async (req: Request, res: Response) => {
-    console.log(req.body.email);
-    console.log(req.body.rut);
-    console.log(req.body.password);
 
     // Validación de usuario
     const { error } = schemaRegister.validate(req.body);
