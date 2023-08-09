@@ -39,6 +39,8 @@ import {
     MdNavigateBefore,
     MdNavigateNext,
     MdUpload,
+    MdVisibility,
+    MdVisibilityOff
 } from "react-icons/md";
 import { NuevoArchivo } from "../widgets/nuevoArchivo";
 import { useMemo, useState } from "react";
@@ -296,20 +298,22 @@ export default function ArchivosAllBody() {
 
                         if (publico) {
                             return (
-                                <Text
-                                //  minW={"100%"} textAlign={"center"}
-                                >
-                                    Publico
-                                </Text>
+                                // <Text
+                                // //  minW={"100%"} textAlign={"center"}
+                                // >
+                                //     Publico
+                                // </Text>
+                                <MdVisibility></MdVisibility>
                             );
                         } else {
                             if (!publico) {
                                 return (
-                                    <Text
-                                    //  minW={"100%"} textAlign={"center"}
-                                    >
-                                        Privado
-                                    </Text>
+                                    // <Text
+                                    // //  minW={"100%"} textAlign={"center"}
+                                    // >
+                                    //     Privado
+                                    // </Text>
+                                    <MdVisibilityOff></MdVisibilityOff>
                                 );
                             }
                             return (

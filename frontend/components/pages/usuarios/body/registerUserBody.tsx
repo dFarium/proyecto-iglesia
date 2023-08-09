@@ -1,7 +1,7 @@
 "use client";
 
 import {Box, Button, Text, FormControl, FormLabel, Input, VStack, HStack, useColorMode, Checkbox,
-    CheckboxGroup, FormErrorMessage, InputGroup, InputLeftAddon, Image } from "@chakra-ui/react";
+    CheckboxGroup, FormErrorMessage, InputGroup, InputLeftAddon, Image, Flex, FormHelperText } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from 'sweetalert2';
