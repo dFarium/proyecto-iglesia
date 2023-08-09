@@ -131,24 +131,6 @@ function EditarItemInventario(props: {
     setUltMant(date);
   };
 
-  const validation = (): boolean => {
-    let error: boolean = false;
-    if (nombre.trim() == "") {
-      setNombreErr(true);
-      error = true;
-    }
-    if (cantidad.toString().trim() == "") {
-      setCantidadErr(true);
-      error = true;
-    }
-    if (error) {
-      return false;
-    } else {
-      setCantidadErr(false);
-      setNombreErr(false);
-    }
-    return true;
-  };
   const mutation = useMutation({
     mutationFn: async (newItem: IItemInventario) => {
       const res = await editItemInventario(props.id, newItem);
@@ -241,13 +223,6 @@ function EditarItemInventario(props: {
                       >
                         Inactivo
                       </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          setEstado("Prestado");
-                        }}
-                      >
-                        En préstamo
-                      </MenuItem>
                     </MenuList>
                   </Menu>
                 </Box>
@@ -330,22 +305,20 @@ function EditarItemInventario(props: {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  // validation();
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      estado,
-                      fechaSalida,
-                      cantidad: cantidad,
-                      desc,
-                      cicloMant,
-                      ultMant,
-                      ultMod: "Yo",
-                      prestable,
-                    });
-                    onCloseInstrumentos();
-                  }
+                  mutation.mutate({
+                    nombre,
+                    estado,
+                    fechaSalida,
+                    cantidad: cantidad,
+                    desc,
+                    cicloMant,
+                    ultMant,
+                    ultMod: "Yo",
+                    prestable,
+                  });
+                  onCloseInstrumentos();
                 }}
               >
                 Aceptar
@@ -506,23 +479,22 @@ function EditarItemInventario(props: {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre || !cantidad || cantidad == 0}
                 onClick={() => {
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      categoria: "Equipo",
-                      estado,
-                      fechaSalida,
-                      cantidad,
-                      uploader: "Yo",
-                      desc,
-                      cicloMant,
-                      ultMant,
-                      ultMod: "Yo",
-                      prestable,
-                    });
-                    onCloseEquipo();
-                  }
+                  mutation.mutate({
+                    nombre,
+                    categoria: "Equipo",
+                    estado,
+                    fechaSalida,
+                    cantidad,
+                    uploader: "Yo",
+                    desc,
+                    cicloMant,
+                    ultMant,
+                    ultMod: "Yo",
+                    prestable,
+                  });
+                  onCloseEquipo();
                 }}
               >
                 Aceptar
@@ -605,19 +577,18 @@ function EditarItemInventario(props: {
               </Button>
               <Button
                 colorScheme="blue"
+                isDisabled={!nombre}
                 onClick={() => {
-                  if (validation()) {
-                    mutation.mutate({
-                      nombre,
-                      estado,
-                      cantidad,
-                      desc,
-                      ultMod: "Yo",
-                    });
-                    setNombreErr(false);
-                    setCantidadErr(false);
-                    onCloseVarios();
-                  }
+                  mutation.mutate({
+                    nombre,
+                    estado,
+                    cantidad,
+                    desc,
+                    ultMod: "Yo",
+                  });
+                  setNombreErr(false);
+                  setCantidadErr(false);
+                  onCloseVarios();
                 }}
               >
                 Aceptar

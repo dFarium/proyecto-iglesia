@@ -48,7 +48,6 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
               display={"flex"}
               justifyContent={"center"}
             >
-              {/* {imagenUrl && ( */}
               <Image
                 src={`${process.env.API_URL}/upload/Imagenes/${props.imgScr}`}
                 fallback={LoadingImage(imagenUrl)}
@@ -58,7 +57,6 @@ function VerFotoItem(props: { nombre: string; imgScr: string }) {
                   colorMode == "light" ? lightBorderImage : darkBorderImage
                 }
               />
-              {/* )} */}
             </AlertDialogBody>
           </AlertDialogContent>
         </AlertDialogOverlay>
