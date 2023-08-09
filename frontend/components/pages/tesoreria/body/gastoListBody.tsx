@@ -99,12 +99,14 @@ export function GastoListBody() {
         header: "Nombre",
         accessorKey: "nombre",
         cell: ({ row }) => {
+
           return (
             <>
               <Text >
                 {row.getValue("nombre")}
               </Text>
               <CargarBoletaDescripcion id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
+
             </>
           )
         },
@@ -135,7 +137,9 @@ export function GastoListBody() {
           return (
             <Text
             >
+
               Fecha de Gasto
+
             </Text>
           );
         },
@@ -229,16 +233,20 @@ export function GastoListBody() {
               <Circle
                 border={"2px solid"}
                 //borderColor={
+
                 //colorMode == "light"
                 //? "tesoreriaDeleteItem.light"
                 //: "tesoreriaDeleteItem.dark"
+
                 //}
                 size={"1.5em"}
                 fontSize={"1.2em"}
                 //color={
+
                 //colorMode == "light"
                 //? "tesoreriaDeleteItem.light"
                 //: "tesoreriaDeleteItem.dark"
+
                 //}
                 cursor={"default"}
               >
