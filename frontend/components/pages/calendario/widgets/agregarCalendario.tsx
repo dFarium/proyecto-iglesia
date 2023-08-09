@@ -131,7 +131,7 @@ function AgregarCalendario() {
                 colorScheme={"newTesoreriaItemButton"}
                 display={{ base: "none", md: "flex" }}
                 onClick={onOpen}>
-                Nuevo Item
+                Agregar Evento
             </Button>
             <IconButton
                 display={{ base: "flex", md: "none" }}

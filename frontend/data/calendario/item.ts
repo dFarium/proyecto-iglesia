@@ -27,6 +27,13 @@ const crearItemCalendario = async (item: ItemCalendario) => {
     return res.data;
 };
 
+const editarItemCalendario = async (id: string, newItem: ItemCalendario) => {
+    const res = await axios.put(`${process.env.API_URL}/calendario/edit/${id}`, {
+      newItem,
+    });
+    return res.data;
+  };
+
 const eliminarItemCalendario = async (id: string) => {
     const res = await axios.delete(`${process.env.API_URL}/calendario/delete`, {
         data: { id },
@@ -38,5 +45,6 @@ const eliminarItemCalendario = async (id: string) => {
 export {
     obtenerListaCalendario,
     crearItemCalendario,
+    editarItemCalendario,
     eliminarItemCalendario,
 }

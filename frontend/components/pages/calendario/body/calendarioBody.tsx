@@ -5,10 +5,11 @@ import { Box, Circle, Flex, HStack, IconButton, Table, TableContainer, Tbody, Td
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef, SortingState, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import React, { useMemo, useState } from 'react'
-import { MdArrowDropDown, MdArrowDropUp, MdDelete, MdHelp, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
+import { MdArrowDropDown, MdArrowDropUp, MdCreate, MdDelete, MdHelp, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
 import AgregarCalendario from '../widgets/agregarCalendario'
 import EliminarCalendario from '../widgets/eliminarCalendario';
-
+/* import EditarCalendario from '../widgets/editarCalendario';
+ */
 export function CalendarioBody() {
 
   const todoQuery = useQuery({
@@ -122,6 +123,40 @@ export function CalendarioBody() {
           )
         }
       },
+      /* {
+        id: "edit",
+        enableSorting: false,
+        header: () => {
+          return (
+            <>
+              <>
+                <Circle
+                  //bg={"#F6AD55"}
+                  border={"2px solid"}
+                  size={"1.5em"}
+                  fontSize={"1.2em"}
+                  //color={colorMode == "light" ? "#4A5568" : "#2D3748"}
+                  cursor={"default"}
+                >
+                  <MdCreate />
+                </Circle>
+              </>
+            </>
+          );
+        }, cell: ({ row }) => {
+          return (
+            <EditarCalendario
+              id={row.getValue("id")}
+              nombreAct={row.getValue("nombre")}
+              fechaInicio={row.getValue("fechaInicio")}
+              fechaTermino={row.getValue("fechaTermino")}
+              estadoActividad={row.getValue("estadoActividad")}
+              descripcion={row.getValue("descripcion")}
+            />
+          );
+        },
+
+      }, */
       {
         id: "delete",
         enableSorting: false,

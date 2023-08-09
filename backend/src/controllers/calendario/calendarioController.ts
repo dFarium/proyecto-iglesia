@@ -23,7 +23,7 @@ const crearItemCalendario = async (req: Request, res: Response) => {
     );
 };
 
-const editarItemCalendario = async (req: Request, res: Response) => {
+/* const editarItemCalendario = async (req: Request, res: Response) => {
     const { id } = req.body;
     await ItemCalendario2.findByIdAndUpdate(id, req.body)
         .then(() => {
@@ -33,6 +33,24 @@ const editarItemCalendario = async (req: Request, res: Response) => {
             console.log(err);
             return res.status(400).send({ message: "Error al editar" });
         });
+}; */
+
+const editarItemCalendario = async (req: Request, res: Response) => {
+    const id = req.params.id; // Obtén el ID del parámetro de la URL
+    const updatedData = req.body; // Datos actualizados desde el cuerpo de la solicitud
+
+    try {
+        const updatedItem = await ItemCalendario2.findByIdAndUpdate(id, updatedData, { new: true });
+
+        if (updatedItem) {
+            return res.status(200).json({ message: "Editado correctamente", item: updatedItem });
+        } else {
+            return res.status(404).json({ message: "Elemento no encontrado" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error al editar" });
+    }
 };
 
 const eliminarItemCalendario = async (req: Request, res: Response) => {
