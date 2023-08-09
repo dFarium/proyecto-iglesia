@@ -67,16 +67,6 @@ export function TotalListBody() {
 
   const totalData = totalQuery.data;
 
-  const datosXLSX: {
-    nombre: string;
-    monto: number;
-    fecha: Date;
-  } = {
-    nombre: totalData.nombre,
-    monto: totalData.valorCaja,
-    fecha: totalData.fechaGasto,
-  };
-
   const [columnVisibility] = useState({
     id: false,
     index: false,
@@ -118,7 +108,7 @@ export function TotalListBody() {
               <Text onClick={onOpen}>
                 {row.getValue("nombre")}
               </Text>
-              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} />
+              <CargarBoletaDescripcion isOpen={isOpen} onClose={onClose} id={row.getValue("id")} descripcion={row.getValue("descripcion")} nombre={row.getValue("nombre")} boleta={row.getValue("boleta")} />
             </>
           )
         },
@@ -128,7 +118,6 @@ export function TotalListBody() {
         header: () => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               Monto
             </Text>
@@ -138,7 +127,6 @@ export function TotalListBody() {
         cell: ({ row }) => {
           return (
             <Text
-            //  minW={"100%"} textAlign={"center"}
             >
               ${formatCLP(row.getValue("valorCaja"))}
             </Text>
@@ -179,6 +167,18 @@ export function TotalListBody() {
         }
       },
       {
+        id: 'boleta',
+        header: 'Boleta',
+        accessorKey: "boleta",
+        cell: ({ row }) => {
+          return (
+            <Text>
+              {row.getValue("boleta")}
+            </Text>
+          )
+        }
+      },
+      {
         id: "tipo",
         header: "Tipo",
         accessorKey: "tipo",
@@ -197,13 +197,12 @@ export function TotalListBody() {
           return (
             <>
               <Circle
-                bg={"#F6AD55"}
+                border={"2px solid"}
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={colorMode == "light" ? "#4A5568" : "#2D3748"}
                 cursor={"default"}
               >
-                <MdCreate />
+                <MdDelete />
               </Circle>
             </>
           );
@@ -229,18 +228,8 @@ export function TotalListBody() {
             <>
               <Circle
                 border={"2px solid"}
-                borderColor={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
                 size={"1.5em"}
                 fontSize={"1.2em"}
-                color={
-                  colorMode == "light"
-                    ? "tesoreriaDeleteItem.light"
-                    : "tesoreriaDeleteItem.dark"
-                }
                 cursor={"default"}
               >
                 <MdDelete />
@@ -285,7 +274,7 @@ export function TotalListBody() {
           <VStack w={"100%"} h={"100%"} spacing={"30px"}>
             <HStack justifyContent={"space-between"} w={"100%"}>
               <Text textStyle={"titulo"}>Total</Text>
-              {/* <NuevoGastoIngresoTesoreria /> */}
+              {/* <NuevoGastoIngresoTesoreria /> */} {/* AGREGUA UN IF, si la ventana es pequeña desbloquea esto */}
             </HStack>
             <TableContainer overflowY={"auto"} width={"100%"}>
               <Table variant={"striped"} size={"sm"} colorScheme="stripTable">
@@ -396,7 +385,7 @@ export function TotalListBody() {
                 <HStack display={{ base: "none", lg: "flex" }}>
                   <MdHelp size={"20px"} />
                   <Text minW={"400px"}>
-                    Puede ver la descripción y archivos adjuntos dando click en el nombre del Item.
+                    Puede ver la descripción y archivo adjunto dando click en el nombre.
                   </Text>
                 </HStack>
               </HStack>
@@ -424,43 +413,3 @@ function showPages(maxRows: number, currentIndex: number, pageSize: number) {
   }
 }
 
-
-/*
-
-       {
-        id: "edit",
-        enableSorting: false,
-        header: () => {
-          return (
-            <>
-              <>
-                <Circle
-                  bg={"#F6AD55"}
-                  size={"1.5em"}
-                  fontSize={"1.2em"}
-                  color={colorMode == "light" ? "#4A5568" : "#2D3748"}
-                  cursor={"default"}
-                >
-                  <MdCreate />
-                </Circle>
-              </>
-            </>
-          );
-        },
-        cell: ({ row }) => {
-          return (
-            <EditarTesoreria
-              id={row.getValue("id")}
-              nombre={row.getValue("nombre")}
-              valorCaja={row.getValue("valorCaja")}
-              tipo={row.getValue("tipo")}
-              descripcion={row.getValue("descripcion")}
-              fechaGasto={row.getValue("fechaGasto")}
-
-            />
-          );
-        },
-      },     
-
-
-*/
