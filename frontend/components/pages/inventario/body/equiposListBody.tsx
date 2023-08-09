@@ -115,15 +115,7 @@ export function InventarioEquiposBody() {
       },
       {
         id: "cantidad",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Cantidad
-            </Text>
-          );
-        },
+        header: "Cantidad",
         accessorKey: "cantidad",
         cell: ({ row }) => {
           return (
@@ -159,15 +151,7 @@ export function InventarioEquiposBody() {
       },
       {
         id: "estado",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Estado
-            </Text>
-          );
-        },
+        header: "Estado",
         accessorKey: "estado",
         cell: ({ row }) => {
           return (
@@ -181,15 +165,7 @@ export function InventarioEquiposBody() {
       },
       {
         id: "prestable",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              ¿Prestable?
-            </Text>
-          );
-        },
+        header: "Prestable",
         accessorKey: "prestable",
         cell({ row }) {
           const prestable: boolean = row.getValue("prestable");
@@ -224,15 +200,7 @@ export function InventarioEquiposBody() {
       },
       {
         id: "createdAt",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Fecha de Ingreso
-            </Text>
-          );
-        },
+        header: "Fecha Ingreso",
         accessorKey: "createdAt",
         cell: ({ row }) => {
           const date = textDate(row.getValue<Date>("createdAt"));
@@ -248,15 +216,7 @@ export function InventarioEquiposBody() {
       },
       {
         id: "fechaSalida",
-        header: () => {
-          return (
-            <Text
-            //  minW={"100%"} textAlign={"center"}
-            >
-              Fecha de Salida
-            </Text>
-          );
-        },
+        header: "Fecha Salida",
         accessorKey: "fechaSalida",
         cell: ({ row }) => {
           if (!row.getValue("fechaSalida")) {
