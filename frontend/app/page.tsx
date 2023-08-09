@@ -98,8 +98,10 @@ export default function Page() {
           <InputGroup>
             <InputLeftElement
               pointerEvents="none"
-              children={<Icon as={EmailIcon} />} // Icono de correo
-            />
+              // Icono de correo
+            >
+              <Icon as={EmailIcon} />
+            </InputLeftElement>
             <Input
               placeholder="Correo"
               value={email}
@@ -112,8 +114,10 @@ export default function Page() {
           <InputGroup>
             <InputLeftElement
               pointerEvents="none"
-              children={<Icon as={LockIcon} />} // Icono simbólico de contraseña
-            />
+              // Icono simbólico de contraseña
+            >
+              <Icon as={LockIcon} />
+            </InputLeftElement>
             <Input
               placeholder="*******"
               type="password"
